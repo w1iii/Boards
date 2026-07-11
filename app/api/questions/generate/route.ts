@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
+import { sql } from "@/app/lib/db"
 import { handleError, AppError } from "@/app/lib/errors"
+import { generateQuestionsSchema, generatedQuestionSchema } from "@/app/lib/validation"
+import { z } from "zod"
 
 export async function POST(request: NextRequest) {
   try {
@@ -8,9 +11,10 @@ export async function POST(request: NextRequest) {
     if (!userId) throw new AppError("Unauthorized", 401)
 
     const body = await request.json()
-    const { contentArea, count = 10 } = body
+    const parsed = generateQuestionsSchema.safeParse(body)
+    if (!parsed.success) throw new AppError(parsed.error.message, 400)
 
-    if (!contentArea) throw new AppError("contentArea is required")
+    const { contentArea, count } = parsed.data
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -25,7 +29,7 @@ export async function POST(request: NextRequest) {
         messages: [
           {
             role: "user",
-            content: `Generate ${count} NLE-style situational questions for content area: ${contentArea}. Return JSON array with fields: text, choices (array of {key, text}), correctAnswer, rationale, wrongChoiceRationales (object mapping wrong keys to explanations).`,
+            content: `Generate ${count} NLE-style situational questions for content area: ${contentArea}. Return a JSON array ONLY — no markdown, no code fences. Each object must have: text (string), choices (array of {key: string, text: string}), correctAnswer (string), rationale (string), wrongChoiceRationales (object mapping wrong keys to explanation strings).`,
           },
         ],
       }),
@@ -38,13 +42,42 @@ export async function POST(request: NextRequest) {
 
     const data = await response.json()
     const generatedText = data.content?.[0]?.text ?? ""
+    if (!generatedText) throw new AppError("AI returned empty response", 502)
+
+    let generated: unknown
+    try {
+      generated = JSON.parse(generatedText)
+    } catch {
+      return NextResponse.json({
+        error: "AI returned malformed JSON",
+        raw: generatedText,
+      }, { status: 422 })
+    }
+
+    const questions = z.array(generatedQuestionSchema).safeParse(generated)
+    if (!questions.success) {
+      return NextResponse.json({
+        error: "AI response failed validation",
+        raw: generatedText,
+        validationErrors: questions.error.issues,
+      }, { status: 422 })
+    }
+
+    const inserted = []
+    for (const q of questions.data) {
+      const result = await sql`
+        INSERT INTO questions (content_area, difficulty, text, choices, correct_answer, rationale, wrong_choice_rationales, reviewed)
+        VALUES (${contentArea}, 'medium', ${q.text}, ${JSON.stringify(q.choices)}, ${q.correctAnswer}, ${q.rationale}, ${JSON.stringify(q.wrongChoiceRationales || {})}, false)
+        RETURNING *
+      `
+      inserted.push(result.rows[0])
+    }
 
     return NextResponse.json({
-      message: "Questions generated",
+      message: `Generated ${inserted.length} questions`,
       contentArea,
-      count,
-      raw: generatedText,
-    })
+      questions: inserted,
+    }, { status: 201 })
   } catch (error) {
     return handleError(error)
   }

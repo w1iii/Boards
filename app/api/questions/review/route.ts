@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
     if (!userId) throw new AppError("Unauthorized", 401)
 
     const body = await request.json()
-    const { questionId, approved, feedback } = body
+    const { questionId, approved } = body
 
     if (!questionId) throw new AppError("questionId is required")
 

@@ -5,9 +5,7 @@ let _sql: NeonQueryFunction<false, true> | null = null
 async function getSql(): Promise<NeonQueryFunction<false, true>> {
   if (!_sql) {
     const url = process.env.DATABASE_URL
-    if (!url) {
-      throw new Error("DATABASE_URL not set")
-    }
+    if (!url) throw new Error("DATABASE_URL not set")
     const { neon } = await import("@neondatabase/serverless")
     _sql = neon(url, { fullResults: true })
   }
@@ -20,4 +18,12 @@ export async function sql(
 ): Promise<FullQueryResults<false>> {
   const client = await getSql()
   return client(strings, ...values) as Promise<FullQueryResults<false>>
+}
+
+export async function unsafesql(
+  query: string,
+  params: unknown[],
+): Promise<FullQueryResults<false>> {
+  const client = await getSql()
+  return client.query(query, params) as Promise<FullQueryResults<false>>
 }

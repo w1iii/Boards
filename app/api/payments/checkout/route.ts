@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { createCheckoutSession } from "@/app/lib/paymongo"
 import { handleError, AppError } from "@/app/lib/errors"
+import { checkoutSchema } from "@/app/lib/validation"
 
 const PRICES: Record<string, number> = {
   monthly: 34900,
@@ -14,10 +15,10 @@ export async function POST(request: NextRequest) {
     if (!userId) throw new AppError("Unauthorized", 401)
 
     const body = await request.json()
-    const { plan } = body
+    const parsed = checkoutSchema.safeParse(body)
+    if (!parsed.success) throw new AppError("Invalid plan", 400)
 
-    if (!plan || !PRICES[plan]) throw new AppError("Invalid plan")
-
+    const { plan } = parsed.data
     const origin = request.headers.get("origin") ?? "http://localhost:3000"
 
     const checkout = await createCheckoutSession({

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { sql } from "@/app/lib/db"
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,8 +12,21 @@ export async function POST(request: NextRequest) {
 
     switch (event.type) {
       case "checkout_session.payment.paid": {
-        const metadata = event.data?.attributes?.metadata ?? {}
+        const attrs = event.data?.attributes ?? {}
+        const metadata = attrs.metadata ?? {}
         const { userId, plan } = metadata
+
+        if (!userId || !plan) break
+
+        await sql`
+          INSERT INTO subscriptions (user_id, plan, expires_at, paymongo_session_id)
+          VALUES (
+            ${userId},
+            ${plan},
+            now() + interval '30 days',
+            ${attrs.id ?? null}
+          )
+        `
         break
       }
       case "checkout_session.payment.failed": {

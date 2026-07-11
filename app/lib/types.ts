@@ -1,34 +1,40 @@
-export type ContentArea =
-  | "medical-surgical"
-  | "mother-child"
-  | "psychiatric"
-  | "community-health"
-  | "leadership-management"
+import type { z } from "zod"
+import type {
+  contentAreaSchema,
+  difficultySchema,
+  choiceSchema,
+  createQuestionSchema,
+  generatedQuestionSchema,
+} from "./validation"
 
-export type Difficulty = "easy" | "medium" | "hard"
+export type ContentArea = z.infer<typeof contentAreaSchema>
+export type Difficulty = z.infer<typeof difficultySchema>
+export type Choice = z.infer<typeof choiceSchema>
+export type CreateQuestionInput = z.infer<typeof createQuestionSchema>
+export type GeneratedQuestion = z.infer<typeof generatedQuestionSchema>
 
 export interface Question {
   id: string
-  contentArea: ContentArea
+  content_area: ContentArea
   difficulty: Difficulty
   text: string
-  choices: { key: string; text: string }[]
-  correctAnswer: string
+  choices: Choice[]
+  correct_answer: string
   rationale: string
-  wrongChoiceRationales: Record<string, string>
+  wrong_choice_rationales: Record<string, string>
   reviewed: boolean
-  reviewedBy?: string
-  createdAt: string
+  reviewed_by?: string
+  created_at: string
 }
 
 export interface Session {
   id: string
-  userId: string
+  user_id: string
   type: "practice" | "mock-exam"
-  contentAreas: ContentArea[]
+  content_areas: ContentArea[]
   status: "in-progress" | "completed"
-  startedAt: string
-  completedAt?: string
+  started_at: string
+  completed_at?: string
   questions: string[]
   answers: Record<string, string>
 }
@@ -39,14 +45,25 @@ export interface SessionResult {
   answeredQuestions: number
   correctAnswers: number
   score: number
-  timeTaken: number
-  areaBreakdown: Record<ContentArea, { correct: number; total: number }>
+  areaBreakdown: Record<string, { correct: number; total: number }>
 }
 
 export interface UserProgress {
   totalQuestionsAnswered: number
   totalCorrect: number
   overallScore: number
-  areaScores: Record<ContentArea, { correct: number; total: number; score: number }>
-  weakAreas: ContentArea[]
+  areaScores: Record<string, { correct: number; total: number; score: number }>
+  weakAreas: string[]
 }
+
+export interface Subscription {
+  id: string
+  user_id: string
+  plan: "monthly" | "final-push"
+  status: "active" | "expired" | "cancelled"
+  starts_at: string
+  expires_at: string
+  paymongo_session_id?: string
+  created_at: string
+}
+

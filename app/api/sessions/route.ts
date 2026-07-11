@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { sql } from "@/app/lib/db"
 import { handleError, AppError } from "@/app/lib/errors"
+import { createSessionSchema } from "@/app/lib/validation"
 
 export async function POST(request: NextRequest) {
   try {
@@ -9,11 +10,10 @@ export async function POST(request: NextRequest) {
     if (!userId) throw new AppError("Unauthorized", 401)
 
     const body = await request.json()
-    const { type, contentAreas, questionCount = 20 } = body
+    const parsed = createSessionSchema.safeParse(body)
+    if (!parsed.success) throw new AppError(parsed.error.message, 400)
 
-    if (!type || !contentAreas?.length) {
-      throw new AppError("type and contentAreas are required")
-    }
+    const { type, contentAreas, questionCount } = parsed.data
 
     const questions = await sql`
       SELECT id FROM questions
