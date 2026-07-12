@@ -38,7 +38,7 @@ export default function HomePage() {
         </div>
         <div className="flex items-center gap-4">
           <button className="material-symbols-outlined p-2 hover:bg-surface-container rounded-full transition-colors text-on-surface">notifications</button>
-          <Link href="/sign-up" className="bg-primary text-white font-label-caps px-6 py-3 hover:bg-primary-container transition-all active:scale-95 inline-block">START PROJECT</Link>
+          <Link href="/sign-in" className="bg-primary text-white font-label-caps px-6 py-3 hover:bg-primary-container transition-all active:scale-95 inline-block">START PROJECT</Link>
         </div>
       </nav>
 
