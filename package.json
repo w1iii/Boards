@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "db:migrate": "cat migrations/001_initial.sql | psql \"$(grep DATABASE_URL .env.local | cut -d= -f2-)\""
+    "db:migrate": "for f in migrations/*.sql; do echo \"Running $f...\"; cat \"$f\" | psql \"$(grep '^DATABASE_URL=' .env.local | cut -d= -f2-)\"; done"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.5.16",
