@@ -56,6 +56,19 @@ export interface UserProgress {
   weakAreas: string[]
 }
 
+export interface UserProfile {
+  id: string
+  clerk_user_id: string
+  first_name?: string
+  last_name?: string
+  onboarding_completed: boolean
+  content_areas: ContentArea[]
+  daily_goal: number
+  target_exam_date?: string
+  created_at: string
+  updated_at: string
+}
+
 export interface Subscription {
   id: string
   user_id: string

@@ -59,6 +59,16 @@ export const generatedQuestionSchema = z.object({
   wrongChoiceRationales: z.record(z.string(), z.string()).optional(),
 })
 
+export const onboardingSchema = z.object({
+  firstName: z.string().min(1, "First name is required").max(100),
+  lastName: z.string().min(1, "Last name is required").max(100),
+  contentAreas: z.array(contentAreaSchema).min(1, "Select at least one content area"),
+  dailyGoal: z.number().int().min(5).max(100).default(20),
+  targetExamDate: z.string().optional(),
+})
+
+export type OnboardingInput = z.infer<typeof onboardingSchema>
+
 export const questionListSchema = z.object({
   contentArea: contentAreaSchema.optional(),
   difficulty: difficultySchema.optional(),
