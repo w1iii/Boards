@@ -2,6 +2,7 @@ import { auth, currentUser } from "@clerk/nextjs/server"
 import { sql } from "@/app/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
+import NavHeader from "@/app/components/nav-header"
 
 const AREA_LABELS: Record<string, string> = {
   "medical-surgical": "Medical-Surgical Nursing",
@@ -214,58 +215,7 @@ export default async function DashboardPage() {
 
   return (
     <>
-      {/* TopNavBar */}
-      <header className="sticky top-0 z-50 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-full bg-surface border-b border-tertiary">
-        <div className="flex items-center gap-8">
-          <span className="font-display-md text-[24px] font-black tracking-tighter text-on-surface">
-            BOARDS.
-          </span>
-          <nav className="hidden md:flex gap-6">
-            <Link
-              className="font-label-caps text-primary border-b-2 border-primary pb-1"
-              href="/dashboard"
-            >
-              Dashboard
-            </Link>
-            <Link
-              className="font-label-caps text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200"
-              href="/practice"
-            >
-              Practice
-            </Link>
-            <Link
-              className="font-label-caps text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200"
-              href="/progress"
-            >
-              Progress
-            </Link>
-            <Link
-              className="font-label-caps text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200"
-              href="/pricing"
-            >
-              Pricing
-            </Link>
-          </nav>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="material-symbols-outlined p-2 hover:bg-surface-container transition-colors duration-200 rounded-full">
-            notifications
-          </button>
-          <div className="w-10 h-10 rounded-full overflow-hidden border border-secondary">
-            {user?.imageUrl ? (
-              <img
-                className="w-full h-full object-cover"
-                src={user.imageUrl}
-                alt={`${firstName}'s avatar`}
-              />
-            ) : (
-              <div className="w-full h-full bg-secondary-fixed-dim flex items-center justify-center font-mono-data text-on-secondary-fixed-variant">
-                {firstName.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-        </div>
-      </header>
+      <NavHeader firstName={firstName} imageUrl={user?.imageUrl ?? null} activeHref="/dashboard" />
 
       <main className="min-h-screen grid-pattern">
         <section className="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-12">

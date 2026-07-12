@@ -1,8 +1,19 @@
 import { SignIn } from '@clerk/nextjs'
+import Link from 'next/link'
 
 export default function SignInPage() {
   return (
     <div className="min-h-screen flex flex-col bg-surface">
+      {/* Nav */}
+      <nav className="sticky top-0 z-50 bg-surface border-b border-tertiary flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-full">
+        <div className="flex items-center gap-2">
+          <img alt="BOARDS. Logo" className="h-8 md:h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2blFSvhfS9jHGCBXITovua9NLN6SXNJnqVDMXc9CHOYrjzSyHKGk1G-nSIA7Y-pA8IE5OxPbz97Q4ItVK4bGlq9lrPC-fPD7SteKIuT4T3u-Rpvye8uHZDBc_ZOElnEozIrYHZsTVDzmtwG7qjlgwEnOwk48CHFzu2Uz8bKKXs4zGBZ1iBaWI8Xw2n6H4kErKXEz9UJQbSR2YoV_iFBGvDST0_zMLuobj8XeygXkZ2mX4QSh4FXqa" />
+        </div>
+        <div className="hidden md:flex items-center gap-10">
+          <Link className="font-headline-lg text-body-md text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200" href="/">Home</Link>
+        </div>
+      </nav>
+
       <div
         className="fixed inset-0 pointer-events-none z-0 opacity-20"
         style={{

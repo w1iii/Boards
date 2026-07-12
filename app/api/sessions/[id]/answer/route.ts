@@ -33,7 +33,7 @@ export async function POST(
     const isCorrect = answer === q.correct_answer
     const rationale = isCorrect
       ? q.rationale
-      : q.wrong_choice_rationales?.[answer] ?? q.rationale
+      : q.wrong_choice_rationales?.[answer] ?? `Choice ${answer} is incorrect. ${q.rationale}`
 
     const currentAnswers = session.rows[0].answers ?? {}
     currentAnswers[questionId] = answer

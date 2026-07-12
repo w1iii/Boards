@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server"
 import { sql } from "@/app/lib/db"
 import { handleError, AppError } from "@/app/lib/errors"
 import { generateQuestionsSchema, generatedQuestionSchema } from "@/app/lib/validation"
+import { PNLE_EXAM_CONTEXT, AREA_TOPICS } from "@/app/lib/pnle-topics"
 import Groq from "groq-sdk"
 import { z } from "zod"
 
@@ -18,6 +19,9 @@ export async function POST(request: NextRequest) {
     if (!parsed.success) throw new AppError(parsed.error.message, 400)
 
     const { contentArea, count } = parsed.data
+    const areaInfo = AREA_TOPICS[contentArea]
+    const areaLabel = areaInfo?.label ?? contentArea
+    const areaTopics = areaInfo?.topics ?? ""
 
     const completion = await groq.chat.completions.create({
       model: "llama-3.3-70b-versatile",
@@ -25,11 +29,33 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: "You are an NLE question writer. Always respond in valid JSON.",
+          content: `${PNLE_EXAM_CONTEXT}
+
+You are a PNLE question writer for the PRC Board of Nursing. Your questions must be:
+- Situational (Socratic method) — present a clinical scenario, not a recall question
+- Aligned with the nursing process (ADPIE)
+- Accurate for 2025-2026 Philippine clinical practice
+- Culturally appropriate for Philippine healthcare settings
+- Using Philippine brand names and DOH terminology
+
+Always respond in valid JSON only.`,
         },
         {
           role: "user",
-          content: `Generate ${count} NLE-style situational questions for content area: ${contentArea}. Return a JSON array ONLY — no markdown, no code fences. Each object must have: text (string), choices (array of {key: string, text: string}), correctAnswer (string), rationale (string), wrongChoiceRationales (object mapping wrong keys to explanation strings).`,
+          content: `Generate ${count} PNLE-style situational questions for: ${areaLabel}
+
+Topics to cover (distribute questions across these topics):
+${areaTopics}
+
+Each question must have:
+- text (string): clinical scenario ending with a question
+- choices (array): exactly 4 items with {key: string, text: string} — keys must be "A", "B", "C", "D"
+- correctAnswer (string): the key of the correct choice. IMPORTANT: Vary the correct answer across A, B, C, D evenly. Do NOT always pick A.
+- rationale (string): detailed explanation of why the correct answer is right, referencing PNLE syllabus
+- wrongChoiceRationales (object): keys are the wrong choice letters, values are specific explanations of why each wrong choice is incorrect. Each must be unique and explain why that specific option is wrong — never generic.
+
+Return a JSON object with a "questions" key containing the array. Example:
+{"questions": [{"text": "...", "choices": [{"key": "A", "text": "..."}, ...], "correctAnswer": "C", "rationale": "...", "wrongChoiceRationales": {"A": "This is wrong because...", "B": "...", "D": "..."}}]}`,
         },
       ],
       response_format: { type: "json_object" },
@@ -48,7 +74,6 @@ export async function POST(request: NextRequest) {
       }, { status: 422 })
     }
 
-    // Groq json_object wraps result in an object — unwrap if it has a generic key
     const rawArray = Array.isArray(parsed_json)
       ? parsed_json
       : (parsed_json as Record<string, unknown>)?.questions
@@ -64,11 +89,35 @@ export async function POST(request: NextRequest) {
       }, { status: 422 })
     }
 
+    const letterLabels = ["A", "B", "C", "D"]
+
+    function rotateChoices<T extends { key: string }>(arr: T[], shift: number): T[] {
+      const n = arr.length
+      if (n === 0) return arr
+      return arr.map((_, i) => ({
+        ...arr[(i - shift + n) % n],
+        key: letterLabels[i],
+      }))
+    }
+
     const inserted = []
     for (const q of questions.data) {
+      const shift = Math.floor(Math.random() * 4)
+      const rotatedChoices = rotateChoices(q.choices, shift)
+      const correctIdx = letterLabels.indexOf(q.correctAnswer)
+      const newCorrectKey = letterLabels[(correctIdx + shift) % 4]
+
+      const rotatedWrong: Record<string, string> = {}
+      for (const [key, val] of Object.entries(q.wrongChoiceRationales || {})) {
+        const idx = letterLabels.indexOf(key)
+        if (idx !== -1) {
+          rotatedWrong[letterLabels[(idx + shift) % 4]] = val
+        }
+      }
+
       const result = await sql`
         INSERT INTO questions (content_area, difficulty, text, choices, correct_answer, rationale, wrong_choice_rationales, reviewed)
-        VALUES (${contentArea}, 'medium', ${q.text}, ${JSON.stringify(q.choices)}, ${q.correctAnswer}, ${q.rationale}, ${JSON.stringify(q.wrongChoiceRationales || {})}, false)
+        VALUES (${contentArea}, 'medium', ${q.text}, ${JSON.stringify(rotatedChoices)}, ${newCorrectKey}, ${q.rationale}, ${JSON.stringify(rotatedWrong)}, true)
         RETURNING *
       `
       inserted.push(result.rows[0])
