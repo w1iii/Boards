@@ -144,11 +144,12 @@ export default async function DashboardPage() {
   const contentAreas = (profile.content_areas as string[]) || []
   const targetExamDate = profile.target_exam_date as string | null
 
-  let examDaysLeft: number | null = null
-  if (targetExamDate) {
-    const diff = new Date(targetExamDate).getTime() - Date.now()
-    examDaysLeft = Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
-  }
+  const examDaysLeft: number | null = targetExamDate
+    ? (() => {
+        const diff = new Date(targetExamDate).getTime() - new Date().getTime()
+        return Math.max(0, Math.ceil(diff / 86400000))
+      })()
+    : null
 
   const progressResult = await sql`
     SELECT COUNT(*)::int as total_answered,
