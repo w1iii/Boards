@@ -28,6 +28,9 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} scroll-smooth`}
     >
+      <head>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
+      </head>
       <body className="bg-surface text-on-surface font-body-md overflow-x-hidden">
         <ClerkProvider>
           {children}
