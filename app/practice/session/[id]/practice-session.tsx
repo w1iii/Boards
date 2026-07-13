@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import NavHeader from "@/app/components/nav-header"
 import QuestionTimer from "./timer"
@@ -46,14 +46,14 @@ export default function PracticeSession({
   const [answerStates, setAnswerStates] = useState<Record<string, AnswerState>>({})
   const [showFeedback, setShowFeedback] = useState(false)
   const [submitting, setSubmitting] = useState(false)
-  const [completing, setCompleting] = useState(false)
   const [timerRunning, setTimerRunning] = useState(true)
   const [timerResetKey, setTimerResetKey] = useState(0)
+  const [completing, setCompleting] = useState(false)
+  const completingRef = useRef(false)
   const router = useRouter()
 
   const question = questions[currentIdx]
   const totalQuestions = questions.length
-  const answeredCount = Object.keys(answers).length
 
   useEffect(() => {
     const initialStates: Record<string, AnswerState> = {}
@@ -102,6 +102,16 @@ export default function PracticeSession({
     setTimerRunning(false)
   }, [question, answerStates])
 
+  const safeChoices = useCallback(
+    (q: Question): { key: string; text: string }[] => {
+      const labels = ["A", "B", "C", "D"]
+      return (q.choices || [])
+        .filter((c) => c && c.key && c.text)
+        .sort((a, b) => labels.indexOf(a.key) - labels.indexOf(b.key))
+    },
+    [],
+  )
+
   const handleSelect = useCallback(
     async (key: string) => {
       if (showFeedback || !question || answerStates[question.id]) return
@@ -144,7 +154,8 @@ export default function PracticeSession({
   }, [currentIdx, totalQuestions, goToQuestion])
 
   const handleFinish = useCallback(async () => {
-    if (completing) return
+    if (completingRef.current) return
+    completingRef.current = true
     setCompleting(true)
     try {
       await fetch(`/api/sessions/${sessionId}`, {
@@ -156,13 +167,11 @@ export default function PracticeSession({
       // proceed even if patch fails
     }
     router.push(`/practice/session/${sessionId}/results`)
-  }, [sessionId, completing, router])
+  }, [sessionId, router])
 
   const handleViewResults = useCallback(() => {
-    if (completing) return
-    setCompleting(true)
     handleFinish()
-  }, [handleFinish, completing])
+  }, [handleFinish])
 
   const isLastQuestion = currentIdx === totalQuestions - 1
 
@@ -182,8 +191,6 @@ export default function PracticeSession({
           .join(", ")
       : "Practice"
 
-  const letterLabels = ["A", "B", "C", "D"]
-
   if (!question) {
     return (
       <div className="h-dvh flex items-center justify-center bg-surface">
@@ -192,10 +199,7 @@ export default function PracticeSession({
     )
   }
 
-  const choices = (question.choices || []).sort(
-    (a, b) => letterLabels.indexOf(a.key) - letterLabels.indexOf(b.key),
-  )
-
+  const choices = safeChoices(question)
   const feedbackState = showFeedback ? answerStates[question.id] : null
 
   return (

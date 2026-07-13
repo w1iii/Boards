@@ -51,12 +51,20 @@ export const checkoutSchema = z.object({
   plan: z.enum(["monthly", "final-push"]),
 })
 
+export const wrongChoiceKeysSchema = z.record(z.string(), z.string()).refine(
+  (val) => {
+    const keys = Object.keys(val)
+    return keys.length >= 3 && keys.every((k) => ["A", "B", "C", "D"].includes(k))
+  },
+  { message: "wrongChoiceRationales must have entries for at least 3 choices (keys A/B/C/D)" },
+)
+
 export const generatedQuestionSchema = z.object({
   text: z.string().min(1),
   choices: z.array(choiceSchema).min(2).max(10),
   correctAnswer: z.string().min(1),
   rationale: z.string().min(1),
-  wrongChoiceRationales: z.record(z.string(), z.string()).optional(),
+  wrongChoiceRationales: wrongChoiceKeysSchema,
 })
 
 export const onboardingSchema = z.object({

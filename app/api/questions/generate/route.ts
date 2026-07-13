@@ -89,7 +89,7 @@ Return a JSON object with a "questions" key containing the array. Example:
       }, { status: 422 })
     }
 
-    const letterLabels = ["A", "B", "C", "D"]
+    const letterLabels = ["A", "B", "C", "D"] as const
 
     function rotateChoices<T extends { key: string }>(arr: T[], shift: number): T[] {
       const n = arr.length
@@ -100,24 +100,53 @@ Return a JSON object with a "questions" key containing the array. Example:
       }))
     }
 
+    function safeCorrectKey(rawKey: string): string {
+      const upper = rawKey.toUpperCase()
+      return letterLabels.includes(upper as typeof letterLabels[number]) ? upper : "A"
+    }
+
+    function fillMissingWrongRationales(
+      wrongRationales: Record<string, string>,
+      choices: { key: string; text: string }[],
+      correctAnswer: string,
+      correctRationale: string,
+    ): Record<string, string> {
+      const filled = { ...wrongRationales }
+      for (const choice of choices) {
+        if (choice.key === correctAnswer) continue
+        if (!filled[choice.key]) {
+          filled[choice.key] = `Choice ${choice.key} ("${choice.text}") is not the best response. ${correctRationale}`
+        }
+      }
+      return filled
+    }
+
     const inserted = []
     for (const q of questions.data) {
       const shift = Math.floor(Math.random() * 4)
       const rotatedChoices = rotateChoices(q.choices, shift)
-      const correctIdx = letterLabels.indexOf(q.correctAnswer)
+      const correctKey = safeCorrectKey(q.correctAnswer)
+      const correctIdx = letterLabels.indexOf(correctKey as typeof letterLabels[number])
       const newCorrectKey = letterLabels[(correctIdx + shift) % 4]
 
       const rotatedWrong: Record<string, string> = {}
       for (const [key, val] of Object.entries(q.wrongChoiceRationales || {})) {
-        const idx = letterLabels.indexOf(key)
+        const idx = letterLabels.indexOf(key.toUpperCase() as typeof letterLabels[number])
         if (idx !== -1) {
           rotatedWrong[letterLabels[(idx + shift) % 4]] = val
         }
       }
 
+      const filledWrong = fillMissingWrongRationales(
+        rotatedWrong,
+        rotatedChoices,
+        newCorrectKey,
+        q.rationale,
+      )
+
       const result = await sql`
         INSERT INTO questions (content_area, difficulty, text, choices, correct_answer, rationale, wrong_choice_rationales, reviewed)
-        VALUES (${contentArea}, 'medium', ${q.text}, ${JSON.stringify(rotatedChoices)}, ${newCorrectKey}, ${q.rationale}, ${JSON.stringify(rotatedWrong)}, true)
+        VALUES (${contentArea}, 'medium', ${q.text}, ${JSON.stringify(rotatedChoices)}, ${newCorrectKey}, ${q.rationale}, ${JSON.stringify(filledWrong)}, true)
         RETURNING *
       `
       inserted.push(result.rows[0])

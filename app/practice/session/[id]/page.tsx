@@ -39,14 +39,14 @@ export default async function SessionPage({
   const contentAreas = (session.content_areas as string[]) || []
 
   const serializedQuestions = questions.map((q) => ({
-    id: q.id as string,
-    text: q.text as string,
-    choices: q.choices as { key: string; text: string }[],
-    correct_answer: q.correct_answer as string,
-    rationale: q.rationale as string,
-    wrong_choice_rationales: (q.wrong_choice_rationales as Record<string, string>) || {},
-    content_area: q.content_area as string,
-    difficulty: q.difficulty as string,
+    id: (q.id as string) ?? "",
+    text: (q.text as string) ?? "",
+    choices: (Array.isArray(q.choices) ? q.choices : []) as { key: string; text: string }[],
+    correct_answer: (q.correct_answer as string) ?? "",
+    rationale: (q.rationale as string) ?? "",
+    wrong_choice_rationales: (q.wrong_choice_rationales as Record<string, string>) ?? {},
+    content_area: (q.content_area as string) ?? "",
+    difficulty: (q.difficulty as string) ?? "medium",
   }))
 
   return (

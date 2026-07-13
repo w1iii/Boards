@@ -37,24 +37,27 @@ export default async function ResultsPage({
   )
 
   let correctCount = 0
+  let existingCount = 0
   const areaBreak: Record<string, { correct: number; total: number }> = {}
 
   for (const qId of questionIds) {
     const q = questionMap.get(qId)
     if (!q) continue
+    existingCount++
 
     const area = q.content_area
     if (!areaBreak[area]) areaBreak[area] = { correct: 0, total: 0 }
     areaBreak[area].total++
 
-    if (answers[qId] === q.correct_answer) {
+    const userAnswer = answers[qId]
+    if (userAnswer && userAnswer === q.correct_answer) {
       correctCount++
       areaBreak[area].correct++
     }
   }
 
-  const totalQuestions = questionIds.length
-  const answeredQuestions = Object.keys(answers).length
+  const totalQuestions = existingCount
+  const answeredQuestions = Object.keys(answers).filter((id) => questionMap.has(id)).length
   const score = totalQuestions > 0 ? correctCount / totalQuestions : 0
 
   return (
