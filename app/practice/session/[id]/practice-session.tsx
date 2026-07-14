@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useEffect, useRef } from "react"
+import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
 import NavHeader from "@/app/components/nav-header"
 import QuestionTimer from "./timer"
@@ -43,25 +43,13 @@ export default function PracticeSession({
 }: Props) {
   const [currentIdx, setCurrentIdx] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>(existingAnswers)
-  const [answerStates, setAnswerStates] = useState<Record<string, AnswerState>>({})
-  const [showFeedback, setShowFeedback] = useState(false)
-  const [submitting, setSubmitting] = useState(false)
-  const [timerRunning, setTimerRunning] = useState(true)
-  const [timerResetKey, setTimerResetKey] = useState(0)
-  const [completing, setCompleting] = useState(false)
-  const completingRef = useRef(false)
-  const router = useRouter()
-
-  const question = questions[currentIdx]
-  const totalQuestions = questions.length
-
-  useEffect(() => {
-    const initialStates: Record<string, AnswerState> = {}
+  function buildInitialStates() {
+    const states: Record<string, AnswerState> = {}
     for (const q of questions) {
       const selected = existingAnswers[q.id]
       if (selected) {
         const correct = selected === q.correct_answer
-        initialStates[q.id] = {
+        states[q.id] = {
           selected,
           correct,
           correctAnswer: q.correct_answer,
@@ -72,8 +60,20 @@ export default function PracticeSession({
         }
       }
     }
-    setAnswerStates(initialStates)
-  }, [questions, existingAnswers])
+    return states
+  }
+
+  const [answerStates, setAnswerStates] = useState<Record<string, AnswerState>>(buildInitialStates)
+  const [showFeedback, setShowFeedback] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
+  const [timerRunning, setTimerRunning] = useState(true)
+  const [timerResetKey, setTimerResetKey] = useState(0)
+  const [completing, setCompleting] = useState(false)
+  const completingRef = useRef(false)
+  const router = useRouter()
+
+  const question = questions[currentIdx]
+  const totalQuestions = questions.length
 
   const goToQuestion = useCallback(
     (idx: number) => {
@@ -219,10 +219,10 @@ export default function PracticeSession({
               </h1>
             </div>
             <QuestionTimer
+              key={timerResetKey}
               duration={60}
               onExpire={handleTimeExpire}
               running={timerRunning && !feedbackState}
-              resetKey={timerResetKey}
             />
           </div>
           <div className="w-full h-[3px] bg-surface-variant relative overflow-hidden">

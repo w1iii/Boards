@@ -6,17 +6,11 @@ interface Props {
   duration: number
   onExpire: () => void
   running: boolean
-  resetKey: number
 }
 
-export default function QuestionTimer({ duration, onExpire, running, resetKey }: Props) {
+export default function QuestionTimer({ duration, onExpire, running }: Props) {
   const [remaining, setRemaining] = useState(duration)
   const expiredRef = useRef(false)
-
-  useEffect(() => {
-    setRemaining(duration)
-    expiredRef.current = false
-  }, [resetKey, duration])
 
   useEffect(() => {
     if (!running || remaining <= 0) return
