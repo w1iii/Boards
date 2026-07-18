@@ -4,7 +4,7 @@ CREATE TABLE user_profiles (
   first_name TEXT,
   last_name TEXT,
   onboarding_completed BOOLEAN NOT NULL DEFAULT false,
-  content_areas JSONB NOT NULL DEFAULT '["medical-surgical", "mother-child", "psychiatric", "community-health", "leadership-management"]',
+  content_areas JSONB NOT NULL DEFAULT '["pnle-i", "pnle-ii", "pnle-iii", "pnle-iv", "pnle-v"]',
   daily_goal INT NOT NULL DEFAULT 20,
   target_exam_date DATE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now(),

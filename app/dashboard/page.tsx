@@ -5,11 +5,11 @@ import Link from "next/link"
 import NavHeader from "@/app/components/nav-header"
 
 const AREA_LABELS: Record<string, string> = {
-  "medical-surgical": "Medical-Surgical Nursing",
-  "mother-child": "Mother-Child",
-  psychiatric: "Psychiatric",
-  "community-health": "CH Nursing",
-  "leadership-management": "Leadership",
+  "pnle-i": "PNLE I — Foundation",
+  "pnle-ii": "PNLE II — Community Health",
+  "pnle-iii": "PNLE III — Mother & Child",
+  "pnle-iv": "PNLE IV — Medical-Surgical",
+  "pnle-v": "PNLE V — Psychiatric",
 }
 
 function ScoreCircle({ score, label }: { score: number; label: string }) {
@@ -154,8 +154,10 @@ export default async function DashboardPage() {
 
   const progressResult = await sql`
     SELECT COUNT(*)::int as total_answered,
-           COUNT(*) FILTER (WHERE s.answers ? 'correct')::int as total_correct
+           COUNT(*) FILTER (WHERE s.answers->>q.id::text = q.correct_answer)::int as total_correct
     FROM sessions s
+    CROSS JOIN LATERAL jsonb_array_elements_text(s.questions) AS qid(qid_txt)
+    JOIN questions q ON q.id::text = qid.qid_txt
     WHERE s.user_id = ${userId} AND s.status = 'completed'
   `
   const totalAnswered =
@@ -206,11 +208,11 @@ export default async function DashboardPage() {
     hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
 
   const areaOrder = [
-    "medical-surgical",
-    "psychiatric",
-    "community-health",
-    "leadership-management",
-    "mother-child",
+    "pnle-iv",
+    "pnle-v",
+    "pnle-ii",
+    "pnle-i",
+    "pnle-iii",
   ]
 
   return (
@@ -353,7 +355,7 @@ export default async function DashboardPage() {
               const label = AREA_LABELS[areaKey] || areaKey
 
               switch (areaKey) {
-                case "medical-surgical":
+                case "pnle-iv":
                   return (
                     <div
                       key={areaKey}
@@ -364,7 +366,7 @@ export default async function DashboardPage() {
                           <div>
                             <h3 className="font-headline-lg mb-2">{label}</h3>
                             <p className="text-secondary max-w-lg">
-                              Advanced management of adult health problems.
+                              Adult health, perioperative care, body systems.
                             </p>
                           </div>
                           <span className="font-display-md text-4xl">{score}%</span>
@@ -385,25 +387,25 @@ export default async function DashboardPage() {
                       </div>
                     </div>
                   )
-                case "psychiatric":
+                case "pnle-v":
                   return (
                     <div key={areaKey} className="md:col-span-4">
                       <AreaCard label={label} score={score} variant="surface-container" />
                     </div>
                   )
-                case "community-health":
+                case "pnle-ii":
                   return (
                     <div key={areaKey} className="md:col-span-4">
                       <AreaCard label={label} score={score} variant="default" />
                     </div>
                   )
-                case "leadership-management":
+                case "pnle-i":
                   return (
                     <div key={areaKey} className="md:col-span-4">
                       <AreaCard label={label} score={score} variant={score >= 80 ? "dark" : "default"} />
                     </div>
                   )
-                case "mother-child":
+                case "pnle-iii":
                   return (
                     <div key={areaKey} className="md:col-span-4">
                       <AreaCard

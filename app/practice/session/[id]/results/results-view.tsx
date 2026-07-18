@@ -4,11 +4,11 @@ import Link from "next/link"
 import UserMenu from "@/app/dashboard/user-menu"
 
 const AREA_LABELS: Record<string, string> = {
-  "medical-surgical": "Medical-Surgical",
-  "mother-child": "Mother & Child",
-  psychiatric: "Psychiatric",
-  "community-health": "Community Health",
-  "leadership-management": "Leadership & Mgmt",
+  "pnle-i": "PNLE I — Foundation",
+  "pnle-ii": "PNLE II — Community Health",
+  "pnle-iii": "PNLE III — Mother & Child",
+  "pnle-iv": "PNLE IV — Med-Surg",
+  "pnle-v": "PNLE V — Psychiatric",
 }
 
 interface Props {

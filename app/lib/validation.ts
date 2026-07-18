@@ -1,11 +1,11 @@
 import { z } from "zod"
 
 export const contentAreaSchema = z.enum([
-  "medical-surgical",
-  "mother-child",
-  "psychiatric",
-  "community-health",
-  "leadership-management",
+  "pnle-i",
+  "pnle-ii",
+  "pnle-iii",
+  "pnle-iv",
+  "pnle-v",
 ])
 
 export const difficultySchema = z.enum(["easy", "medium", "hard"])
@@ -52,11 +52,8 @@ export const checkoutSchema = z.object({
 })
 
 export const wrongChoiceKeysSchema = z.record(z.string(), z.string()).refine(
-  (val) => {
-    const keys = Object.keys(val)
-    return keys.length >= 3 && keys.every((k) => ["A", "B", "C", "D"].includes(k))
-  },
-  { message: "wrongChoiceRationales must have entries for at least 3 choices (keys A/B/C/D)" },
+  (val) => Object.keys(val).length >= 1,
+  { message: "wrongChoiceRationales needs at least 1 entry" },
 )
 
 export const generatedQuestionSchema = z.object({
