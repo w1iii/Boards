@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { PNLE_SCRAPE_URLS } from "./pnle-topics"
+import { NLP_SCRAPE_URLS } from "./nlp-topics"
 
 const scrapedQuestionSchema = z.object({
   text: z.string().min(1),
@@ -27,7 +27,7 @@ function extractQuestionsFromText(raw: string): ScrapedQuestion[] {
   while ((amatch = answerRegex.exec(answerText)) !== null) {
     const num = amatch[1]
     const key = amatch[2].toUpperCase()
-    let rest = amatch[3].trim()
+    const rest = amatch[3].trim()
     const dotIdx = rest.indexOf(".")
     const rationale = dotIdx > 0 ? rest.slice(dotIdx + 1).trim() : rest
     answerMap.set(num, { key, rationale })
@@ -86,11 +86,11 @@ export function getCachedScraped(area: string): ScrapedQuestion[] {
   return scrapeCache[area] || []
 }
 
-export async function scrapePnleQuestions(area: string): Promise<ScrapedQuestion[]> {
+export async function scrapeNlpQuestions(area: string): Promise<ScrapedQuestion[]> {
   const cached = getCachedScraped(area)
   if (cached.length > 0) return cached
 
-  const urls = PNLE_SCRAPE_URLS[area]
+  const urls = NLP_SCRAPE_URLS[area]
   if (!urls || urls.length === 0) return []
 
   const all: ScrapedQuestion[] = []
@@ -99,7 +99,7 @@ export async function scrapePnleQuestions(area: string): Promise<ScrapedQuestion
   for (const url of urls) {
     try {
       const res = await fetch(url, {
-        headers: { "User-Agent": "Mozilla/5.0 (compatible; PNLE-Bot/1.0)" },
+        headers: { "User-Agent": "Mozilla/5.0 (compatible; NLP-Bot/1.0)" },
         signal: AbortSignal.timeout(15000),
       })
       if (!res.ok) continue

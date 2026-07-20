@@ -1,11 +1,11 @@
 import { z } from "zod"
 
 export const contentAreaSchema = z.enum([
-  "pnle-i",
-  "pnle-ii",
-  "pnle-iii",
-  "pnle-iv",
-  "pnle-v",
+  "nlp-i",
+  "nlp-ii",
+  "nlp-iii",
+  "nlp-iv",
+  "nlp-v",
 ])
 
 export const difficultySchema = z.enum(["easy", "medium", "hard"])

@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation"
 import NavHeader from "@/app/components/nav-header"
 
 const AREAS = [
-  { key: "pnle-i", label: "NLP I — Foundation", description: "Theories, Leadership, Legal, Research, Pharmacology.", icon: "menu_book" },
-  { key: "pnle-ii", label: "NLP II — Community Health", description: "DOH programs, Epidemiology, Communicable diseases.", icon: "groups" },
-  { key: "pnle-iii", label: "NLP III — Mother & Child", description: "OB, Pedia, Newborn, Family Planning.", icon: "pregnant_woman" },
-  { key: "pnle-iv", label: "NLP IV — Med-Surg", description: "Adult health, Perioperative, Oncology, Body systems.", icon: "medical_services" },
-  { key: "pnle-v", label: "NLP V — Psychiatric", description: "Mental health, Psychopharmacology, Crisis care.", icon: "psychology" },
+  { key: "nlp-i", label: "NLP I — Foundation", description: "Theories, Leadership, Legal, Research, Pharmacology.", icon: "menu_book" },
+  { key: "nlp-ii", label: "NLP II — Community Health", description: "DOH programs, Epidemiology, Communicable diseases.", icon: "groups" },
+  { key: "nlp-iii", label: "NLP III — Mother & Child", description: "OB, Pedia, Newborn, Family Planning.", icon: "pregnant_woman" },
+  { key: "nlp-iv", label: "NLP IV — Med-Surg", description: "Adult health, Perioperative, Oncology, Body systems.", icon: "medical_services" },
+  { key: "nlp-v", label: "NLP V — Psychiatric", description: "Mental health, Psychopharmacology, Crisis care.", icon: "psychology" },
 ] as const
 
 interface Props {

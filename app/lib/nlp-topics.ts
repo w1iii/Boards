@@ -1,5 +1,5 @@
-export const PNLE_EXAM_CONTEXT = `
-Philippine Nurse Licensure Exam (PNLE) — Professional Regulation Commission (PRC) Board of Nursing
+export const NLP_EXAM_CONTEXT = `
+Philippine Nurse Licensure Exam (NLP) — Professional Regulation Commission (PRC) Board of Nursing
 
 Exam structure:
 - 500 items total across 5 nursing practice areas
@@ -12,8 +12,8 @@ Exam structure:
 `.trim()
 
 export const AREA_TOPICS: Record<string, { label: string; topics: string }> = {
-  "pnle-i": {
-    label: "PNLE I — Foundation of Professional Nursing Practice",
+  "nlp-i": {
+    label: "NLP I — Foundation of Professional Nursing Practice",
     topics: `
 Nursing theories: Orem's self-care, Henderson's 14 needs, Watson's caring, Neuman's systems model, Roy's adaptation, Leininger's transcultural, Nightingale's environment
 Nursing process: assessment (data gathering, validation, documentation), diagnosis (NANDA, actual vs risk), planning (goals, prioritizing), implementation (independent/dependent/interdependent), evaluation (formative vs summative)
@@ -27,8 +27,8 @@ Documentation: SOAP/PIE/DAR/focus charting, narrative charting, legal documentat
 Pharmacology: drug classifications, pharmacokinetics, pharmacodynamics, 10 rights, drug calculations (oral, IV, insulin), IV flow rates
     `.trim(),
   },
-  "pnle-ii": {
-    label: "PNLE II — Community Health Nursing",
+  "nlp-ii": {
+    label: "NLP II — Community Health Nursing",
     topics: `
 PH health system: DOH structure (central to barangay), PhilHealth (Z-benefits, case rates), devolution (LGC), primary health care, BHWs, RHUs, BHS
 DOH programs: DOTS (National TB Program), EPI (BCG, DPT, OPV, measles, Hepa B), Family Planning (natural & artificial), National Dengue Control, Rabies Prevention, HIV/AIDS Program, RA 11036 (Mental Health Act), National Nutrition (Operation Timbang), Garantisadong Pambata, IMCI
@@ -42,8 +42,8 @@ Legal bases: RA 9173, RA 1054 (Occupational Health), RA 7305, PD 856, EO 51 (Mil
 Occupational health: hazards (biological, chemical, physical, ergonomic, psychosocial), RA 11058 (OSH Standards)
     `.trim(),
   },
-  "pnle-iii": {
-    label: "PNLE III — Maternal & Child Health Nursing",
+  "nlp-iii": {
+    label: "NLP III — Maternal & Child Health Nursing",
     topics: `
 Antepartum: prenatal assessment, danger signs of pregnancy, hyperemesis gravidarum, PIH (preeclampsia/eclampsia), gestational diabetes, RH incompatibility, Leopold's maneuvers, fundic height, GTPAL
 Intrapartum: stages of labor (1-4), true vs false labor, fetal monitoring (FHR patterns, decelerations), nursing interventions per stage, pain management, amniotomy, episiotomy, vacuum/forceps, C-section
@@ -55,8 +55,8 @@ Family planning: natural (rhythm, BBT, cervical mucus, LAM), artificial (OCPs, I
 DOH programs: Garantisadong Pambata, EPI, IMCI, Milk Code (EO 51), rooming-in, newborn screening (RA 9288), National Safe Motherhood
     `.trim(),
   },
-  "pnle-iv": {
-    label: "PNLE IV — Medical-Surgical Nursing",
+  "nlp-iv": {
+    label: "NLP IV — Medical-Surgical Nursing",
     topics: `
 Cardiovascular: heart failure, MI (STEMI/NSTEMI), hypertension, CAD, angina, dysrhythmias (AF, V-tach, V-fib, heart blocks), valvular disease, cardiac monitoring/EKG, cardiac catheterization, CABG, pacemaker, ACLS
 Respiratory: pneumonia, COPD, asthma, PTB, chest tube management, oxygen therapy, mechanical ventilation, pulmonary embolism, pneumothorax, thoracentesis, ABG, PFTs
@@ -74,8 +74,8 @@ Immunologic: HIV/AIDS (staging, HAART, OIs), SLE, systemic sclerosis, Sjogren's,
 Use PH brand names, PhilHealth Z-benefits, DOH clinical guidelines.
     `.trim(),
   },
-  "pnle-v": {
-    label: "PNLE V — Psychiatric Nursing",
+  "nlp-v": {
+    label: "NLP V — Psychiatric Nursing",
     topics: `
 Therapeutic communication: techniques (active listening, open-ended, reflection, clarification, focusing, empathy), nontherapeutic blocks (false reassurance, advice, changing subject), phases (preinteraction, orientation, working, termination), therapeutic milieu
 MSE: appearance, speech (rate/rhythm/volume), mood/affect, thought process/content (delusions, obsessions, phobias), perception (hallucinations vs illusions), cognition (orientation, memory, attention), insight/judgment
@@ -93,23 +93,23 @@ Legal/ethical: RA 11036 (Mental Health Act), confidentiality, voluntary vs invol
   },
 }
 
-export const PNLE_SCRAPE_URLS: Record<string, string[]> = {
-  "pnle-i": [
+export const NLP_SCRAPE_URLS: Record<string, string[]> = {
+  "nlp-i": [
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-i-for-foundation-of-professional-nursing-practice/",
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-i-for-foundation-of-nursing/",
   ],
-  "pnle-ii": [
+  "nlp-ii": [
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-ii-for-community-health-nursing-and-care-of-the-mother-and-child/",
   ],
-  "pnle-iii": [
+  "nlp-iii": [
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-ii-for-maternal-and-child-health/",
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-iii-for-care-of-clients-with-physiologic-and-psychosocial-alterations-part-1/",
   ],
-  "pnle-iv": [
+  "nlp-iv": [
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-iv-for-care-of-clients-with-physiologic-and-psychosocial-alterations-part-2/",
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-iii-for-medical-surgical-nursing/",
   ],
-  "pnle-v": [
+  "nlp-v": [
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-v-for-care-of-clients-with-physiologic-and-psychosocial-alterations-part-3/",
     "https://www.rnpedia.com/practice-exams/philippine-nursing-licensure-exam-pnle/pnle-iv-for-psychiatric-nursing/",
   ],

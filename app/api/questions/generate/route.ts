@@ -3,8 +3,8 @@ import { auth } from "@clerk/nextjs/server"
 import { sql } from "@/app/lib/db"
 import { handleError, AppError } from "@/app/lib/errors"
 import { generateQuestionsSchema, generatedQuestionSchema } from "@/app/lib/validation"
-import { AREA_TOPICS, PNLE_EXAM_CONTEXT } from "@/app/lib/pnle-topics"
-import { scrapePnleQuestions, formatScrapedAsExamples } from "@/app/lib/pnle-scraper"
+import { AREA_TOPICS, NLP_EXAM_CONTEXT } from "@/app/lib/nlp-topics"
+import { scrapeNlpQuestions, formatScrapedAsExamples } from "@/app/lib/nlp-scraper"
 import Groq from "groq-sdk"
 import { z } from "zod"
 
@@ -23,8 +23,8 @@ function shuffleLines(s: string): string {
   return shuffle(s.split("\n").filter(Boolean)).join("\n")
 }
 
-const PNLE_SYSTEM_PROMPTS: Record<string, string> = {
-  "pnle-i": `You are an expert PNLE item writer specializing in Foundation of Professional Nursing Practice. This area covers nursing theories, the nursing process, fundamentals of nursing care, therapeutic communication, leadership and management, legal responsibilities, nursing research, health education, documentation, and pharmacology calculations.
+const NLP_SYSTEM_PROMPTS: Record<string, string> = {
+  "nlp-i": `You are an expert NLP item writer specializing in Foundation of Professional Nursing Practice. This area covers nursing theories, the nursing process, fundamentals of nursing care, therapeutic communication, leadership and management, legal responsibilities, nursing research, health education, documentation, and pharmacology calculations.
 
 Every question must be a situational clinical vignette featuring a named Filipino patient or nurse (e.g., "Nurse Maria," "Mang Juan," "Mrs. Santos"). The scenario must present a specific clinical moment — not a flat description.
 
@@ -45,7 +45,7 @@ Use Philippine regulations (RA 9173, Code of Ethics for Nurses), DOH policies, P
 
 CRITICAL — Avoid repetition: Each scenario must use a different patient name, diagnosis, body system, and clinical situation. Never reuse patient conditions or question structures across questions.`,
 
-  "pnle-ii": `You are an expert PNLE item writer specializing in Community Health Nursing. This area covers the Philippine health care delivery system, DOH programs (DOTS, EPI, Family Planning, Dengue Control, Rabies Prevention, HIV/AIDS, Nutrition), epidemiology, communicable disease control, environmental health, disaster nursing, family health, community organizing, and occupational health.
+  "nlp-ii": `You are an expert NLP item writer specializing in Community Health Nursing. This area covers the Philippine health care delivery system, DOH programs (DOTS, EPI, Family Planning, Dengue Control, Rabies Prevention, HIV/AIDS, Nutrition), epidemiology, communicable disease control, environmental health, disaster nursing, family health, community organizing, and occupational health.
 
 Every question must be set in a Philippine community health context — a barangay health station, rural health unit, during a home visit, community outreach, or DOH program implementation. Feature named Filipino patients, BHWs, nurses, or community members.
 
@@ -61,7 +61,7 @@ Use Philippine context: DOH programs, RA numbers (RA 9173, RA 7305, PD 856, RA 9
 
 CRITICAL — Avoid repetition: Each scenario must use a different community, family situation, disease condition, and program context.`,
 
-  "pnle-iii": `You are an expert PNLE item writer specializing in Maternal & Child Health Nursing. This area covers antepartum, intrapartum, postpartum, newborn care, pediatrics, high-risk conditions, family planning, and DOH maternal/child programs.
+  "nlp-iii": `You are an expert NLP item writer specializing in Maternal & Child Health Nursing. This area covers antepartum, intrapartum, postpartum, newborn care, pediatrics, high-risk conditions, family planning, and DOH maternal/child programs.
 
 Every question must be a clinical scenario featuring a named Filipino mother, newborn, or child (e.g., "Nanay Elena," "Baby Jose," "Mang Bert"). Present a specific clinical moment — a change in VS, a new symptom, a lab result, an assessment finding during a prenatal visit, labor, postpartum check, or pediatric consult.
 
@@ -77,7 +77,7 @@ Use Philippine context: DOH EPI schedule, Garantisadong Pambata, IMCI guidelines
 
 CRITICAL — Avoid repetition: Each scenario must use a different patient, gestational age, condition, and clinical setting. Never reuse scenarios.`,
 
-  "pnle-iv": `You are an expert PNLE item writer specializing in Medical-Surgical Nursing. This area covers cardiovascular, respiratory, neurological, gastrointestinal, musculoskeletal, endocrine, renal, oncology, fluid & electrolytes, perioperative, integumentary, and immunologic nursing.
+  "nlp-iv": `You are an expert NLP item writer specializing in Medical-Surgical Nursing. This area covers cardiovascular, respiratory, neurological, gastrointestinal, musculoskeletal, endocrine, renal, oncology, fluid & electrolytes, perioperative, integumentary, and immunologic nursing.
 
 Every question is a short clinical vignette (1-3 sentences) featuring a named Filipino patient (e.g., "Mario," "Mrs. Cruz") with relevant context: diagnosis, procedure, medication, vital signs, or presenting complaint. Present a specific shift moment — a change in VS, a new symptom, a lab result, a drug level, a post-procedure finding.
 
@@ -95,7 +95,7 @@ Use Philippine brand names, PhilHealth Z-benefits for catastrophic illnesses, DO
 
 CRITICAL — Avoid repetition: Each scenario must use a different patient name, diagnosis, body system, and clinical situation. Never reuse drug classes, conditions, or question structures.`,
 
-  "pnle-v": `You are an expert PNLE item writer specializing in Psychiatric Nursing. This area covers therapeutic communication, mental status examination, schizophrenia, mood disorders, anxiety disorders, personality disorders, crisis intervention, substance use, psychopharmacology, child/adolescent psychiatry, and legal-ethical issues in mental health.
+  "nlp-v": `You are an expert NLP item writer specializing in Psychiatric Nursing. This area covers therapeutic communication, mental status examination, schizophrenia, mood disorders, anxiety disorders, personality disorders, crisis intervention, substance use, psychopharmacology, child/adolescent psychiatry, and legal-ethical issues in mental health.
 
 Every question is a clinical scenario featuring a named Filipino client showing specific psychiatric signs and symptoms. Present a concrete interaction or assessment moment — a client statement, a behavior observed on the unit, a medication side effect, or a crisis situation.
 
@@ -127,10 +127,10 @@ export async function POST(request: NextRequest) {
     const areaLabel = areaInfo?.label ?? contentArea
     const areaTopics = areaInfo?.topics ?? ""
     //GET THE SPECIFIC PROMPT OF THE CONTENT
-    const systemPrompt = PNLE_SYSTEM_PROMPTS[contentArea] || PNLE_SYSTEM_PROMPTS["pnle-iv"]
+    const systemPrompt = NLP_SYSTEM_PROMPTS[contentArea] || NLP_SYSTEM_PROMPTS["nlp-iv"]
 
     //SCRAPE THE QUESTIONS FROM THE GIVEN SITES AND EXAMPLES TO SET THE QUESTIONS TO BE SIMILAR
-    const scrapedQuestions = await scrapePnleQuestions(contentArea)
+    const scrapedQuestions = await scrapeNlpQuestions(contentArea)
     const scrapedExamples = formatScrapedAsExamples(scrapedQuestions)
 
     const questionTypes = shuffle([
@@ -170,11 +170,11 @@ export async function POST(request: NextRequest) {
       messages: [
         {
           role: "system",
-          content: `${PNLE_EXAM_CONTEXT}\n\n${systemPrompt}\n\nAvoid these overused scenarios: ${forbidList}. Instead write about complications, unexpected findings, subtle assessment changes, drug toxicities, and multi-system interactions.\n\nCRITICAL — Avoid repetition: Each scenario must use a different patient name, diagnosis, body system, and clinical situation. Do NOT reuse patient conditions, drug classes, or question structures across questions. Every question should feel fresh.\n\nNever include "all of the above" or "none of the above". Vary correct answer position evenly across A/B/C/D.\n\nRespond JSON: {"questions": [...]}`,
+          content: `${NLP_EXAM_CONTEXT}\n\n${systemPrompt}\n\nAvoid these overused scenarios: ${forbidList}. Instead write about complications, unexpected findings, subtle assessment changes, drug toxicities, and multi-system interactions.\n\nCRITICAL — Avoid repetition: Each scenario must use a different patient name, diagnosis, body system, and clinical situation. Do NOT reuse patient conditions, drug classes, or question structures across questions. Every question should feel fresh.\n\nNever include "all of the above" or "none of the above". Vary correct answer position evenly across A/B/C/D.\n\nRespond JSON: {"questions": [...]}`,
         },
         {
           role: "user",
-          content: `Generate ${count} PNLE situational questions for: ${areaLabel}
+          content: `Generate ${count} NLP situational questions for: ${areaLabel}
 
 Topics (shuffled — cover a spread):
 ${shuffleLines(areaTopics)}
@@ -182,7 +182,7 @@ ${shuffleLines(areaTopics)}
 Question types to include (pick ${Math.min(count, 8)}):
 ${questionTypes.join("\n")}
 
-${scrapedExamples ? `Reference questions from actual PNLE exams (study these for style, tone, and format — then generate fresh questions of similar quality):\n\n${scrapedExamples}\n\nNow generate ${count} NEW questions in the same PNLE style. Do NOT copy the reference questions — create original scenarios following the same format and difficulty level.\n\n` : ""}
+${scrapedExamples ? `Reference questions from actual NLP exams (study these for style, tone, and format — then generate fresh questions of similar quality):\n\n${scrapedExamples}\n\nNow generate ${count} NEW questions in the same NLP style. Do NOT copy the reference questions — create original scenarios following the same format and difficulty level.\n\n` : ""}
 
 Each question in JSON:
 - text: scenario ending with a specific question

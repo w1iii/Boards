@@ -5,11 +5,11 @@ import Link from "next/link"
 import NavHeader from "@/app/components/nav-header"
 
 const AREA_LABELS: Record<string, string> = {
-  "pnle-i": "PNLE I — Foundation",
-  "pnle-ii": "PNLE II — Community Health",
-  "pnle-iii": "PNLE III — Mother & Child",
-  "pnle-iv": "PNLE IV — Medical-Surgical",
-  "pnle-v": "PNLE V — Psychiatric",
+  "nlp-i": "NLP I — Foundation",
+  "nlp-ii": "NLP II — Community Health",
+  "nlp-iii": "NLP III — Mother & Child",
+  "nlp-iv": "NLP IV — Medical-Surgical",
+  "nlp-v": "NLP V — Psychiatric",
 }
 
 function ScoreCircle({ score, label }: { score: number; label: string }) {
@@ -208,11 +208,11 @@ export default async function DashboardPage() {
     hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
 
   const areaOrder = [
-    "pnle-iv",
-    "pnle-v",
-    "pnle-ii",
-    "pnle-i",
-    "pnle-iii",
+    "nlp-iv",
+    "nlp-v",
+    "nlp-ii",
+    "nlp-i",
+    "nlp-iii",
   ]
 
   return (
@@ -355,7 +355,7 @@ export default async function DashboardPage() {
               const label = AREA_LABELS[areaKey] || areaKey
 
               switch (areaKey) {
-                case "pnle-iv":
+                case "nlp-iv":
                   return (
                     <div
                       key={areaKey}
@@ -387,25 +387,25 @@ export default async function DashboardPage() {
                       </div>
                     </div>
                   )
-                case "pnle-v":
+                case "nlp-v":
                   return (
                     <div key={areaKey} className="md:col-span-4">
                       <AreaCard label={label} score={score} variant="surface-container" />
                     </div>
                   )
-                case "pnle-ii":
+                case "nlp-ii":
                   return (
                     <div key={areaKey} className="md:col-span-4">
                       <AreaCard label={label} score={score} variant="default" />
                     </div>
                   )
-                case "pnle-i":
+                case "nlp-i":
                   return (
                     <div key={areaKey} className="md:col-span-4">
                       <AreaCard label={label} score={score} variant={score >= 80 ? "dark" : "default"} />
                     </div>
                   )
-                case "pnle-iii":
+                case "nlp-iii":
                   return (
                     <div key={areaKey} className="md:col-span-4">
                       <AreaCard

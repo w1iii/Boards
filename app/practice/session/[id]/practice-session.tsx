@@ -181,11 +181,11 @@ export default function PracticeSession({
           .map(
             (a) =>
               ({
-                "pnle-i": "PNLE I — Foundation",
-                "pnle-ii": "PNLE II — Community Health",
-                "pnle-iii": "PNLE III — Mother & Child",
-                "pnle-iv": "PNLE IV — Med-Surg",
-                "pnle-v": "PNLE V — Psychiatric",
+                "nlp-i": "NLP I — Foundation",
+                "nlp-ii": "NLP II — Community Health",
+                "nlp-iii": "NLP III — Mother & Child",
+                "nlp-iv": "NLP IV — Med-Surg",
+                "nlp-v": "NLP V — Psychiatric",
               })[a] ?? a,
           )
           .join(", ")
@@ -242,7 +242,7 @@ export default function PracticeSession({
                 {question.text}
               </h2>
               <p className="font-body-lg text-secondary border-t border-surface-variant pt-3 text-sm italic">
-                Select the best response according to PNLE standards.
+                Select the best response according to NLP standards.
               </p>
             </div>
 
