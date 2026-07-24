@@ -474,54 +474,6 @@ export default async function ProgressPage() {
             )}
           </div>
 
-          {/* Trend Chart Placeholder */}
-          {recentSessions.length >= 3 && (
-            <div className="mb-12">
-              <div className="flex items-end justify-between border-b border-tertiary pb-4 mb-8">
-                <h2 className="font-headline-lg uppercase tracking-tight">
-                  Recent Performance Trend
-                </h2>
-              </div>
-
-              <div className="bg-surface border border-tertiary p-8">
-                <div className="flex items-end gap-2 h-40">
-                  {recentSessions.slice(0, 10).reverse().map((session, i) => {
-                    const sessionScore = Math.round(session.score)
-                    const height = Math.max(sessionScore, 4)
-                    return (
-                      <div key={session.id} className="flex-1 flex flex-col items-center gap-1 group relative">
-                        <div
-                          className={`w-full rounded-t ${sessionScore >= 75 ? "bg-[#1a8038]" : sessionScore >= 50 ? "bg-[#e67e22]" : "bg-primary"} opacity-80 hover:opacity-100 transition-all`}
-                          style={{ height: `${height}%` }}
-                        />
-                        <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-secondary text-white px-2 py-0.5 font-mono-data text-xs opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                          {sessionScore}%
-                        </div>
-                        <span className="font-mono-data text-[8px] text-secondary mt-1">
-                          {new Date(session.completedAt).toLocaleDateString("en-US", { month: "numeric", day: "numeric" })}
-                        </span>
-                      </div>
-                    )
-                  })}
-                </div>
-                <div className="flex items-center justify-between mt-4 pt-4 border-t border-tertiary">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-1.5 bg-[#1a8038]" />
-                      <span className="font-mono-data text-[10px] text-secondary">Passing (≥75%)</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-3 h-1.5 bg-primary" />
-                      <span className="font-mono-data text-[10px] text-secondary">Below passing</span>
-                    </div>
-                  </div>
-                  <span className="font-mono-data text-[10px] text-secondary">
-                    Last 10 sessions
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
         </section>
       </main>
 
