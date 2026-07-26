@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import NavHeader from "@/app/components/nav-header"
+import TopNavBar from "@/app/components/top-nav-bar"
+import ShaderBackground from "@/app/components/shader-background"
 
 const AREAS = [
   { key: "nlp-i", label: "NLP I — Foundation", description: "Theories, Leadership, Legal, Research, Pharmacology.", icon: "menu_book" },
@@ -91,7 +92,9 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden">
-      <NavHeader firstName={firstName} imageUrl={imageUrl} activeHref="/practice" />
+      <ShaderBackground />
+      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
+      <TopNavBar variant="auth" firstName={firstName} imageUrl={imageUrl} />
 
       <main className="flex-1 overflow-hidden">
         <section className="h-full px-margin-mobile md:px-margin-desktop py-6">

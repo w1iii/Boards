@@ -55,6 +55,8 @@ function getDefaultDate(): string {
   return d.toISOString().split("T")[0]
 }
 
+import ShaderBackground from "@/app/components/shader-background"
+
 export default function OnboardingPage() {
   const [step, setStep] = useState<Step>(1)
   const [loading, setLoading] = useState(true)
@@ -157,6 +159,8 @@ export default function OnboardingPage() {
 
   return (
     <div className="bg-surface text-on-surface h-screen flex flex-col selection:bg-primary selection:text-on-primary overflow-hidden">
+      <ShaderBackground />
+      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
       <header className="bg-surface border-b border-tertiary-fixed px-margin-mobile md:px-margin-desktop py-3 flex justify-between items-center z-50">
         <div className="font-display-md text-[24px] font-black tracking-tighter text-on-surface">
           BOARDS.

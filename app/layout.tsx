@@ -27,11 +27,12 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} scroll-smooth`}
+      suppressHydrationWarning
     >
       <head>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,100..900;1,100..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;800&family=Space+Grotesk:wght@400;500;700&family=Work+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
       </head>
-      <body className="bg-surface text-on-surface font-body-md overflow-x-hidden">
+      <body className="bg-surface text-on-surface font-body-md overflow-x-hidden min-h-screen selection:bg-primary selection:text-white">
         <ClerkProvider>
           {children}
         </ClerkProvider>

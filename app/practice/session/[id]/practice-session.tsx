@@ -2,7 +2,8 @@
 
 import { useState, useCallback, useRef } from "react"
 import { useRouter } from "next/navigation"
-import NavHeader from "@/app/components/nav-header"
+import TopNavBar from "@/app/components/top-nav-bar"
+import ShaderBackground from "@/app/components/shader-background"
 import QuestionTimer from "./timer"
 
 interface Question {
@@ -204,7 +205,9 @@ export default function PracticeSession({
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden bg-surface">
-      <NavHeader firstName={firstName} imageUrl={imageUrl} activeHref="/practice" />
+      <ShaderBackground />
+      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
+      <TopNavBar variant="auth" firstName={firstName} imageUrl={imageUrl} />
 
       <div className="shrink-0 px-margin-mobile md:px-margin-desktop pt-4 pb-2">
         <div className="max-w-6xl mx-auto">

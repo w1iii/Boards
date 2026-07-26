@@ -1,7 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import UserMenu from "@/app/dashboard/user-menu"
+import TopNavBar from "@/app/components/top-nav-bar"
+import ShaderBackground from "@/app/components/shader-background"
 
 const AREA_LABELS: Record<string, string> = {
   "nlp-i": "NLP I — Foundation",
@@ -45,33 +46,9 @@ export default function ResultsView({
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden bg-surface">
-      <header className="sticky top-0 z-50 flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-2 bg-surface border-b border-tertiary shrink-0">
-        <div className="flex items-center gap-6">
-          <span className="font-display-md text-[20px] font-black tracking-tighter text-on-surface">
-            BOARDS.
-          </span>
-          <nav className="hidden md:flex gap-4">
-            <Link className="font-label-caps text-[11px] text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200" href="/dashboard">
-              Dashboard
-            </Link>
-            <Link className="font-label-caps text-[11px] text-primary border-b-2 border-primary" href="/practice">
-              Practice
-            </Link>
-            <Link className="font-label-caps text-[11px] text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200" href="/progress">
-              Progress
-            </Link>
-            <Link className="font-label-caps text-[11px] text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200" href="/pricing">
-              Pricing
-            </Link>
-          </nav>
-        </div>
-        <div className="flex items-center gap-3">
-          <button className="material-symbols-outlined p-1.5 hover:bg-surface-container transition-colors duration-200 rounded-full text-lg">
-            notifications
-          </button>
-          <UserMenu imageUrl={imageUrl} firstName={firstName} />
-        </div>
-      </header>
+      <ShaderBackground />
+      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
+      <TopNavBar variant="auth" firstName={firstName} imageUrl={imageUrl} />
 
       <main className="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop py-8">
         <div className="max-w-3xl mx-auto">

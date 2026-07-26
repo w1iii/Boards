@@ -1,0 +1,24 @@
+"use client"
+
+import TopNavBar from "@/app/components/top-nav-bar"
+import SideNavBar from "@/app/components/side-nav-bar"
+
+interface AppLayoutProps {
+  children: React.ReactNode
+  firstName: string
+  imageUrl?: string | null
+}
+
+export default function AppLayout({ children, firstName, imageUrl }: AppLayoutProps) {
+  return (
+    <>
+      <TopNavBar variant="auth" firstName={firstName} imageUrl={imageUrl} />
+      <SideNavBar firstName={firstName} imageUrl={imageUrl ?? null} />
+      <main className="lg:pl-64 pt-16 min-h-screen">
+        <div className="max-w-6xl mx-auto px-margin-mobile md:px-margin-desktop py-8">
+          {children}
+        </div>
+      </main>
+    </>
+  )
+}

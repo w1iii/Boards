@@ -2,7 +2,8 @@ import { auth, currentUser } from "@clerk/nextjs/server"
 import { sql } from "@/app/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
-import NavHeader from "@/app/components/nav-header"
+import AppLayout from "@/app/components/app-layout"
+import ShaderBackground from "@/app/components/shader-background"
 
 const AREA_LABELS: Record<string, string> = {
   "nlp-i": "NLP I — Foundation",
@@ -37,26 +38,13 @@ function ScoreRing({ score, size = "lg" }: { score: number; size?: "sm" | "lg" }
   const textSize = size === "lg" ? "text-5xl" : "text-2xl"
 
   return (
-    <div className={`relative`} style={{ width: dim, height: dim }}>
+    <div className="relative" style={{ width: dim, height: dim }}>
       <svg className="w-full h-full -rotate-90" viewBox={`0 0 ${dim} ${dim}`}>
-        <circle
-          cx={dim / 2} cy={dim / 2} r={r} fill="transparent"
-          stroke="currentColor" strokeWidth={stroke}
-          className="text-surface-container-highest"
-        />
-        <circle
-          cx={dim / 2} cy={dim / 2} r={r} fill="transparent"
-          stroke="currentColor" strokeWidth={stroke}
-          strokeDasharray={circumference}
-          strokeDashoffset={offset}
-          strokeLinecap="round"
-          className={score >= 75 ? "text-[#1a8038]" : "text-primary"}
-        />
+        <circle cx={dim / 2} cy={dim / 2} r={r} fill="transparent" stroke="currentColor" strokeWidth={stroke} className="text-surface-container-highest" />
+        <circle cx={dim / 2} cy={dim / 2} r={r} fill="transparent" stroke="currentColor" strokeWidth={stroke} strokeDasharray={circumference} strokeDashoffset={offset} strokeLinecap="round" className={score >= 75 ? "text-[#1a8038]" : "text-primary"} />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className={`font-display-md ${textSize} font-black ${score >= 75 ? "text-[#1a8038]" : "text-primary"}`}>
-          {Math.round(score)}%
-        </span>
+        <span className={`font-display-md ${textSize} font-black ${score >= 75 ? "text-[#1a8038]" : "text-primary"}`}>{Math.round(score)}%</span>
       </div>
     </div>
   )
@@ -80,33 +68,24 @@ function SessionTimelineItem({
   index: number
 }) {
   const date = new Date(completedAt)
-  const formatted = date.toLocaleDateString("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  })
+  const formatted = date.toLocaleDateString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })
   const passed = score >= 75
 
   return (
-    <div className="flex items-center gap-4 py-3 px-4 bg-surface-container-low border border-tertiary hover:bg-surface-container transition-colors">
+    <div className="flex items-center gap-4 py-3 px-4 bg-surface-container-low border border-tertiary hover:bg-surface-container transition-colors rounded-xl">
       <div className="w-8 text-center shrink-0">
         <span className="font-mono-data text-secondary text-xs">#{index}</span>
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className={`font-label-caps text-[10px] px-1.5 py-0.5 ${type === "mock-exam" ? "bg-primary text-white" : "bg-surface-container-highest text-secondary"}`}>
+          <span className={`font-label-caps text-[10px] px-1.5 py-0.5 ${type === "mock-exam" ? "bg-primary text-white" : "bg-surface-container-highest text-secondary"} rounded`}>
             {type === "mock-exam" ? "MOCK EXAM" : "PRACTICE"}
           </span>
           <span className="font-mono-data text-xs text-secondary truncate">{formatted}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className={`font-mono-data text-sm ${passed ? "text-[#1a8038]" : "text-primary"}`}>
-            {Math.round(score)}%
-          </span>
-          <span className="text-secondary text-xs">
-            {correctAnswers}/{totalQuestions} correct
-          </span>
+          <span className={`font-mono-data text-sm ${passed ? "text-[#1a8038]" : "text-primary"}`}>{Math.round(score)}%</span>
+          <span className="text-secondary text-xs">{correctAnswers}/{totalQuestions} correct</span>
         </div>
       </div>
       <div className={`w-1.5 h-1.5 shrink-0 rounded-full ${passed ? "bg-[#1a8038]" : "bg-primary"}`} />
@@ -147,18 +126,15 @@ export default async function ProgressPage() {
     JOIN questions q ON q.id::text = qid.qid_txt
     WHERE s.user_id = ${userId} AND s.status = 'completed'
   `
-  const totalAnswered =
-    (progressResult.rows[0] as Record<string, unknown>)?.total_answered as number || 0
-  const totalCorrect =
-    (progressResult.rows[0] as Record<string, unknown>)?.total_correct as number || 0
+  const totalAnswered = (progressResult.rows[0] as Record<string, unknown>)?.total_answered as number || 0
+  const totalCorrect = (progressResult.rows[0] as Record<string, unknown>)?.total_correct as number || 0
   const overallScore = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0
 
   const sessionCountResult = await sql`
     SELECT COUNT(*)::int as count FROM sessions
     WHERE user_id = ${userId} AND status = 'completed'
   `
-  const sessionCount =
-    (sessionCountResult.rows[0] as Record<string, unknown>)?.count as number || 0
+  const sessionCount = (sessionCountResult.rows[0] as Record<string, unknown>)?.count as number || 0
 
   let areaBreakdown: Array<{ content_area: string; total: number; correct: number }> = []
   try {
@@ -172,11 +148,7 @@ export default async function ProgressPage() {
       WHERE s.user_id = ${userId} AND s.status = 'completed'
       GROUP BY q.content_area
     `
-    areaBreakdown = areaResult.rows as Array<{
-      content_area: string
-      total: number
-      correct: number
-    }>
+    areaBreakdown = areaResult.rows as Array<{ content_area: string; total: number; correct: number }>
   } catch {
     // area breakdown unavailable
   }
@@ -185,11 +157,7 @@ export default async function ProgressPage() {
   for (const area of contentAreas) {
     const found = areaBreakdown.find((a) => a.content_area === area)
     if (found && found.total > 0) {
-      areaScores.set(area, {
-        score: Math.round((found.correct / found.total) * 100),
-        total: found.total,
-        correct: found.correct,
-      })
+      areaScores.set(area, { score: Math.round((found.correct / found.total) * 100), total: found.total, correct: found.correct })
     } else {
       areaScores.set(area, { score: 0, total: 0, correct: 0 })
     }
@@ -199,19 +167,10 @@ export default async function ProgressPage() {
     .filter(([, v]) => v.total >= 5 && v.score < 50)
     .map(([area]) => area)
 
-  let recentSessions: Array<{
-    id: string
-    score: number
-    totalQuestions: number
-    correctAnswers: number
-    type: string
-    completedAt: string
-  }> = []
+  let recentSessions: Array<{ id: string; score: number; totalQuestions: number; correctAnswers: number; type: string; completedAt: string }> = []
 
   try {
-    const questions = await sql`
-      SELECT id, correct_answer, content_area FROM questions
-    `
+    const questions = await sql`SELECT id, correct_answer, content_area FROM questions`
     const questionMap = new Map<string, { id: string; correct_answer: string }>(
       questions.rows.map((q: unknown) => {
         const row = q as { id: string; correct_answer: string }
@@ -255,301 +214,164 @@ export default async function ProgressPage() {
 
   return (
     <>
-      <NavHeader firstName={firstName} imageUrl={user?.imageUrl ?? null} activeHref="/progress" />
-
-      <main className="min-h-screen grid-pattern">
-        <section className="max-w-[1440px] mx-auto px-margin-mobile md:px-margin-desktop py-12">
-          {/* Hero Section */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter mb-12">
-            <div className="md:col-span-8 bg-surface-container border-l-4 border-primary p-10">
-              <h1 className="font-headline-lg text-headline-lg-mobile md:text-headline-lg mb-4 uppercase tracking-tighter">
-                Progress & Analytics
-              </h1>
-              <p className="font-body-lg text-secondary mb-8 max-w-2xl">
-                {examDaysLeft !== null ? (
-                  <>
-                    Your NLE Board Exam is in{" "}
-                    <span className="font-bold text-on-surface">{examDaysLeft} days</span>.
-                    Track your mastery across all content areas.
-                  </>
-                ) : (
-                  <>
-                    Monitor your performance and identify areas for improvement.
-                  </>
-                )}
-              </p>
-              <div className="flex gap-4">
-                <Link
-                  href="/practice"
-                  className="bg-primary text-white px-8 py-3 font-label-caps hover:bg-opacity-90 transition-all uppercase flex items-center gap-2"
-                >
-                  Start Practice{" "}
-                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                </Link>
-              </div>
-            </div>
-            <div className="md:col-span-4 bg-surface border border-tertiary p-8 flex flex-col items-center justify-center">
-              <p className="font-label-caps text-secondary mb-4">OVERALL MASTERY</p>
-              <ScoreRing score={overallScore} size="lg" />
-            </div>
-          </div>
-
-          {/* Stats Row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-gutter mb-12">
-            <div className="bg-surface border border-tertiary p-6">
-              <p className="font-label-caps text-secondary mb-1">TOTAL QUESTIONS</p>
-              <h2 className="font-display-md text-3xl md:text-4xl">{totalAnswered.toLocaleString()}</h2>
-              <p className="font-mono-data text-secondary text-xs mt-2">
-                {totalCorrect} correct
-              </p>
-            </div>
-            <div className="bg-surface border border-tertiary p-6">
-              <p className="font-label-caps text-secondary mb-1">SESSIONS</p>
-              <h2 className="font-display-md text-3xl md:text-4xl">{sessionCount}</h2>
-              <p className="font-mono-data text-secondary text-xs mt-2">
-                completed
-              </p>
-            </div>
-            <div className="bg-surface border border-tertiary p-6">
-              <p className="font-label-caps text-secondary mb-1">ACCURACY</p>
-              <h2 className={`font-display-md text-3xl md:text-4xl ${overallScore >= 75 ? "text-[#1a8038]" : "text-primary"}`}>
-                {overallScore}%
-              </h2>
-              <p className="font-mono-data text-secondary text-xs mt-2">
-                {overallScore >= 75 ? "On track" : "Needs improvement"}
-              </p>
-            </div>
-            <div className="bg-surface border border-tertiary p-6">
-              <p className="font-label-caps text-secondary mb-1">WEAK AREAS</p>
-              <h2 className="font-display-md text-3xl md:text-4xl text-primary">
-                {weakAreas.length.toString().padStart(2, "0")}
-              </h2>
-              <p className="font-mono-data text-secondary text-xs mt-2">
-                {weakAreas.length > 0 ? "Needs focus" : "None detected"}
-              </p>
-            </div>
-          </div>
-
-          {/* Weak Areas Alert */}
-          {weakAreas.length > 0 && (
-            <div className="mb-12 border-2 border-primary bg-error-container p-6">
-              <div className="flex items-center gap-4 mb-4">
-                <span className="material-symbols-outlined text-primary text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  error
-                </span>
-                <div>
-                  <h3 className="font-label-caps text-primary">AREAS REQUIRING ATTENTION</h3>
-                  <p className="font-body-md text-on-error-container">
-                    {weakAreas.length} content area{weakAreas.length > 1 ? "s" : ""} below 50% mastery.
-                    Focused practice recommended.
-                  </p>
+      <ShaderBackground />
+      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
+      <AppLayout firstName={firstName} imageUrl={user?.imageUrl ?? null}>
+        {/* Hero Section */}
+        <section className="mb-10">
+          <div className="glass-jar p-8 md:p-10 rounded-3xl border border-white/50">
+            <div className="flex items-start justify-between gap-8">
+              <div className="flex-1">
+                <h1 className="font-display-lg text-display-lg text-primary mb-2">Progress & Analytics</h1>
+                <p className="font-body-lg text-on-surface-variant max-w-xl">
+                  {examDaysLeft !== null ? (
+                    <>Your NLE Board Exam is in <strong className="text-primary">{examDaysLeft} days</strong>. Track your mastery.</>
+                  ) : (
+                    <>Monitor your performance and identify areas for improvement.</>
+                  )}
+                </p>
+                <div className="flex gap-4 mt-6">
+                  <Link href="/practice" className="px-6 py-3 bg-primary text-on-primary rounded-full font-title-md text-sm candy-button-shadow hover:bg-primary-container active:scale-95 transition-all flex items-center gap-2">
+                    <span className="material-symbols-outlined text-lg">play_circle</span>
+                    Start Practice
+                  </Link>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-3">
-                {weakAreas.map((area) => (
-                  <Link
-                    key={area}
-                    href={`/practice?area=${area}`}
-                    className="bg-primary text-white px-4 py-2 font-label-caps text-xs uppercase flex items-center gap-2 hover:bg-opacity-90 transition-all"
-                  >
-                    <span className="material-symbols-outlined text-sm">{AREA_ICONS[area] || "school"}</span>
-                    {AREA_LABELS[area] || area}
-                  </Link>
-                ))}
+              <div className="hidden md:flex flex-col items-center">
+                <p className="font-label-caps text-on-surface-variant mb-2">OVERALL MASTERY</p>
+                <ScoreRing score={overallScore} size="lg" />
               </div>
             </div>
-          )}
+          </div>
+        </section>
 
-          {/* Area Mastery Breakdown */}
-          <div className="mb-12">
-            <div className="flex items-end justify-between border-b border-tertiary pb-4 mb-8">
-              <h2 className="font-headline-lg uppercase tracking-tight">
-                Content Area Mastery
-              </h2>
-              <span className="font-label-caps text-secondary text-xs">
-                Sorted weakest to strongest
-              </span>
+        {/* Stats Row */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          <div className="glass-jar p-6 rounded-2xl">
+            <p className="font-label-caps text-on-surface-variant mb-1">TOTAL QUESTIONS</p>
+            <h2 className="font-display-lg text-3xl md:text-4xl text-primary">{totalAnswered.toLocaleString()}</h2>
+            <p className="font-mono-data text-on-surface-variant text-xs mt-2">{totalCorrect} correct</p>
+          </div>
+          <div className="glass-jar p-6 rounded-2xl">
+            <p className="font-label-caps text-on-surface-variant mb-1">SESSIONS</p>
+            <h2 className="font-display-lg text-3xl md:text-4xl text-primary">{sessionCount}</h2>
+            <p className="font-mono-data text-on-surface-variant text-xs mt-2">completed</p>
+          </div>
+          <div className="glass-jar p-6 rounded-2xl">
+            <p className="font-label-caps text-on-surface-variant mb-1">ACCURACY</p>
+            <h2 className={`font-display-lg text-3xl md:text-4xl ${overallScore >= 75 ? "text-[#1a8038]" : "text-primary"}`}>{overallScore}%</h2>
+            <p className="font-mono-data text-on-surface-variant text-xs mt-2">{overallScore >= 75 ? "On track" : "Needs improvement"}</p>
+          </div>
+          <div className="glass-jar p-6 rounded-2xl">
+            <p className="font-label-caps text-on-surface-variant mb-1">WEAK AREAS</p>
+            <h2 className="font-display-lg text-3xl md:text-4xl text-primary">{weakAreas.length.toString().padStart(2, "0")}</h2>
+            <p className="font-mono-data text-on-surface-variant text-xs mt-2">{weakAreas.length > 0 ? "Needs focus" : "None detected"}</p>
+          </div>
+        </div>
+
+        {/* Weak Areas Alert */}
+        {weakAreas.length > 0 && (
+          <div className="mb-10 bg-primary-container p-6 rounded-2xl border-l-4 border-primary text-on-primary-container">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="material-symbols-outlined text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>error</span>
+              <div>
+                <h3 className="font-title-md">Areas Requiring Attention</h3>
+                <p className="font-body-md opacity-90">
+                  {weakAreas.length} content area{weakAreas.length > 1 ? "s" : ""} below 50% mastery. Focused practice recommended.
+                </p>
+              </div>
             </div>
+            <div className="flex flex-wrap gap-3">
+              {weakAreas.map((area) => (
+                <Link
+                  key={area}
+                  href={`/practice?area=${area}`}
+                  className="bg-on-primary-container text-primary-container px-4 py-2 font-label-caps text-xs uppercase rounded-xl flex items-center gap-2 hover:opacity-90 transition-all"
+                >
+                  <span className="material-symbols-outlined text-sm">{AREA_ICONS[area] || "school"}</span>
+                  {AREA_LABELS[area] || area}
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-              {sortedAreas.map(({ area, score, total, correct }) => {
-                const label = AREA_LABELS[area] || area
-                const icon = AREA_ICONS[area] || "school"
-                const description = AREA_DESCRIPTIONS[area]
-                const scoreColor =
-                  score >= 75 ? "text-[#1a8038]" : score >= 50 ? "text-[#e67e22]" : "text-primary"
-                const barColor =
-                  score >= 75 ? "bg-[#1a8038]" : score >= 50 ? "bg-[#e67e22]" : "bg-primary"
+        {/* Area Mastery Breakdown */}
+        <div className="mb-10">
+          <div className="flex items-end justify-between mb-6">
+            <h2 className="font-headline-lg text-headline-lg text-primary">Content Area Mastery</h2>
+            <span className="font-label-caps text-on-surface-variant text-xs">Sorted weakest to strongest</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {sortedAreas.map(({ area, score, total, correct }) => {
+              const label = AREA_LABELS[area] || area
+              const icon = AREA_ICONS[area] || "school"
+              const description = AREA_DESCRIPTIONS[area]
+              const scoreColor = score >= 75 ? "text-[#1a8038]" : score >= 50 ? "text-[#e67e22]" : "text-primary"
+              const barColor = score >= 75 ? "bg-[#1a8038]" : score >= 50 ? "bg-[#e67e22]" : "bg-primary"
 
-                return (
-                  <div key={area} className="bg-surface border border-tertiary p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex items-center gap-3">
-                        <span className="material-symbols-outlined text-2xl text-secondary">
-                          {icon}
-                        </span>
-                        <div>
-                          <h3 className="font-headline-lg text-sm uppercase">{label}</h3>
-                          {description && (
-                            <p className="font-mono-data text-xs text-secondary">{description}</p>
-                          )}
-                        </div>
+              return (
+                <div key={area} className="glass-jar p-6 rounded-2xl">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <span className="material-symbols-outlined text-2xl text-secondary">{icon}</span>
+                      <div>
+                        <h3 className="font-title-md text-sm uppercase">{label}</h3>
+                        {description && <p className="font-mono-data text-xs text-on-surface-variant">{description}</p>}
                       </div>
-                      <span className={`font-display-md text-2xl font-black ${scoreColor}`}>
-                        {score}%
-                      </span>
                     </div>
-                    <div className="h-2 w-full bg-surface-container-highest">
-                      <div className={`h-full ${barColor} transition-all duration-700`} style={{ width: `${score}%` }} />
-                    </div>
-                    {total > 0 && (
-                      <div className="flex justify-between mt-3">
-                        <span className="font-mono-data text-xs text-secondary">
-                          {correct}/{total} correct
-                        </span>
-                        <Link
-                          href={`/practice?area=${area}`}
-                          className="font-label-caps text-[10px] text-primary hover:underline"
-                        >
-                          PRACTICE THIS AREA
-                        </Link>
-                      </div>
-                    )}
+                    <span className={`font-display-md text-2xl font-black ${scoreColor}`}>{score}%</span>
                   </div>
+                  <div className="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                    <div className={`h-full ${barColor} rounded-full transition-all duration-700`} style={{ width: `${score}%` }} />
+                  </div>
+                  {total > 0 && (
+                    <div className="flex justify-between mt-3">
+                      <span className="font-mono-data text-xs text-on-surface-variant">{correct}/{total} correct</span>
+                      <Link href={`/practice?area=${area}`} className="font-label-caps text-[10px] text-primary hover:underline">PRACTICE THIS AREA</Link>
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Session History */}
+        <div className="mb-10">
+          <div className="flex items-end justify-between mb-6">
+            <h2 className="font-headline-lg text-headline-lg text-primary">Session History</h2>
+            <span className="font-label-caps text-on-surface-variant text-xs">Last {recentSessions.length} sessions</span>
+          </div>
+
+          {recentSessions.length > 0 ? (
+            <div className="space-y-2">
+              {recentSessions.map((session, i) => {
+                const sessionScore = Math.round(session.score)
+                return (
+                  <Link key={session.id} href={`/practice/session/${session.id}/results`}>
+                    <SessionTimelineItem
+                      sessionId={session.id}
+                      score={sessionScore}
+                      totalQuestions={session.totalQuestions}
+                      correctAnswers={session.correctAnswers}
+                      type={session.type}
+                      completedAt={session.completedAt}
+                      index={recentSessions.length - i}
+                    />
+                  </Link>
                 )
               })}
             </div>
-          </div>
-
-          {/* Session History */}
-          <div className="mb-12">
-            <div className="flex items-end justify-between border-b border-tertiary pb-4 mb-8">
-              <h2 className="font-headline-lg uppercase tracking-tight">
-                Session History
-              </h2>
-              <span className="font-label-caps text-secondary text-xs">
-                Last {recentSessions.length} sessions
-              </span>
+          ) : (
+            <div className="glass-jar p-10 rounded-2xl text-center">
+              <span className="material-symbols-outlined text-4xl text-secondary mb-4 block">timeline</span>
+              <p className="font-body-md text-on-surface-variant mb-4">No completed sessions yet. Start practicing to see your progress.</p>
+              <Link href="/practice" className="bg-primary text-on-primary px-6 py-2.5 font-label-caps text-xs rounded-xl candy-button-shadow-sm inline-block">Start Your First Session</Link>
             </div>
-
-            {recentSessions.length > 0 ? (
-              <div className="space-y-2">
-                <div className="hidden md:grid grid-cols-[auto_1fr_auto] gap-4 px-4 py-2">
-                  <span className="font-label-caps text-[10px] text-secondary">#</span>
-                  <span className="font-label-caps text-[10px] text-secondary">SESSION</span>
-                  <span className="font-label-caps text-[10px] text-secondary">SCORE</span>
-                </div>
-                {recentSessions.map((session, i) => {
-                  const sessionScore = Math.round(session.score)
-                  return (
-                    <Link key={session.id} href={`/practice/session/${session.id}/results`}>
-                      <SessionTimelineItem
-                        sessionId={session.id}
-                        score={sessionScore}
-                        totalQuestions={session.totalQuestions}
-                        correctAnswers={session.correctAnswers}
-                        type={session.type}
-                        completedAt={session.completedAt}
-                        index={recentSessions.length - i}
-                      />
-                    </Link>
-                  )
-                })}
-              </div>
-            ) : (
-              <div className="bg-surface-container-low border border-tertiary p-10 text-center">
-                <span className="material-symbols-outlined text-4xl text-secondary mb-4 block">
-                  timeline
-                </span>
-                <p className="font-body-md text-secondary mb-4">
-                  No completed sessions yet. Start practicing to see your progress.
-                </p>
-                <Link
-                  href="/practice"
-                  className="bg-primary text-white px-6 py-2 font-label-caps text-xs uppercase inline-block"
-                >
-                  Start Your First Session
-                </Link>
-              </div>
-            )}
-          </div>
-
-        </section>
-      </main>
-
-      {/* Footer */}
-      <footer className="w-full bg-secondary text-on-primary border-t border-tertiary">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter px-margin-mobile md:px-margin-desktop py-section-gap w-full max-w-[1440px] mx-auto">
-          <div className="col-span-1 md:col-span-1">
-            <span className="font-display-md text-headline-lg-mobile text-on-primary mb-4 block">
-              BOARDS.
-            </span>
-            <p className="font-body-md text-secondary-fixed-dim opacity-80 max-w-xs leading-tight">
-              Empowering the next generation of Filipino nurses with editorial-grade precision and
-              educational excellence.
-            </p>
-          </div>
-          <div className="col-span-1">
-            <h4 className="font-label-caps text-white mb-6 uppercase tracking-widest">Platform</h4>
-            <ul className="space-y-4">
-              <li>
-                <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">
-                  Curriculum
-                </Link>
-              </li>
-              <li>
-                <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">
-                  Mock Exams
-                </Link>
-              </li>
-              <li>
-                <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">
-                  Flashcards
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="col-span-1">
-            <h4 className="font-label-caps text-white mb-6 uppercase tracking-widest">Legal</h4>
-            <ul className="space-y-4">
-              <li>
-                <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">
-                  Cookie Policy
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div className="col-span-1">
-            <h4 className="font-label-caps text-white mb-6 uppercase tracking-widest">Support</h4>
-            <p className="font-body-md text-secondary-fixed-dim mb-4">
-              Need help preparing for the boards?
-            </p>
-            <a className="font-headline-lg text-primary-fixed-dim underline underline-offset-8 decoration-1" href="mailto:support@boards.edu">
-              Contact Support
-            </a>
-          </div>
+          )}
         </div>
-        <div className="px-margin-mobile md:px-margin-desktop py-8 border-t border-on-secondary-fixed-variant flex flex-col md:flex-row justify-between gap-4 max-w-[1440px] mx-auto">
-          <span className="font-body-md text-secondary-fixed-dim opacity-60">
-            &copy; 2024 BOARDS. Nursing Excellence Platform. All rights reserved.
-          </span>
-          <div className="flex gap-6">
-            <span className="material-symbols-outlined text-secondary-fixed-dim cursor-pointer hover:text-white">face_nod</span>
-            <span className="material-symbols-outlined text-secondary-fixed-dim cursor-pointer hover:text-white">language</span>
-            <span className="material-symbols-outlined text-secondary-fixed-dim cursor-pointer hover:text-white">school</span>
-          </div>
-        </div>
-      </footer>
+      </AppLayout>
     </>
   )
 }

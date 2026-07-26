@@ -1,38 +1,28 @@
 import { SignUp } from '@clerk/nextjs'
 import Link from 'next/link'
+import TopNavBar from '@/app/components/top-nav-bar'
+import ShaderBackground from '@/app/components/shader-background'
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-surface">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-surface border-b border-tertiary flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-full">
-        <div className="flex items-center gap-2">
-          <img alt="BOARDS. Logo" className="h-8 md:h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2blFSvhfS9jHGCBXITovua9NLN6SXNJnqVDMXc9CHOYrjzSyHKGk1G-nSIA7Y-pA8IE5OxPbz97Q4ItVK4bGlq9lrPC-fPD7SteKIuT4T3u-Rpvye8uHZDBc_ZOElnEozIrYHZsTVDzmtwG7qjlgwEnOwk48CHFzu2Uz8bKKXs4zGBZ1iBaWI8Xw2n6H4kErKXEz9UJQbSR2YoV_iFBGvDST0_zMLuobj8XeygXkZ2mX4QSh4FXqa" />
-        </div>
-        <div className="hidden md:flex items-center gap-10">
-          <Link className="font-headline-lg text-body-md text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200" href="/">Home</Link>
-        </div>
-      </nav>
+    <div className="min-h-screen flex flex-col">
+      <ShaderBackground />
+      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
+      <TopNavBar variant="public" />
 
-      <main className="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-12">
+      <main className="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-12 relative z-10 pt-28">
         <div className="w-full max-w-[440px]">
-          <div className="text-center mb-6">
-            <h1 className="font-display-md text-2xl md:text-3xl font-black tracking-tighter text-primary mb-1">
-              BOARDS.
-            </h1>
-            <p className="text-sm text-on-surface-variant">
-              Elevate Your Practice
-            </p>
-            <div className="mt-3 inline-flex items-center gap-2 bg-tertiary-fixed px-3 py-1 border border-tertiary">
-              <span
-                className="material-symbols-outlined text-[14px] text-primary"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                group
-              </span>
-              <span className="font-label-caps text-[9px] text-on-tertiary-fixed uppercase">
-                Join 5,000+ nursing students
-              </span>
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-3">
+              <div className="w-12 h-12 bg-primary flex items-center justify-center rounded-2xl shadow-md">
+                <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>medical_services</span>
+              </div>
+            </div>
+            <h1 className="font-display-md text-3xl font-black tracking-tighter text-primary mb-1">BOARDS.</h1>
+            <p className="font-body-md text-on-surface-variant">Elevate Your Practice</p>
+            <div className="mt-3 inline-flex items-center gap-2 bg-primary-fixed/40 px-3 py-1.5 rounded-xl border border-primary-fixed/30">
+              <span className="material-symbols-outlined text-[14px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
+              <span className="font-label-caps text-[9px] text-primary uppercase">Join 5,000+ nursing students</span>
             </div>
           </div>
 
@@ -40,16 +30,16 @@ export default function SignUpPage() {
             appearance={{
               elements: {
                 rootBox: 'mx-auto w-full',
-                card: 'bg-surface-container-lowest border border-secondary shadow-none p-6 md:p-8',
-                headerTitle: 'font-display-md text-2xl md:text-3xl font-black tracking-tighter text-primary',
+                card: 'glass-jar border border-white/40 shadow-none p-6 md:p-8 rounded-2xl',
+                headerTitle: 'font-display-md text-2xl font-black tracking-tighter text-primary',
                 headerSubtitle: 'text-sm text-on-surface-variant',
-                socialButtonsBlockButton: 'border border-secondary text-on-surface hover:bg-surface-container-lowest',
+                socialButtonsBlockButton: 'border border-outline-variant text-on-surface hover:bg-surface-container rounded-xl',
                 socialButtonsBlockButtonText: 'text-sm font-body-md text-on-surface',
-                dividerLine: 'bg-tertiary',
-                dividerText: 'font-label-caps text-[10px] text-secondary-fixed-dim',
+                dividerLine: 'bg-outline-variant',
+                dividerText: 'font-label-caps text-[10px] text-on-surface-variant',
                 formFieldLabel: 'font-label-caps text-[10px] text-on-surface-variant',
-                formFieldInput: 'w-full bg-surface border-b border-tertiary px-0 py-2 text-sm text-on-surface placeholder:text-secondary-fixed-dim focus:border-primary focus:outline-none focus:ring-0',
-                formButtonPrimary: 'w-full bg-primary text-on-primary text-sm py-3 uppercase tracking-wider transition-all hover:bg-on-primary-fixed-variant active:scale-[0.98]',
+                formFieldInput: 'w-full bg-surface-container-low border border-outline-variant rounded-xl px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none focus:ring-0 transition-all',
+                formButtonPrimary: 'w-full bg-primary text-on-primary text-sm py-3 rounded-xl font-label-caps uppercase tracking-wider transition-all hover:bg-primary-container active:scale-[0.98] candy-button-shadow',
                 footerActionText: 'text-sm text-on-surface-variant',
                 footerActionLink: 'text-primary font-bold hover:underline',
                 identityPreviewText: 'text-on-surface',
@@ -60,10 +50,8 @@ export default function SignUpPage() {
         </div>
       </main>
 
-      <footer className="w-full py-6 px-margin-mobile border-t border-tertiary bg-surface text-center">
-        <p className="font-label-caps text-[10px] text-secondary-fixed-dim">
-          &copy; 2024 BOARDS. NURSING EXCELLENCE PLATFORM.
-        </p>
+      <footer className="w-full py-6 px-margin-mobile border-t border-outline-variant/30 bg-surface-container-low/50 backdrop-blur-md text-center relative z-10">
+        <p className="font-label-caps text-[10px] text-on-surface-variant">&copy; 2024 BOARDS. NURSING EXCELLENCE PLATFORM.</p>
       </footer>
     </div>
   )

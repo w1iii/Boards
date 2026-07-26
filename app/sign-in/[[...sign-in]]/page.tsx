@@ -1,66 +1,43 @@
 import { SignIn } from '@clerk/nextjs'
-import Link from 'next/link'
+import TopNavBar from '@/app/components/top-nav-bar'
+import ShaderBackground from '@/app/components/shader-background'
 
 export default function SignInPage() {
   return (
-    <div className="min-h-screen flex flex-col bg-surface">
-      {/* Nav */}
-      <nav className="sticky top-0 z-50 bg-surface border-b border-tertiary flex justify-between items-center w-full px-margin-mobile md:px-margin-desktop py-4 max-w-full">
-        <div className="flex items-center gap-2">
-          <img alt="BOARDS. Logo" className="h-8 md:h-10 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2blFSvhfS9jHGCBXITovua9NLN6SXNJnqVDMXc9CHOYrjzSyHKGk1G-nSIA7Y-pA8IE5OxPbz97Q4ItVK4bGlq9lrPC-fPD7SteKIuT4T3u-Rpvye8uHZDBc_ZOElnEozIrYHZsTVDzmtwG7qjlgwEnOwk48CHFzu2Uz8bKKXs4zGBZ1iBaWI8Xw2n6H4kErKXEz9UJQbSR2YoV_iFBGvDST0_zMLuobj8XeygXkZ2mX4QSh4FXqa" />
-        </div>
-        <div className="hidden md:flex items-center gap-10">
-          <Link className="font-headline-lg text-body-md text-on-secondary-fixed-variant hover:text-on-surface transition-colors duration-200" href="/">Home</Link>
-        </div>
-      </nav>
+    <div className="min-h-screen flex flex-col">
+      <ShaderBackground />
+      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
+      <TopNavBar variant="public" />
 
-      <div
-        className="fixed inset-0 pointer-events-none z-0 opacity-20"
-        style={{
-          backgroundImage:
-            'linear-gradient(to right, #e8e2d5 1px, transparent 1px), linear-gradient(to bottom, #e8e2d5 1px, transparent 1px)',
-          backgroundSize: '40px 40px',
-        }}
-      />
-
-      <main className="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-12 relative z-10">
+      <main className="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-12 relative z-10 pt-28">
         <div className="w-full max-w-md">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8">
             <div className="flex justify-center mb-3">
-              <div className="w-10 h-10 bg-primary flex items-center justify-center">
-                <span
-                  className="material-symbols-outlined text-white text-2xl"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  medical_services
-                </span>
+              <div className="w-12 h-12 bg-primary flex items-center justify-center rounded-2xl shadow-md">
+                <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>medical_services</span>
               </div>
             </div>
-            <h1 className="font-display-md text-2xl md:text-3xl font-black tracking-tighter text-on-surface">
-              BOARDS.
-            </h1>
-            <p className="font-label-caps text-[10px] uppercase text-secondary tracking-widest mt-1">
-              Nursing Excellence Platform
-            </p>
+            <h1 className="font-display-md text-3xl font-black tracking-tighter text-primary">BOARDS.</h1>
+            <p className="font-label-caps text-[10px] uppercase text-on-surface-variant tracking-widest mt-1">Nursing Excellence Platform</p>
           </div>
 
           <div className="relative">
-            <div className="absolute top-0 left-0 w-2 h-full bg-primary z-10" />
+            <div className="absolute top-0 left-0 w-2 h-full bg-primary z-10 rounded-l-lg" />
             <SignIn
               appearance={{
                 elements: {
                   rootBox: 'mx-auto w-full',
-                  card: 'bg-surface-container-lowest border border-tertiary shadow-none p-6 md:p-8 relative',
-                  headerTitle: 'font-headline-lg text-xl text-on-surface',
+                  card: 'glass-jar border border-white/40 shadow-none p-6 md:p-8 rounded-2xl',
+                  headerTitle: 'font-headline-lg text-xl text-primary',
                   headerSubtitle: 'text-sm text-on-surface-variant',
-                  socialButtonsBlockButton: 'border-2 border-on-surface-variant text-on-surface hover:bg-surface-container hover:border-on-surface',
+                  socialButtonsBlockButton: 'border-2 border-outline-variant text-on-surface hover:bg-surface-container hover:border-primary rounded-xl',
                   socialButtonsBlockButtonText: 'text-sm font-body-md text-on-surface',
-                  dividerLine: 'bg-tertiary',
-                  dividerText: 'font-label-caps text-[10px] text-secondary',
-                  formFieldLabel: 'font-label-caps text-[10px] text-secondary',
-                  formFieldInput: 'w-full bg-surface-container-low border border-tertiary px-3 py-2 text-sm text-on-surface placeholder:text-on-secondary-fixed-variant focus:border-primary focus:outline-none focus:ring-0',
-                  formButtonPrimary: 'w-full bg-primary text-on-primary text-sm py-3 transition-all hover:bg-primary-container active:scale-[0.98] uppercase tracking-wider',
-                  footerActionText: 'text-sm text-secondary',
+                  dividerLine: 'bg-outline-variant',
+                  dividerText: 'font-label-caps text-[10px] text-on-surface-variant',
+                  formFieldLabel: 'font-label-caps text-[10px] text-on-surface-variant',
+                  formFieldInput: 'w-full bg-surface-container-low border border-outline-variant rounded-xl px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none focus:ring-0 transition-all',
+                  formButtonPrimary: 'w-full bg-primary text-on-primary text-sm py-3 rounded-xl font-label-caps uppercase tracking-wider transition-all hover:bg-primary-container active:scale-[0.98] candy-button-shadow',
+                  footerActionText: 'text-sm text-on-surface-variant',
                   footerActionLink: 'text-primary font-bold hover:underline',
                   identityPreviewText: 'text-on-surface',
                   identityPreviewEditButton: 'text-primary',
@@ -86,21 +63,13 @@ export default function SignInPage() {
         </div>
       </main>
 
-      <footer className="py-6 border-t border-tertiary bg-surface-container relative z-10">
+      <footer className="py-6 border-t border-outline-variant/30 bg-surface-container-low/50 backdrop-blur-md relative z-10">
         <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="font-body-md text-label-caps text-on-secondary-container opacity-60">
-            &copy; 2024 BOARDS. Nursing Excellence Platform. All rights reserved.
-          </p>
+          <p className="font-body-md text-label-caps text-on-surface-variant opacity-60">&copy; 2024 BOARDS. Nursing Excellence Platform. All rights reserved.</p>
           <div className="flex gap-6">
-            <a className="font-label-caps text-[10px] text-on-secondary-container hover:text-primary transition-colors" href="#">
-              PRIVACY POLICY
-            </a>
-            <a className="font-label-caps text-[10px] text-on-secondary-container hover:text-primary transition-colors" href="#">
-              TERMS OF SERVICE
-            </a>
-            <a className="font-label-caps text-[10px] text-on-secondary-container hover:text-primary transition-colors" href="#">
-              SUPPORT
-            </a>
+            <a className="font-label-caps text-[10px] text-on-surface-variant hover:text-primary transition-colors" href="#">PRIVACY POLICY</a>
+            <a className="font-label-caps text-[10px] text-on-surface-variant hover:text-primary transition-colors" href="#">TERMS OF SERVICE</a>
+            <a className="font-label-caps text-[10px] text-on-surface-variant hover:text-primary transition-colors" href="#">SUPPORT</a>
           </div>
         </div>
       </footer>
