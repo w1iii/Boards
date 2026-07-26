@@ -135,7 +135,7 @@ void main() {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 w-full h-full"
+      className="fixed inset-0 w-full h-full z-[-2] pointer-events-none"
       style={{ display: "block" }}
     />
   )

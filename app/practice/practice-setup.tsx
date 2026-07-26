@@ -3,14 +3,13 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import TopNavBar from "@/app/components/top-nav-bar"
-import ShaderBackground from "@/app/components/shader-background"
 
 const AREAS = [
-  { key: "nlp-i", label: "NLP I — Foundation", description: "Theories, Leadership, Legal, Research, Pharmacology.", icon: "menu_book" },
-  { key: "nlp-ii", label: "NLP II — Community Health", description: "DOH programs, Epidemiology, Communicable diseases.", icon: "groups" },
-  { key: "nlp-iii", label: "NLP III — Mother & Child", description: "OB, Pedia, Newborn, Family Planning.", icon: "pregnant_woman" },
-  { key: "nlp-iv", label: "NLP IV — Med-Surg", description: "Adult health, Perioperative, Oncology, Body systems.", icon: "medical_services" },
-  { key: "nlp-v", label: "NLP V — Psychiatric", description: "Mental health, Psychopharmacology, Crisis care.", icon: "psychology" },
+  { key: "nlp-i", label: "NLP I", description: "Foundation", icon: "menu_book", accent: "bg-primary-fixed" },
+  { key: "nlp-ii", label: "NLP II", description: "Community Health", icon: "groups", accent: "bg-secondary-fixed" },
+  { key: "nlp-iii", label: "NLP III", description: "Mother & Child", icon: "pregnant_woman", accent: "bg-tertiary-fixed" },
+  { key: "nlp-iv", label: "NLP IV", description: "Med-Surg", icon: "medical_services", accent: "bg-primary-fixed-dim" },
+  { key: "nlp-v", label: "NLP V", description: "Psychiatric", icon: "psychology", accent: "bg-outline-variant" },
 ] as const
 
 interface Props {
@@ -23,7 +22,6 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [generatingAreas, setGeneratingAreas] = useState<string[]>([])
   const router = useRouter()
 
   function toggle(key: string) {
@@ -36,7 +34,6 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
 
   async function generateQuestions(areas: string[]) {
     setGenerating(true)
-    setGeneratingAreas(areas)
     try {
       for (const area of areas) {
         const res = await fetch("/api/questions/generate", {
@@ -44,17 +41,12 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ contentArea: area, count: 10 }),
         })
-        if (!res.ok) {
-          const data = await res.json().catch(() => ({}))
-          throw new Error(data.error || `Failed to generate questions for ${area}`)
-        }
+        if (!res.ok) throw new Error()
       }
       setGenerating(false)
-      setGeneratingAreas([])
       createSession(areas)
     } catch {
       setGenerating(false)
-      setGeneratingAreas([])
       setError("Failed to generate questions. Please try again.")
     }
   }
@@ -66,11 +58,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
       const res = await fetch("/api/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          type: "practice",
-          contentAreas: areas,
-          questionCount: 20,
-        }),
+        body: JSON.stringify({ type: "practice", contentAreas: areas, questionCount: 20 }),
       })
       const data = await res.json()
       if (data.error === "no_questions_found") {
@@ -90,89 +78,85 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
     createSession([...selected])
   }
 
+  const count = selected.size
+
   return (
-    <div className="h-dvh flex flex-col overflow-hidden">
-      <ShaderBackground />
-      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
+    <div className="h-dvh flex flex-col overflow-hidden bg-surface text-on-surface">
       <TopNavBar variant="auth" firstName={firstName} imageUrl={imageUrl} />
 
-      <main className="flex-1 overflow-hidden">
-        <section className="h-full px-margin-mobile md:px-margin-desktop py-6">
-          <div className="max-w-[1440px] mx-auto w-full h-full flex flex-col">
-            <div className="mb-4 shrink-0">
-              <span className="font-label-caps text-primary mb-1 block tracking-[0.2em] text-[10px]">
-                PRACTICE MODE
-              </span>
-              <h1 className="font-headline-lg text-headline-lg uppercase leading-tight mb-1">
-                CHOOSE CONTENT AREA
-              </h1>
-              <p className="font-body-md text-secondary text-sm max-w-xl">
-                Select the core nursing domains to focus your practice session. You can choose
-                multiple areas to create a cross-functional assessment.
-              </p>
-            </div>
+      <div className="scallop-top w-full h-[24px] md:h-[40px] pointer-events-none shrink-0" style={{ marginTop: 64 }} />
 
-            <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 min-h-0">
+      <div className="flex-1 flex flex-col overflow-hidden px-margin-mobile md:px-margin-desktop">
+        <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-4 md:py-6">
+          <div className="mb-3 md:mb-4 shrink-0">
+            <span className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] bg-primary-fixed px-3 py-1 rounded-full inline-block mb-1.5">
+              Practice Mode
+            </span>
+            <h1 className="font-display-lg text-display-lg text-primary leading-[1.1]">
+              CHOOSE CONTENT AREA
+            </h1>
+            <p className="font-body-md text-body-md text-on-surface-variant mt-1 max-w-xl">
+              Select nursing domains to focus your practice.
+            </p>
+          </div>
+
+          <div className="flex-1 overflow-y-auto -mx-2 px-2 pb-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {AREAS.map((area) => {
                 const isSelected = selected.has(area.key)
                 return (
                   <button
                     key={area.key}
                     onClick={() => toggle(area.key)}
-                    className={`group relative flex flex-col items-start p-4 border border-tertiary bg-surface transition-all duration-200 text-left hover:bg-surface-container-high ${
-                      isSelected ? "bg-surface-container-high" : ""
+                    className={`group cursor-pointer text-left relative overflow-hidden rounded-xl border-2 transition-all duration-200 ${
+                      isSelected
+                        ? "border-primary bg-primary-fixed"
+                        : "border-transparent bg-surface-container-lowest"
                     }`}
                   >
-                    <span className="material-symbols-outlined text-2xl mb-3 text-on-surface group-hover:scale-110 transition-transform">
-                      {area.icon}
-                    </span>
-                    <h3 className="font-headline-lg text-headline-lg-mobile uppercase mb-1 leading-tight">
-                      {area.label}
-                    </h3>
-                    <p className="font-body-md text-secondary text-xs leading-snug">{area.description}</p>
-                    <div
-                      className={`absolute top-3 right-3 transition-opacity duration-200 ${
-                        isSelected ? "opacity-100" : "opacity-0"
-                      }`}
-                    >
-                      <span
-                        className="material-symbols-outlined text-primary text-lg"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        check_circle
-                      </span>
+                    <div className={`absolute top-0 left-0 w-full h-1 ${area.accent}`} style={{ opacity: 0.4 }} />
+                    <div className="p-3 md:p-4 flex items-start gap-3">
+                      <span className="material-symbols-outlined text-secondary shrink-0" style={{ fontSize: 24 }}>{area.icon}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-title-md text-title-md text-primary truncate">{area.label}</h3>
+                          {isSelected && (
+                            <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 18 }}>check_circle</span>
+                          )}
+                        </div>
+                        <p className="font-body-sm text-body-sm text-on-surface-variant leading-snug mt-0.5 line-clamp-2">{area.description}</p>
+                      </div>
                     </div>
                   </button>
                 )
               })}
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </div>
 
-      <footer className="w-full bg-surface border-t border-tertiary px-margin-mobile md:px-margin-desktop py-3 shrink-0">
-        <div className="max-w-[1440px] mx-auto w-full flex flex-row justify-between items-center gap-4">
-          <div className="flex flex-col">
-            <span className="font-label-caps text-secondary text-[10px]">
-              {generating ? "GENERATING QUESTIONS..." : error ? "ERROR" : "READY TO BEGIN?"}
-            </span>
-            <p className="font-body-md text-on-surface text-xs">
-              {generating
-                ? `Creating ${generatingAreas.length > 0 ? generatingAreas.map((a) => AREAS.find((ar) => ar.key === a)?.label ?? a).join(", ") : ""} questions via AI...`
-                : error
-                  ? error
-                  : "Start your nursing practice session based on selected criteria."}
+      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-4 md:pb-6">
+        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4 px-5 py-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,218,213,0.6)" }}>
+          <div className="flex items-center gap-2.5">
+            <span className={`w-2.5 h-2.5 rounded-full ${count > 0 ? "bg-primary" : "bg-secondary"}`} />
+            <p className="font-title-md text-title-md text-primary uppercase tracking-wider text-sm">
+              {error ? "ERROR" : count > 0 ? `${count} Domain${count > 1 ? "s" : ""} Selected` : "Select a focus area"}
             </p>
           </div>
           <button
             onClick={beginSession}
-            disabled={selected.size === 0 || loading || generating}
-            className="shrink-0 px-8 py-3 bg-primary text-on-primary font-label-caps uppercase text-xs hover:bg-on-primary-fixed-variant transition-all duration-200 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed"
+            disabled={count === 0 || loading || generating}
+            className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-title-md text-sm transition-all active:scale-[0.97] flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            style={{ boxShadow: "0 3px 0 #930006, 0 4px 12px rgba(188,0,11,0.2)" }}
           >
-            {generating ? "Generating..." : loading ? "Creating..." : "Begin Practice Session"}
+            {loading || generating ? (
+              <><span>{generating ? "Generating..." : "Creating..."}</span><span className="material-symbols-outlined animate-spin" style={{ fontSize: 18 }}>autorenew</span></>
+            ) : (
+              <><span>Begin Practice Session</span><span className="material-symbols-outlined" style={{ fontSize: 18 }}>rocket_launch</span></>
+            )}
           </button>
         </div>
-      </footer>
+      </div>
     </div>
   )
 }
