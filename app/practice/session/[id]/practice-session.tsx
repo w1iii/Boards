@@ -1,9 +1,10 @@
 "use client"
 
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import SideNavBar from "@/app/components/side-nav-bar"
 import QuestionTimer from "./timer"
+import { useBreak } from "@/app/contexts/break-context"
 
 interface Question {
   id: string
@@ -71,6 +72,21 @@ export default function PracticeSession({
   const [completing, setCompleting] = useState(false)
   const completingRef = useRef(false)
   const router = useRouter()
+  const { isBreakActive } = useBreak()
+  const timerRunningBeforeBreakRef = useRef(false)
+
+  useEffect(() => {
+    if (isBreakActive) {
+      timerRunningBeforeBreakRef.current = timerRunning
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTimerRunning(false)
+    } else {
+      if (timerRunningBeforeBreakRef.current && !showFeedback) {
+        setTimerRunning(true)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isBreakActive])
 
   const question = questions[currentIdx]
   const totalQuestions = questions.length

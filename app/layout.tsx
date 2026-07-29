@@ -2,6 +2,8 @@ import { ClerkProvider } from "@clerk/nextjs"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono, Playfair_Display, Source_Sans_3, Space_Grotesk } from "next/font/google"
 import AppShell from "@/app/components/app-shell"
+import { BreakProvider } from "@/app/contexts/break-context"
+import BreakModal from "@/app/components/break-modal"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -58,9 +60,12 @@ export default function RootLayout({
       </head>
       <body className="bg-surface text-on-surface font-body-md overflow-x-hidden min-h-screen selection:bg-primary selection:text-white custom-scrollbar">
         <ClerkProvider>
-          <AppShell>
-            {children}
-          </AppShell>
+          <BreakProvider>
+            <AppShell>
+              {children}
+            </AppShell>
+            <BreakModal />
+          </BreakProvider>
         </ClerkProvider>
       </body>
     </html>

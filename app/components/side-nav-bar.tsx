@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useBreak } from "@/app/contexts/break-context"
 
 const NAV_ITEMS: Array<{
   href: string
@@ -22,6 +23,7 @@ interface SideNavBarProps {
 
 export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
   const pathname = usePathname()
+  const { openBreakModal } = useBreak()
 
   function isActive(href: string, query?: boolean): boolean {
     if (query) {
@@ -89,7 +91,10 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
           <span className="material-symbols-outlined text-xl">settings</span>
           Settings
         </Link>
-        <button className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-label-caps text-sm candy-button-shadow-sm transition-all hover:opacity-90 flex items-center justify-center gap-2">
+        <button
+          onClick={openBreakModal}
+          className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-label-caps text-sm candy-button-shadow-sm transition-all hover:opacity-90 flex items-center justify-center gap-2"
+        >
           <span className="material-symbols-outlined text-base">self_improvement</span>
           Take a Break
         </button>
