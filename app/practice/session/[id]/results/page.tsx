@@ -1,6 +1,6 @@
-import { auth, currentUser } from "@clerk/nextjs/server"
+import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
-import { sql } from "@/app/lib/db"
+import { sql, getProfile } from "@/app/lib/db"
 import ResultsView from "./results-view"
 
 export default async function ResultsPage({
@@ -11,8 +11,8 @@ export default async function ResultsPage({
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const user = await currentUser()
-  const firstName = user?.firstName || "there"
+  const profile = await getProfile(userId)
+  const firstName = (profile?.first_name as string) || "there"
   const { id: sessionId } = await params
 
   const session = await sql`
@@ -64,7 +64,7 @@ export default async function ResultsPage({
     <ResultsView
       sessionId={sessionId}
       firstName={firstName}
-      imageUrl={user?.imageUrl ?? null}
+      imageUrl={null}
       totalQuestions={totalQuestions}
       answeredQuestions={answeredQuestions}
       correctAnswers={correctCount}

@@ -1,6 +1,6 @@
-import { auth, currentUser } from "@clerk/nextjs/server"
+import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
-import { sql } from "@/app/lib/db"
+import { sql, getProfile } from "@/app/lib/db"
 import PracticeSession from "./practice-session"
 
 export default async function SessionPage({
@@ -11,8 +11,8 @@ export default async function SessionPage({
   const { userId } = await auth()
   if (!userId) redirect("/sign-in")
 
-  const user = await currentUser()
-  const firstName = user?.firstName || "there"
+  const profile = await getProfile(userId)
+  const firstName = (profile?.first_name as string) || "there"
   const { id } = await params
 
   const result = await sql`
@@ -55,7 +55,7 @@ export default async function SessionPage({
       questions={serializedQuestions}
       existingAnswers={existingAnswers}
       firstName={firstName}
-      imageUrl={user?.imageUrl ?? null}
+      imageUrl={null}
       contentAreas={contentAreas}
     />
   )

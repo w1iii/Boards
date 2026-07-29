@@ -3,7 +3,7 @@
 @theme {
   --color-background: #F2E8C6;
   --color-foreground: #1b1c19;
-  --font-sans: var(--font-work-sans), var(--font-geist-sans);
+  --font-sans: var(--font-source-sans), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
   --color-primary: #952323;
@@ -70,9 +70,9 @@
   --font-headline-lg-mobile: var(--font-playfair), var(--font-geist-sans);
   --font-label-caps: var(--font-space-grotesk), sans-serif;
   --font-mono-data: var(--font-space-grotesk), sans-serif;
-  --font-title-md: var(--font-work-sans), sans-serif;
-  --font-body-md: var(--font-work-sans), sans-serif;
-  --font-body-lg: var(--font-work-sans), sans-serif;
+  --font-title-md: var(--font-source-sans), sans-serif;
+  --font-body-md: var(--font-source-sans), sans-serif;
+  --font-body-lg: var(--font-source-sans), sans-serif;
 
   --text-display-md: 56px;
   --text-display-md--line-height: 52px;

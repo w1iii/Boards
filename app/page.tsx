@@ -1,34 +1,13 @@
-"use client";
-
-import { useEffect } from "react";
-import Link from "next/link";
-import TopNavBar from "@/app/components/top-nav-bar";
+import Link from "next/link"
+import Image from "next/image"
+import TopNavBar from "@/app/components/top-nav-bar"
+import ScrollAnimator from "@/app/components/scroll-animator"
 
 export default function HomePage() {
-  useEffect(() => {
-    const observerOptions = { threshold: 0.1 };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("opacity-100", "translate-y-0");
-          entry.target.classList.remove("opacity-0", "translate-y-10");
-        }
-      });
-    }, observerOptions);
-
-    document.querySelectorAll("section").forEach((section) => {
-      section.classList.add("transition-all", "duration-1000", "opacity-0", "translate-y-10");
-      observer.observe(section);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <>
+    <ScrollAnimator>
       <TopNavBar variant="public" />
 
-      {/* Hero Section */}
       <header className="relative min-h-[80vh] flex flex-col justify-center px-margin-mobile md:px-margin-desktop pt-12">
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-gutter items-end pb-12 border-b border-tertiary">
           <div className="md:col-span-8">
@@ -77,7 +56,6 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Stats Row */}
       <section className="py-16 px-margin-mobile md:px-margin-desktop bg-surface">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-gutter">
           <div className="border-l border-tertiary pl-6 py-4">
@@ -99,7 +77,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features Bento Grid */}
       <section className="py-section-gap px-margin-mobile md:px-margin-desktop bg-surface-container-low">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-between items-end mb-16">
@@ -114,7 +91,6 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-            {/* Large Feature Card */}
             <div className="md:col-span-8 bg-on-surface text-surface p-12 flex flex-col justify-between min-h-[500px] border border-secondary transition-transform hover:-translate-y-1">
               <div className="flex justify-between items-start">
                 <span className="font-label-caps text-primary uppercase">Feature 01</span>
@@ -128,10 +104,17 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Secondary Card Stack */}
             <div className="md:col-span-4 grid grid-rows-2 gap-gutter">
               <div className="bg-surface border border-tertiary p-8 hover:bg-surface-container transition-colors">
-                <img className="w-full h-32 object-cover mb-6 grayscale brightness-90" alt="Medical equipment in a clinical setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD94-PQv_nTWXsaZcnWsCwuWl-yZVwYGI1r6h6ST7vHDGDTRgBgflWgbtGPM-5lMmlZ0j6-H0kerD0evVUM1pD6K-hIQmvQCQxaOph6NKJOSTYSVYIN8kES4vQVVDVYIPWwsyf2kJUf_Inu2MXIZS2MxSvBbqyAz0DFZakkVsyN8r4ewEWehga3dokEvlVkyH1yfibWBBTwa7zOg_iG4ZKQIB44Iumq9qP0LK9_FqtK-N_2pX_2-ksY" />
+                <div className="relative w-full h-32 mb-6">
+                  <Image
+                    className="grayscale brightness-90 object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD94-PQv_nTWXsaZcnWsCwuWl-yZVwYGI1r6h6ST7vHDGDTRgBgflWgbtGPM-5lMmlZ0j6-H0kerD0evVUM1pD6K-hIQmvQCQxaOph6NKJOSTYSVYIN8kES4vQVVDVYIPWwsyf2kJUf_Inu2MXIZS2MxSvBbqyAz0DFZakkVsyN8r4ewEWehga3dokEvlVkyH1yfibWBBTwa7zOg_iG4ZKQIB44Iumq9qP0LK9_FqtK-N_2pX_2-ksY"
+                    alt="Medical equipment in a clinical setting"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 25vw"
+                  />
+                </div>
                 <div className="flex justify-between items-center">
                   <h4 className="font-headline-lg uppercase text-xl">Rationale Library</h4>
                   <span className="material-symbols-outlined">north_east</span>
@@ -146,7 +129,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Three smaller cards */}
             <div className="md:col-span-4 bg-surface border border-tertiary p-6 h-64 flex flex-col justify-end group">
               <div className="flex justify-between items-end">
                 <h5 className="font-headline-lg uppercase text-lg">Simulated Board Environment</h5>
@@ -169,7 +151,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* How It Works */}
       <section className="py-section-gap px-margin-mobile md:px-margin-desktop bg-surface">
         <div className="max-w-7xl mx-auto">
           <span className="text-primary font-label-caps uppercase mb-2 block text-center">The Methodology</span>
@@ -194,7 +175,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Pricing Teaser */}
       <section className="py-section-gap px-margin-mobile md:px-margin-desktop bg-surface-container-highest">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-gutter">
           <div className="md:col-span-4">
@@ -202,7 +182,6 @@ export default function HomePage() {
             <p className="font-body-lg text-secondary mb-12">No hidden fees. Just premium content designed to get you registered.</p>
           </div>
           <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-gutter">
-            {/* Monthly Plan */}
             <div className="bg-surface p-12 border border-tertiary relative overflow-hidden group">
               <div className="relative z-10">
                 <span className="font-label-caps text-secondary uppercase mb-8 block">Subscription</span>
@@ -217,7 +196,6 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* Final Push Plan */}
             <div className="bg-on-surface text-surface p-12 border border-secondary relative overflow-hidden">
               <div className="absolute top-6 right-6 bg-primary text-white font-label-caps px-3 py-1 text-[10px] uppercase">Recommended</div>
               <div className="relative z-10">
@@ -236,12 +214,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="bg-primary border-t border-primary-fixed/30 px-margin-mobile md:px-margin-desktop py-section-gap w-full text-on-primary">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-gutter">
           <div className="md:col-span-2">
             <div className="flex items-center gap-2 mb-8">
-              <img alt="BOARDS. Logo" className="h-12 w-auto brightness-0 invert" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2blFSvhfS9jHGCBXITovua9NLN6SXNJnqVDMXc9CHOYrjzSyHKGk1G-nSIA7Y-pA8IE5OxPbz97Q4ItVK4bGlq9lrPC-fPD7SteKIuT4T3u-Rpvye8uHZDBc_ZOElnEozIrYHZsTVDzmtwG7qjlgwEnOwk48CHFzu2Uz8bKKXs4zGBZ1iBaWI8Xw2n6H4kErKXEz9UJQbSR2YoV_iFBGvDST0_zMLuobj8XeygXkZ2mX4QSh4FXqa" />
+              <div className="relative h-12 w-auto">
+                <Image
+                  className="brightness-0 invert"
+                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2blFSvhfS9jHGCBXITovua9NLN6SXNJnqVDMXc9CHOYrjzSyHKGk1G-nSIA7Y-pA8IE5OxPbz97Q4ItVK4bGlq9lrPC-fPD7SteKIuT4T3u-Rpvye8uHZDBc_ZOElnEozIrYHZsTVDzmtwG7qjlgwEnOwk48CHFzu2Uz8bKKXs4zGBZ1iBaWI8Xw2n6H4kErKXEz9UJQbSR2YoV_iFBGvDST0_zMLuobj8XeygXkZ2mX4QSh4FXqa"
+                  alt="BOARDS. Logo"
+                  width={180}
+                  height={48}
+                />
+              </div>
             </div>
             <p className="font-body-md text-secondary-fixed-dim max-w-sm">
               Empowering the next generation of Filipino nurses through cutting-edge technology and pedagogical excellence.
@@ -268,6 +253,6 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
-    </>
-  );
+    </ScrollAnimator>
+  )
 }

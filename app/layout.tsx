@@ -1,6 +1,6 @@
 import { ClerkProvider } from "@clerk/nextjs"
 import type { Metadata } from "next"
-import { Geist, Geist_Mono, Playfair_Display, Space_Grotesk, Work_Sans } from "next/font/google"
+import { Geist, Geist_Mono, Playfair_Display, Source_Sans_3, Space_Grotesk } from "next/font/google"
 import AppShell from "@/app/components/app-shell"
 import "./globals.css"
 
@@ -28,10 +28,10 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 })
 
-const workSans = Work_Sans({
+const sourceSans = Source_Sans_3({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-work-sans",
+  weight: ["400", "600", "700"],
+  variable: "--font-source-sans",
   display: "swap",
 })
 
@@ -48,7 +48,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${spaceGrotesk.variable} ${workSans.variable} scroll-smooth`}
+      className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${spaceGrotesk.variable} ${sourceSans.variable} scroll-smooth`}
       suppressHydrationWarning
     >
       <head>
