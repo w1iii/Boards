@@ -3,7 +3,6 @@ import { sql } from "@/app/lib/db"
 import { redirect } from "next/navigation"
 import Link from "next/link"
 import AppLayout from "@/app/components/app-layout"
-import ShaderBackground from "@/app/components/shader-background"
 
 const AREA_LABELS: Record<string, string> = {
   "nlp-i": "NLP I — Foundation",
@@ -214,8 +213,6 @@ export default async function ProgressPage() {
 
   return (
     <>
-      <ShaderBackground />
-      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
       <AppLayout firstName={firstName} imageUrl={user?.imageUrl ?? null}>
         {/* Hero Section */}
         <section className="mb-10">

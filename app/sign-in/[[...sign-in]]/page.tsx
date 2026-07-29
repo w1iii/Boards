@@ -1,12 +1,9 @@
 import { SignIn } from '@clerk/nextjs'
 import TopNavBar from '@/app/components/top-nav-bar'
-import ShaderBackground from '@/app/components/shader-background'
 
 export default function SignInPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <ShaderBackground />
-      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
       <TopNavBar variant="public" />
 
       <main className="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-12 relative z-10 pt-28">

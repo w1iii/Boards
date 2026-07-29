@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import TopNavBar from "@/app/components/top-nav-bar"
+import SideNavBar from "@/app/components/side-nav-bar"
 
 const AREAS = [
   { key: "nlp-i", label: "NLP I", description: "Foundation", icon: "menu_book", accent: "bg-primary-fixed" },
@@ -82,9 +82,10 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden bg-surface text-on-surface">
-      <TopNavBar variant="auth" firstName={firstName} imageUrl={imageUrl} />
+      <SideNavBar firstName={firstName} imageUrl={imageUrl} />
 
-      <div className="scallop-top w-full h-[24px] md:h-[40px] pointer-events-none shrink-0" style={{ marginTop: 64 }} />
+      <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
+      <div className="scallop-top w-full h-[24px] md:h-[40px] pointer-events-none shrink-0" />
 
       <div className="flex-1 flex flex-col overflow-hidden px-margin-mobile md:px-margin-desktop">
         <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-4 md:py-6">
@@ -147,7 +148,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
             onClick={beginSession}
             disabled={count === 0 || loading || generating}
             className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-title-md text-sm transition-all active:scale-[0.97] flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
-            style={{ boxShadow: "0 3px 0 #930006, 0 4px 12px rgba(188,0,11,0.2)" }}
+            style={{ boxShadow: "0 3px 0 #9E3B3B, 0 4px 12px rgba(210,83,83,0.2)" }}
           >
             {loading || generating ? (
               <><span>{generating ? "Generating..." : "Creating..."}</span><span className="material-symbols-outlined animate-spin" style={{ fontSize: 18 }}>autorenew</span></>
@@ -156,6 +157,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
             )}
           </button>
         </div>
+      </div>
       </div>
     </div>
   )

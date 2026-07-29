@@ -1,8 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import TopNavBar from "@/app/components/top-nav-bar"
-import ShaderBackground from "@/app/components/shader-background"
+import SideNavBar from "@/app/components/side-nav-bar"
 
 const AREA_LABELS: Record<string, string> = {
   "nlp-i": "NLP I — Foundation",
@@ -46,10 +45,9 @@ export default function ResultsView({
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden bg-surface">
-      <ShaderBackground />
-      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
-      <TopNavBar variant="auth" firstName={firstName} imageUrl={imageUrl} />
+      <SideNavBar firstName={firstName} imageUrl={imageUrl} />
 
+      <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
       <main className="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop py-8">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
@@ -149,6 +147,7 @@ export default function ResultsView({
           </div>
         </div>
       </main>
+      </div>
     </div>
   )
 }

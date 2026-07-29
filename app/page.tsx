@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import TopNavBar from "@/app/components/top-nav-bar";
-import ShaderBackground from "@/app/components/shader-background";
 
 export default function HomePage() {
   useEffect(() => {
@@ -27,8 +26,6 @@ export default function HomePage() {
 
   return (
     <>
-      <ShaderBackground />
-      <div className="fixed inset-0 z-[-5] opacity-20 graph-paper pointer-events-none" />
       <TopNavBar variant="public" />
 
       {/* Hero Section */}

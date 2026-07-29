@@ -1,78 +1,78 @@
 @import "tailwindcss";
 
 @theme {
-  --color-background: #fbf9f4;
+  --color-background: #FFEAD3;
   --color-foreground: #1b1c19;
-  --font-sans: "Work Sans", var(--font-geist-sans);
+  --font-sans: var(--font-work-sans), var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  --color-primary: #bc000b;
+  --color-primary: #D25353;
   --color-on-primary: #ffffff;
-  --color-primary-container: #ea0011;
-  --color-on-primary-container: #fffbff;
-  --color-primary-fixed: #ffdad5;
-  --color-primary-fixed-dim: #ffb4aa;
-  --color-on-primary-fixed: #410001;
-  --color-on-primary-fixed-variant: #930006;
-  --color-inverse-primary: #ffb4aa;
+  --color-primary-container: #EA7B7B;
+  --color-on-primary-container: #9E3B3B;
+  --color-primary-fixed: #FFEAD3;
+  --color-primary-fixed-dim: #EA7B7B;
+  --color-on-primary-fixed: #9E3B3B;
+  --color-on-primary-fixed-variant: #9E3B3B;
+  --color-inverse-primary: #EA7B7B;
 
-  --color-secondary: #4d635d;
+  --color-secondary: #6B5C55;
   --color-on-secondary: #ffffff;
-  --color-secondary-container: #d0e8e1;
-  --color-on-secondary-container: #536963;
-  --color-secondary-fixed: #d0e8e1;
-  --color-secondary-fixed-dim: #b4ccc5;
-  --color-on-secondary-fixed: #0a1f1b;
-  --color-on-secondary-fixed-variant: #364b46;
+  --color-secondary-container: #F0E0D8;
+  --color-on-secondary-container: #50433E;
+  --color-secondary-fixed: #F0E0D8;
+  --color-secondary-fixed-dim: #D4C4BC;
+  --color-on-secondary-fixed: #241A15;
+  --color-on-secondary-fixed-variant: #50433E;
 
-  --color-tertiary: #3b272a;
+  --color-tertiary: #4B3A34;
   --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #533d40;
-  --color-on-tertiary-container: #c6a8ab;
-  --color-tertiary-fixed: #fbdbde;
-  --color-tertiary-fixed-dim: #debfc2;
-  --color-on-tertiary-fixed: #281719;
-  --color-on-tertiary-fixed-variant: #574144;
+  --color-tertiary-container: #E8D3CB;
+  --color-on-tertiary-container: #4B3A34;
+  --color-tertiary-fixed: #FFEDE4;
+  --color-tertiary-fixed-dim: #DBC6BE;
+  --color-on-tertiary-fixed: #241A15;
+  --color-on-tertiary-fixed-variant: #4B3A34;
 
-  --color-error: #ba1a1a;
+  --color-error: #BA1A1A;
   --color-on-error: #ffffff;
-  --color-error-container: #ffdad6;
-  --color-on-error-container: #93000a;
+  --color-error-container: #FFDAD6;
+  --color-on-error-container: #93000A;
 
-  --color-surface: #fbf9f4;
-  --color-on-surface: #1b1c19;
-  --color-surface-dim: #dbdad5;
-  --color-surface-bright: #fbf9f4;
-  --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f5f3ee;
-  --color-surface-container: #f0eee9;
-  --color-surface-container-high: #eae8e3;
-  --color-surface-container-highest: #e4e2dd;
-  --color-surface-variant: #e4e2dd;
-  --color-on-surface-variant: #574143;
+  --color-surface: #FFEAD3;
+  --color-on-surface: #1B1C19;
+  --color-surface-dim: #E8D5C0;
+  --color-surface-bright: #FFF0E0;
+  --color-surface-container-lowest: #FFFFFF;
+  --color-surface-container-low: #F5E4D0;
+  --color-surface-container: #F0DFCB;
+  --color-surface-container-high: #EAD9C5;
+  --color-surface-container-highest: #E4D3BF;
+  --color-surface-variant: #F0E0D8;
+  --color-on-surface-variant: #50433E;
 
-  --color-outline: #8b7172;
-  --color-outline-variant: #debfc0;
+  --color-outline: #8B7A75;
+  --color-outline-variant: #D4C4BC;
 
-  --color-inverse-surface: #30312e;
-  --color-inverse-on-surface: #f2f1ec;
+  --color-inverse-surface: #30312E;
+  --color-inverse-on-surface: #F2F1EC;
 
-  --color-surface-tint: #aa3246;
+  --color-surface-tint: #D25353;
 
   --spacing-margin-mobile: 16px;
   --spacing-margin-desktop: 64px;
   --spacing-gutter: 24px;
   --spacing-section-gap: 120px;
 
-  --font-display-md: "Playfair Display", var(--font-geist-sans);
-  --font-display-lg: "Playfair Display", var(--font-geist-sans);
-  --font-headline-lg: "Playfair Display", var(--font-geist-sans);
-  --font-headline-lg-mobile: "Playfair Display", var(--font-geist-sans);
-  --font-label-caps: "Space Grotesk", sans-serif;
-  --font-mono-data: "Space Grotesk", sans-serif;
-  --font-title-md: "Work Sans", sans-serif;
-  --font-body-md: "Work Sans", sans-serif;
-  --font-body-lg: "Work Sans", sans-serif;
+  --font-display-md: var(--font-playfair), var(--font-geist-sans);
+  --font-display-lg: var(--font-playfair), var(--font-geist-sans);
+  --font-headline-lg: var(--font-playfair), var(--font-geist-sans);
+  --font-headline-lg-mobile: var(--font-playfair), var(--font-geist-sans);
+  --font-label-caps: var(--font-space-grotesk), sans-serif;
+  --font-mono-data: var(--font-space-grotesk), sans-serif;
+  --font-title-md: var(--font-work-sans), sans-serif;
+  --font-body-md: var(--font-work-sans), sans-serif;
+  --font-body-lg: var(--font-work-sans), sans-serif;
 
   --text-display-md: 56px;
   --text-display-md--line-height: 52px;
@@ -122,13 +122,13 @@
 }
 
 .sweet-shadow {
-  box-shadow: 0 4px 20px rgba(188, 0, 11, 0.08);
+  box-shadow: 0 4px 20px rgba(210, 83, 83, 0.08);
 }
 
 .graph-paper {
   background-image:
-    linear-gradient(rgba(188, 0, 11, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(188, 0, 11, 0.04) 1px, transparent 1px);
+    linear-gradient(rgba(210, 83, 83, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(210, 83, 83, 0.04) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -148,21 +148,21 @@
 }
 
 .candy-button-shadow {
-  box-shadow: 0 4px 0 #930006, 0 6px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 0 #9E3B3B, 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .candy-button-shadow:active {
   transform: translateY(2px);
-  box-shadow: 0 2px 0 #930006, 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 0 #9E3B3B, 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .candy-button-shadow-sm {
-  box-shadow: 0 2px 0 #930006, 0 3px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 0 #9E3B3B, 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .candy-button-shadow-sm:active {
   transform: translateY(1px);
-  box-shadow: 0 1px 0 #930006, 0 1px 2px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 0 #9E3B3B, 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes float {
@@ -195,7 +195,7 @@
 }
 
 .scallop-top {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath d='M0,0 Q30,60 60,0 T120,0 T180,0 T240,0 T300,0 T360,0 T420,0 T480,0 T540,0 T600,0 T660,0 T720,0 T780,0 T840,0 T900,0 T960,0 T1020,0 T1080,0 T1140,0 T1200,0 V60 H0 Z' fill='%23ffdad5'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 60' preserveAspectRatio='none'%3E%3Cpath d='M0,0 Q30,60 60,0 T120,0 T180,0 T240,0 T300,0 T360,0 T420,0 T480,0 T540,0 T600,0 T660,0 T720,0 T780,0 T840,0 T900,0 T960,0 T1020,0 T1080,0 T1140,0 T1200,0 V60 H0 Z' fill='%23EA7B7B'/%3E%3C/svg%3E");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: top center;
@@ -205,9 +205,9 @@
   width: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f5f3ee;
+  background: #F5E4D0;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #ea0011;
+  background: #EA7B7B;
   border-radius: 10px;
 }

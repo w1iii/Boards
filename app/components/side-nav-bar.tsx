@@ -32,7 +32,7 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
   }
 
   return (
-    <aside className="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-20 pb-6 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-outline-variant/30 w-64 rounded-r-2xl shadow-sm">
+    <aside className="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-6 pb-6 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-outline-variant/30 w-64 rounded-r-2xl shadow-sm">
       <div className="px-5 mb-6">
         <div className="flex items-center gap-3 p-3 bg-gradient-to-br from-primary-fixed/20 to-secondary-fixed/10 rounded-2xl border border-primary-fixed/20">
           <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-primary-fixed shrink-0 shadow-sm">

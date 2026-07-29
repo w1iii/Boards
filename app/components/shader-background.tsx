@@ -93,7 +93,7 @@ void main() {
     const uTime = gl.getUniformLocation(prog, "u_time")
     const uRes = gl.getUniformLocation(prog, "u_resolution")
 
-    let mouse = { x: canvasEl.width / 2, y: canvasEl.height / 2 }
+    const mouse = { x: canvasEl.width / 2, y: canvasEl.height / 2 }
 
     function handleMouse(event: MouseEvent) {
       const el = canvasRef.current
