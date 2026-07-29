@@ -16,8 +16,6 @@ export default function PracticeLoading() {
       <SideNavBarSkeleton />
 
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
-        <div className="scallop-top w-full h-[24px] md:h-[40px] pointer-events-none shrink-0" />
-
         <div className="flex-1 flex flex-col overflow-hidden px-margin-mobile md:px-margin-desktop">
           <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-4 md:py-6">
             <div className="mb-3 md:mb-4 shrink-0">

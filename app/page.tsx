@@ -29,7 +29,7 @@ export default function HomePage() {
       <TopNavBar variant="public" />
 
       {/* Hero Section */}
-      <header className="relative grid-pattern min-h-[80vh] flex flex-col justify-center px-margin-mobile md:px-margin-desktop pt-12">
+      <header className="relative min-h-[80vh] flex flex-col justify-center px-margin-mobile md:px-margin-desktop pt-12">
         <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-gutter items-end pb-12 border-b border-tertiary">
           <div className="md:col-span-8">
             <span className="text-primary font-label-caps tracking-widest block mb-4 uppercase">Academic Excellence Studio</span>

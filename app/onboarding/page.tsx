@@ -519,15 +519,6 @@ export default function OnboardingPage() {
           </div>
         </div>
       </div>
-
-      <div className="fixed bottom-0 left-0 w-full h-1/4 pointer-events-none z-[-1] opacity-20 overflow-hidden">
-        <div className="absolute -bottom-24 -left-24 w-96 h-96 border-[40px] border-tertiary opacity-10 rotate-12" />
-        <div className="absolute top-1/2 right-10 flex gap-2 rotate-90">
-          <div className="w-2 h-24 bg-primary" />
-          <div className="w-2 h-12 bg-tertiary" />
-        </div>
-      </div>
-
     </div>
   )
 }
