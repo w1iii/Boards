@@ -5,11 +5,11 @@ import Link from "next/link"
 import AppLayout from "@/app/components/app-layout"
 
 const AREA_LABELS: Record<string, string> = {
-  "nlp-i": "NLP I — Foundation",
-  "nlp-ii": "NLP II — Community Health",
-  "nlp-iii": "NLP III — Mother & Child",
-  "nlp-iv": "NLP IV — Medical-Surgical",
-  "nlp-v": "NLP V — Psychiatric",
+  "nlp-i": "NP I — Community Health",
+  "nlp-ii": "NP II — Mother & Child",
+  "nlp-iii": "NP III — Adult Health (Part 1)",
+  "nlp-iv": "NP IV — Adult Health (Part 2)",
+  "nlp-v": "NP V — Mental Health & Psych",
 }
 
 function ScoreCircle({ score, label }: { score: number; label: string }) {

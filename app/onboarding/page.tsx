@@ -3,11 +3,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
 
 const CONTENT_AREAS = [
-  { value: "nlp-i", label: "NLP I — Foundation of Professional Nursing Practice" },
-  { value: "nlp-ii", label: "NLP II — Community Health Nursing" },
-  { value: "nlp-iii", label: "NLP III — Maternal & Child Health Nursing" },
-  { value: "nlp-iv", label: "NLP IV — Medical-Surgical Nursing" },
-  { value: "nlp-v", label: "NLP V — Psychiatric Nursing" },
+  { value: "nlp-i", label: "NP I — Community Health Nursing" },
+  { value: "nlp-ii", label: "NP II — Maternal & Child Health Nursing" },
+  { value: "nlp-iii", label: "NP III — Adult Health and Illness Care (Part 1)" },
+  { value: "nlp-iv", label: "NP IV — Adult Health and Illness Care (Part 2)" },
+  { value: "nlp-v", label: "NP V — Mental Health and Psychiatric Nursing" },
 ] as const
 
 const GOAL_OPTIONS = [

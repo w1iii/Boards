@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation"
 import SideNavBar from "@/app/components/side-nav-bar"
 
 const AREAS = [
-  { key: "nlp-i", label: "NLP I", description: "Foundation", icon: "menu_book", accent: "bg-primary-fixed" },
-  { key: "nlp-ii", label: "NLP II", description: "Community Health", icon: "groups", accent: "bg-secondary-fixed" },
-  { key: "nlp-iii", label: "NLP III", description: "Mother & Child", icon: "pregnant_woman", accent: "bg-tertiary-fixed" },
-  { key: "nlp-iv", label: "NLP IV", description: "Med-Surg", icon: "medical_services", accent: "bg-primary-fixed-dim" },
-  { key: "nlp-v", label: "NLP V", description: "Psychiatric", icon: "psychology", accent: "bg-outline-variant" },
+  { key: "nlp-i", label: "NP I", description: "Community Health", icon: "groups", accent: "bg-primary-fixed" },
+  { key: "nlp-ii", label: "NP II", description: "Mother & Child", icon: "pregnant_woman", accent: "bg-secondary-fixed" },
+  { key: "nlp-iii", label: "NP III", description: "Adult Health I", icon: "monitor_heart", accent: "bg-tertiary-fixed" },
+  { key: "nlp-iv", label: "NP IV", description: "Adult Health II", icon: "medical_services", accent: "bg-primary-fixed-dim" },
+  { key: "nlp-v", label: "NP V", description: "Mental Health", icon: "psychology", accent: "bg-outline-variant" },
 ] as const
 
 interface Props {

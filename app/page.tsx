@@ -56,22 +56,22 @@ export default function HomePage() {
             <div className="flex gap-4 items-center w-full justify-end border-b border-tertiary/20 py-2">
               <span>{'//01'}</span>
               <div className="flex-grow border-t border-tertiary/20 mx-2"></div>
-              <span>Medical-Surgical</span>
+              <span>Community Health</span>
             </div>
             <div className="flex gap-4 items-center w-full justify-end border-b border-tertiary/20 py-2">
               <span>{'//02'}</span>
               <div className="flex-grow border-t border-tertiary/20 mx-2"></div>
-              <span>Maternal &amp; Child</span>
+              <span>Mother &amp; Child</span>
             </div>
             <div className="flex gap-4 items-center w-full justify-end border-b border-tertiary/20 py-2">
               <span>{'//03'}</span>
               <div className="flex-grow border-t border-tertiary/20 mx-2"></div>
-              <span>Community Health</span>
+              <span>Adult Health</span>
             </div>
             <div className="flex gap-4 items-center w-full justify-end py-2">
               <span>{'//04'}</span>
               <div className="flex-grow border-t border-tertiary/20 mx-2"></div>
-              <span>Psychiatric Nursing</span>
+              <span>Mental Health</span>
             </div>
           </div>
         </div>

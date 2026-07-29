@@ -181,11 +181,11 @@ export default function PracticeSession({
           .map(
             (a) =>
               ({
-                "nlp-i": "NLP I — Foundation",
-                "nlp-ii": "NLP II — Community Health",
-                "nlp-iii": "NLP III — Mother & Child",
-                "nlp-iv": "NLP IV — Med-Surg",
-                "nlp-v": "NLP V — Psychiatric",
+                "nlp-i": "NP I — Community Health",
+                "nlp-ii": "NP II — Mother & Child",
+                "nlp-iii": "NP III — Adult Health (Part 1)",
+                "nlp-iv": "NP IV — Adult Health (Part 2)",
+                "nlp-v": "NP V — Mental Health & Psych",
               })[a] ?? a,
           )
           .join(", ")
