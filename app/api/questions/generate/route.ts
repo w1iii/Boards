@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
     const parsed = generateQuestionsSchema.safeParse(body)
     if (!parsed.success) throw new AppError(parsed.error.message, 400)
 
-    const { contentArea, count } = parsed.data
+    const { contentArea, count, difficulty } = parsed.data
     //GET THE INFO OF THE CONTENT TO GENERATE THE TYPE OF QUESTION FROM THE AREA_TOPICS
     const areaInfo = AREA_TOPICS[contentArea]
     const areaLabel = areaInfo?.label ?? contentArea
@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
         },
         {
           role: "user",
-          content: `Generate ${count} NLP situational questions for: ${areaLabel}
+          content: `Generate ${count} NLP situational questions for: ${areaLabel}${difficulty ? `\n\nDifficulty level: ${difficulty} — all questions should be ${difficulty} difficulty.` : "\n\nVary difficulty across questions: some easy, some medium, some hard."}
 
 Topics (shuffled — cover a spread):
 ${shuffleLines(areaTopics)}
@@ -284,8 +284,6 @@ Example format:
       return filled
     }
 
-    const difficulties = ["easy", "medium", "hard"] as const
-
     const inserted = []
     for (let i = 0; i < questions.data.length; i++) {
       const q = questions.data[i]
@@ -310,11 +308,11 @@ Example format:
         q.rationale,
       )
 
-      const difficulty = difficulties[i % 3]
+      const qDifficulty = difficulty ?? (["easy", "medium", "hard"] as const)[i % 3]
 
       const result = await sql`
         INSERT INTO questions (content_area, difficulty, text, choices, correct_answer, rationale, wrong_choice_rationales, reviewed)
-        VALUES (${contentArea}, ${difficulty}, ${q.text}, ${JSON.stringify(rotatedChoices)}, ${newCorrectKey}, ${q.rationale}, ${JSON.stringify(filledWrong)}, true)
+        VALUES (${contentArea}, ${qDifficulty}, ${q.text}, ${JSON.stringify(rotatedChoices)}, ${newCorrectKey}, ${q.rationale}, ${JSON.stringify(filledWrong)}, true)
         RETURNING *
       `
       inserted.push(result.rows[0])

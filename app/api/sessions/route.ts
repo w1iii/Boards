@@ -13,15 +13,24 @@ export async function POST(request: NextRequest) {
     const parsed = createSessionSchema.safeParse(body)
     if (!parsed.success) throw new AppError(parsed.error.message, 400)
 
-    const { type, contentAreas, questionCount } = parsed.data
+    const { type, contentAreas, questionCount, difficulty } = parsed.data
 
-    const questions = await sql`
-      SELECT id FROM questions
-      WHERE content_area = ANY(${contentAreas})
-        AND reviewed = true
-      ORDER BY RANDOM()
-      LIMIT ${questionCount}
-    `
+    const questions = difficulty
+      ? await sql`
+          SELECT id FROM questions
+          WHERE content_area = ANY(${contentAreas})
+            AND reviewed = true
+            AND difficulty = ${difficulty}
+          ORDER BY RANDOM()
+          LIMIT ${questionCount}
+        `
+      : await sql`
+          SELECT id FROM questions
+          WHERE content_area = ANY(${contentAreas})
+            AND reviewed = true
+          ORDER BY RANDOM()
+          LIMIT ${questionCount}
+        `
 
     const questionIds = questions.rows.map((q: Record<string, unknown>) => q.id as string)
 

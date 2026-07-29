@@ -17,8 +17,17 @@ interface Props {
   imageUrl: string | null
 }
 
+const DIFFICULTIES = [
+  { key: "all", label: "All", description: "Mix of easy to hard" },
+  { key: "easy", label: "Easy", description: "Recall & basic application" },
+  { key: "medium", label: "Medium", description: "Analysis & priority setting" },
+  { key: "hard", label: "Hard", description: "Complex multi-step reasoning" },
+] as const
+
 export default function PracticeSetup({ firstName, imageUrl }: Props) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
+  const [questionCount, setQuestionCount] = useState(20)
+  const [difficulty, setDifficulty] = useState<string>("all")
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -32,14 +41,24 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
     setError(null)
   }
 
+  function splitCount(areas: string[]): number[] {
+    const n = areas.length
+    const base = Math.floor(questionCount / n)
+    const remainder = questionCount % n
+    return areas.map((_, i) => base + (i < remainder ? 1 : 0))
+  }
+
   async function generateQuestions(areas: string[]) {
     setGenerating(true)
+    const counts = splitCount(areas)
     try {
-      for (const area of areas) {
+      for (let i = 0; i < areas.length; i++) {
+        const body: Record<string, unknown> = { contentArea: areas[i], count: counts[i] }
+        if (difficulty !== "all") body.difficulty = difficulty
         const res = await fetch("/api/questions/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ contentArea: area, count: 10 }),
+          body: JSON.stringify(body),
         })
         if (!res.ok) throw new Error()
       }
@@ -55,10 +74,12 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
     setLoading(true)
     setError(null)
     try {
+      const body: Record<string, unknown> = { type: "practice", contentAreas: areas, questionCount }
+      if (difficulty !== "all") body.difficulty = difficulty
       const res = await fetch("/api/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "practice", contentAreas: areas, questionCount: 20 }),
+        body: JSON.stringify(body),
       })
       const data = await res.json()
       if (data.error === "no_questions_found") {
@@ -134,7 +155,51 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
         </div>
       </div>
 
-      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-4 md:pb-6">
+      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-4 md:pb-6 space-y-3">
+        <div className="max-w-4xl mx-auto w-full bg-surface-container-lowest rounded-xl border border-outline-variant p-4 md:p-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+              <label className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em] text-[11px] block mb-2">
+                Questions: <span className="text-primary font-bold">{questionCount}</span>
+              </label>
+              <div className="flex items-center gap-3">
+                <span className="font-body-sm text-[11px] text-on-surface-variant w-5 text-right">10</span>
+                <input
+                  type="range"
+                  min={10}
+                  max={50}
+                  step={5}
+                  value={questionCount}
+                  onChange={(e) => setQuestionCount(Number(e.target.value))}
+                  className="flex-1 accent-primary h-1.5 appearance-none cursor-pointer rounded-full bg-outline-variant [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-md"
+                />
+                <span className="font-body-sm text-[11px] text-on-surface-variant w-5">50</span>
+              </div>
+            </div>
+
+            <div>
+              <label className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em] text-[11px] block mb-2">
+                Difficulty
+              </label>
+              <div className="flex gap-1 bg-surface-variant rounded-lg p-1">
+                {DIFFICULTIES.map((d) => (
+                  <button
+                    key={d.key}
+                    onClick={() => setDifficulty(d.key)}
+                    className={`flex-1 px-3 py-2 rounded-md text-[11px] font-label-caps tracking-wider transition-all ${
+                      difficulty === d.key
+                        ? "bg-primary text-on-primary shadow-sm"
+                        : "text-on-surface-variant hover:text-on-surface"
+                    }`}
+                  >
+                    {d.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4 px-5 py-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,218,213,0.6)" }}>
           <div className="flex items-center gap-2.5">
             <span className={`w-2.5 h-2.5 rounded-full ${count > 0 ? "bg-primary" : "bg-secondary"}`} />

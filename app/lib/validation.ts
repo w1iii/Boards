@@ -28,6 +28,7 @@ export const createQuestionSchema = z.object({
 export const generateQuestionsSchema = z.object({
   contentArea: contentAreaSchema,
   count: z.number().int().min(1).max(50).default(10),
+  difficulty: difficultySchema.optional(),
 })
 
 export const reviewQuestionSchema = z.object({
@@ -39,7 +40,8 @@ export const reviewQuestionSchema = z.object({
 export const createSessionSchema = z.object({
   type: z.enum(["practice", "mock-exam"]),
   contentAreas: z.array(contentAreaSchema).min(1),
-  questionCount: z.number().int().min(1).max(100).default(20),
+  questionCount: z.number().int().min(10).max(50).default(20),
+  difficulty: difficultySchema.optional(),
 })
 
 export const answerQuestionSchema = z.object({
