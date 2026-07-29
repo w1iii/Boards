@@ -12,7 +12,7 @@ const AREA_ICONS = ["menu_book", "groups", "pregnant_woman", "medical_services",
 
 export default function PracticeLoading() {
   return (
-    <div className="h-dvh flex flex-col overflow-hidden bg-surface text-on-surface">
+    <div className="h-dvh flex flex-col overflow-hidden text-on-surface">
       <SideNavBarSkeleton />
 
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">

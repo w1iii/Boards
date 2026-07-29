@@ -193,7 +193,7 @@ export default function PracticeSession({
 
   if (!question) {
     return (
-      <div className="h-dvh flex items-center justify-center bg-surface">
+      <div className="h-dvh flex items-center justify-center">
         <p className="font-body-lg text-secondary">No questions available.</p>
       </div>
     )
@@ -203,7 +203,7 @@ export default function PracticeSession({
   const feedbackState = showFeedback ? answerStates[question.id] : null
 
   return (
-    <div className="h-dvh flex flex-col overflow-hidden bg-surface">
+    <div className="h-dvh flex flex-col overflow-hidden">
       <SideNavBar firstName={firstName} imageUrl={imageUrl} />
 
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">

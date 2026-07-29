@@ -81,7 +81,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
   const count = selected.size
 
   return (
-    <div className="h-dvh flex flex-col overflow-hidden bg-surface text-on-surface">
+    <div className="h-dvh flex flex-col overflow-hidden text-on-surface">
       <SideNavBar firstName={firstName} imageUrl={imageUrl} />
 
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
