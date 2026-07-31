@@ -48,7 +48,7 @@ export default function UserMenu({ imageUrl, firstName }: UserMenuProps) {
         <div className="absolute right-0 top-12 w-48 bg-surface border border-tertiary shadow-lg z-50">
           <button
             onClick={() => {
-              router.push("/settings")
+              router.push("/dashboard/settings")
               setOpen(false)
             }}
             className="w-full text-left px-4 py-3 font-body-md text-on-surface hover:bg-surface-container transition-colors"

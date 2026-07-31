@@ -1,258 +1,167 @@
-import Link from "next/link"
+"use client"
+
+import { useState } from "react"
 import Image from "next/image"
-import TopNavBar from "@/app/components/top-nav-bar"
-import ScrollAnimator from "@/app/components/scroll-animator"
+import { Inter } from "next/font/google"
+import { SignIn, SignUp } from "@clerk/nextjs"
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+})
+
+const HERO_IMAGE =
+  "https://lh3.googleusercontent.com/aida-public/AB6AXuBp9URoKbSdVXtDkLUk3agUg470oc7dnRKCgHR1cHcode3qnTUPb4W4llS4Ty0BhqYl0Gud6tuhJ8EmAY5i1Aekaz2i7ZtMDew1MlM7oCUMkikr64B-80R6cPJZPau66s6qQ-jxIYqimGOWnVBh7QrRig9PJD3hR6WgJuIaMbAM_3vpygG5pKIOY3BH8IrbULd-NdM2TELuBLTCMOnMbvT3V_mZVFpz_IJxVYYBqFijXc6b-UPD_7vE"
+
+const LOGO_IMAGE =
+  "https://lh3.googleusercontent.com/aida/AP1WRLuUh2k-lGT78YZeM3wwQp3tOQOFDXYNp8EMnjf-16T0lke4cZaqkOspRffuUgNbKGx75Wrj2AnrNHKrsvrKQB45Ym4b1x_tkvE4jxIcYa3Vxvhtpzn_IfrLDOpB_Hxfa4-i-tTv15VuRdKojci-SKifGI4CWOaA3I5Yre4N_k5QzxIw_Erk60LKmKt2mNiNijLSQLGjc4eqE9TlwNxHtTYVT9ft3tgUXQ7w3emqpa_NragDdHyzDCxOu7Q"
+
+const clerkAppearance = {
+  elements: {
+    rootBox: "w-full",
+    card: "bg-transparent shadow-none p-0 w-full max-w-none",
+    header: "hidden",
+    footer: "hidden",
+    socialButtons: "hidden",
+    formFieldLabel: "block text-sm font-semibold text-gray-900 mb-0.5",
+    formFieldInput:
+      "block w-full px-5 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-power-red/20 focus:border-power-red focus:outline-none transition-all text-base",
+    formButtonPrimary:
+      "btn-gradient w-full py-3.5 px-6 rounded-full text-white font-bold text-lg shadow-lg shadow-power-red/30",
+    formFieldError: "text-sm text-power-red",
+  },
+}
+
+function UserPlusIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      className={className}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2"
+      />
+    </svg>
+  )
+}
 
 export default function HomePage() {
+  const [mode, setMode] = useState<"signup" | "signin">("signup")
+
+  const isSignUp = mode === "signup"
+  const title = isSignUp ? "Create Account" : "Welcome Back"
+  const toggleLabel = isSignUp ? "Sign In" : "Sign Up"
+  const footerPrefix = isSignUp ? "Already have an account?" : "Don't have an account?"
+  const footerLink = isSignUp ? "Sign In" : "Sign Up"
+
   return (
-    <ScrollAnimator>
-      <TopNavBar variant="public" />
+    <main
+      className={`${inter.variable} font-sans antialiased overflow-x-hidden`}
+      style={{ fontFamily: "var(--font-inter), sans-serif" }}
+    >
+      <div className="min-h-screen flex items-center justify-center p-0 md:p-2 lg:p-4" style={{ backgroundColor: "#2b2b2b" }}>
+        <div className="flex flex-col lg:flex-row w-full max-w-[1440px] bg-boards-charcoal rounded-[3rem] lg:rounded-[3rem] rounded-none overflow-hidden shadow-2xl">
+          {/* Left Hero Section */}
+          <section className="relative flex-1 bg-boards-charcoal p-6 lg:p-10 flex flex-col justify-between overflow-hidden min-h-[380px] lg:min-h-[440px]">
+            <div className="absolute inset-0 z-0">
+              <Image
+                src={HERO_IMAGE}
+                alt="Medical background"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover opacity-60"
+              />
+              <div className="absolute inset-0 bg-boards-charcoal/40" />
+            </div>
 
-      <header className="relative min-h-[80vh] flex flex-col justify-center px-margin-mobile md:px-margin-desktop pt-12">
-        <div className="max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-gutter items-end pb-12 border-b border-tertiary">
-          <div className="md:col-span-8">
-            <span className="text-primary font-label-caps tracking-widest block mb-4 uppercase">Academic Excellence Studio</span>
-            <h1 className="font-display-md md:font-display-lg text-[48px] md:text-display-lg uppercase leading-none mb-6">
-              PASS THE NLE.<br />
-              <span className="text-primary">YOUR FIRST TAKE.</span>
-            </h1>
-            <p className="font-body-lg text-secondary max-w-xl mb-12">
-              AI-powered practice exams designed for Philippine nursing boards. We bridge the gap between classroom theory and licensure success.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-              <Link href="/sign-up" className="bg-primary text-on-primary font-headline-lg px-8 py-5 flex items-center gap-4 hover:bg-primary-container transition-all group">
-                START FREE PRACTICE
-                <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
-              </Link>
-              <div className="p-6 bg-on-surface text-surface max-w-xs">
-                <p className="font-mono-data text-sm opacity-80 leading-snug">
-                  An innovative review platform dedicated to creating striking results for nurses who are fearless in their pursuit of excellence.
+            <div className="relative z-10">
+              <Image
+                src={LOGO_IMAGE}
+                alt="BOARDS. Logo"
+                width={160}
+                height={40}
+                className="h-10 w-auto brightness-0 invert"
+              />
+              <p className="text-gray-400 mt-3 text-xs uppercase tracking-widest font-medium">
+                Global NLE Certification Prep
+              </p>
+            </div>
+
+            <div className="relative z-10 mt-6">
+              <h1 className="text-2xl lg:text-4xl font-bold text-white leading-tight max-w-md">
+                Your journey to NLE mastery starts here.
+              </h1>
+            </div>
+          </section>
+
+          {/* Right Auth Section */}
+          <section className="flex-1 bg-white p-6 lg:p-10 flex flex-col justify-center items-center">
+            <div className="w-full max-w-md space-y-4">
+              <div className="flex justify-between items-center">
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900">{title}</h2>
+                <button
+                  onClick={() => setMode(isSignUp ? "signin" : "signup")}
+                  className="text-sm font-semibold text-gray-500 hover:text-gray-900 flex items-center gap-2"
+                >
+                  <UserPlusIcon className="h-5 w-5" />
+                  {toggleLabel}
+                </button>
+              </div>
+
+              {isSignUp ? (
+                <SignUp appearance={clerkAppearance} signInUrl="/sign-in" />
+              ) : (
+                <SignIn appearance={clerkAppearance} signUpUrl="/sign-up" />
+              )}
+
+              <div className="text-center">
+                <p className="text-gray-500 text-sm">
+                  {footerPrefix}{" "}
+                  <button
+                    onClick={() => setMode(isSignUp ? "signin" : "signup")}
+                    className="font-bold text-power-red hover:text-power-red-dark transition-colors"
+                  >
+                    {footerLink}
+                  </button>
                 </p>
               </div>
-            </div>
-          </div>
-          <div className="md:col-span-4 hidden md:flex flex-col gap-2 items-end justify-end pb-4 font-mono-data text-tertiary">
-            <div className="flex gap-4 items-center w-full justify-end border-b border-tertiary/20 py-2">
-              <span>{'//01'}</span>
-              <div className="flex-grow border-t border-tertiary/20 mx-2"></div>
-              <span>Community Health</span>
-            </div>
-            <div className="flex gap-4 items-center w-full justify-end border-b border-tertiary/20 py-2">
-              <span>{'//02'}</span>
-              <div className="flex-grow border-t border-tertiary/20 mx-2"></div>
-              <span>Mother &amp; Child</span>
-            </div>
-            <div className="flex gap-4 items-center w-full justify-end border-b border-tertiary/20 py-2">
-              <span>{'//03'}</span>
-              <div className="flex-grow border-t border-tertiary/20 mx-2"></div>
-              <span>Adult Health</span>
-            </div>
-            <div className="flex gap-4 items-center w-full justify-end py-2">
-              <span>{'//04'}</span>
-              <div className="flex-grow border-t border-tertiary/20 mx-2"></div>
-              <span>Mental Health</span>
-            </div>
-          </div>
-        </div>
-      </header>
 
-      <section className="py-16 px-margin-mobile md:px-margin-desktop bg-surface">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-gutter">
-          <div className="border-l border-tertiary pl-6 py-4">
-            <h3 className="font-display-md text-headline-lg-mobile md:text-[48px] leading-none mb-2">5,000+</h3>
-            <p className="font-label-caps text-secondary uppercase">Questions Delivered</p>
-          </div>
-          <div className="border-l border-tertiary pl-6 py-4">
-            <h3 className="font-display-md text-headline-lg-mobile md:text-[48px] leading-none mb-2">95%</h3>
-            <p className="font-label-caps text-secondary uppercase">Passing Rate</p>
-          </div>
-          <div className="border-l border-tertiary pl-6 py-4">
-            <h3 className="font-display-md text-headline-lg-mobile md:text-[48px] leading-none mb-2">15</h3>
-            <p className="font-label-caps text-secondary uppercase">Years Experience</p>
-          </div>
-          <div className="border-l border-tertiary pl-6 py-4">
-            <h3 className="font-display-md text-headline-lg-mobile md:text-[48px] leading-none mb-2">50+</h3>
-            <p className="font-label-caps text-secondary uppercase">Nursing Colleges</p>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-section-gap px-margin-mobile md:px-margin-desktop bg-surface-container-low">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-between items-end mb-16">
-            <div>
-              <span className="text-primary font-label-caps uppercase mb-2 block">Works</span>
-              <h2 className="font-display-md text-headline-lg md:text-display-md uppercase leading-tight">
-                ENGINEERED FOR <br /><span className="text-outline text-on-surface">CLINICAL PRECISION</span>
-              </h2>
-            </div>
-            <Link className="hidden md:flex items-center gap-2 font-label-caps text-on-surface hover:text-primary transition-colors" href="#">
-              EXPLORE MORE <span className="bg-primary text-white p-1 material-symbols-outlined text-sm">arrow_forward</span>
-            </Link>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-gutter">
-            <div className="md:col-span-8 bg-on-surface text-surface p-12 flex flex-col justify-between min-h-[500px] border border-secondary transition-transform hover:-translate-y-1">
-              <div className="flex justify-between items-start">
-                <span className="font-label-caps text-primary uppercase">Feature 01</span>
-                <span className="material-symbols-outlined text-4xl">psychology</span>
-              </div>
-              <div>
-                <h3 className="font-display-md text-headline-lg md:text-display-md uppercase mb-6 leading-none">Adaptive Learning <br />Algorithms</h3>
-                <p className="font-body-lg max-w-md opacity-70">
-                  Our AI analyzes your performance in real-time, identifying weak areas and adjusting question difficulty to maximize your retention.
-                </p>
-              </div>
-            </div>
-
-            <div className="md:col-span-4 grid grid-rows-2 gap-gutter">
-              <div className="bg-surface border border-tertiary p-8 hover:bg-surface-container transition-colors">
-                <div className="relative w-full h-32 mb-6">
-                  <Image
-                    className="grayscale brightness-90 object-cover"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuD94-PQv_nTWXsaZcnWsCwuWl-yZVwYGI1r6h6ST7vHDGDTRgBgflWgbtGPM-5lMmlZ0j6-H0kerD0evVUM1pD6K-hIQmvQCQxaOph6NKJOSTYSVYIN8kES4vQVVDVYIPWwsyf2kJUf_Inu2MXIZS2MxSvBbqyAz0DFZakkVsyN8r4ewEWehga3dokEvlVkyH1yfibWBBTwa7zOg_iG4ZKQIB44Iumq9qP0LK9_FqtK-N_2pX_2-ksY"
-                    alt="Medical equipment in a clinical setting"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 25vw"
-                  />
-                </div>
-                <div className="flex justify-between items-center">
-                  <h4 className="font-headline-lg uppercase text-xl">Rationale Library</h4>
-                  <span className="material-symbols-outlined">north_east</span>
+              <div className="flex justify-between items-center pt-4 text-xs text-gray-400 font-medium uppercase tracking-widest">
+                <p>© 2024-2025 BOARDS. Inc.</p>
+                <div className="flex gap-6">
+                  <a className="hover:text-gray-900 transition-colors" href="#">
+                    Contact Us
+                  </a>
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-gray-900 transition-colors">
+                    <span>English</span>
+                    <svg
+                      className="h-3 w-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M19 9l-7 7-7-7"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                      />
+                    </svg>
+                  </div>
                 </div>
               </div>
-              <div className="bg-primary text-white p-8 hover:opacity-95 transition-opacity">
-                <div className="mb-8">
-                  <span className="material-symbols-outlined text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>analytics</span>
-                </div>
-                <h4 className="font-headline-lg uppercase text-xl mb-2">Progress Tracking</h4>
-                <p className="font-body-md opacity-80">Detailed metrics of your mastery level across all five NLE NP segments.</p>
-              </div>
             </div>
-
-            <div className="md:col-span-4 bg-surface border border-tertiary p-6 h-64 flex flex-col justify-end group">
-              <div className="flex justify-between items-end">
-                <h5 className="font-headline-lg uppercase text-lg">Simulated Board Environment</h5>
-                <span className="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
-              </div>
-            </div>
-            <div className="md:col-span-4 bg-tertiary text-white p-6 h-64 flex flex-col justify-end group">
-              <div className="flex justify-between items-end">
-                <h5 className="font-headline-lg uppercase text-lg">Expert-Verified Item Banks</h5>
-                <span className="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
-              </div>
-            </div>
-            <div className="md:col-span-4 bg-surface border border-tertiary p-6 h-64 flex flex-col justify-end group">
-              <div className="flex justify-between items-end">
-                <h5 className="font-headline-lg uppercase text-lg">Focus Mode Interface</h5>
-                <span className="material-symbols-outlined opacity-0 group-hover:opacity-100 transition-opacity">arrow_forward</span>
-              </div>
-            </div>
-          </div>
+          </section>
         </div>
-      </section>
-
-      <section className="py-section-gap px-margin-mobile md:px-margin-desktop bg-surface">
-        <div className="max-w-7xl mx-auto">
-          <span className="text-primary font-label-caps uppercase mb-2 block text-center">The Methodology</span>
-          <h2 className="font-display-md text-headline-lg md:text-display-md uppercase text-center mb-20">HOW IT <span className="text-primary">WORKS</span></h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 border-y border-tertiary">
-            <div className="p-12 md:border-r border-tertiary group hover:bg-on-surface hover:text-surface transition-all duration-500">
-              <span className="font-display-md text-headline-lg text-outline text-on-surface group-hover:text-surface mb-8 block transition-colors">01</span>
-              <h3 className="font-headline-lg uppercase mb-4">CHOOSE AREA</h3>
-              <p className="font-body-md opacity-60">Select from NP 1-5 or specific sub-categories like Pharmacology or Nursing Research.</p>
-            </div>
-            <div className="p-12 md:border-r border-tertiary group hover:bg-primary hover:text-surface transition-all duration-500">
-              <span className="font-display-md text-headline-lg text-outline text-on-surface group-hover:text-surface mb-8 block transition-colors">02</span>
-              <h3 className="font-headline-lg uppercase mb-4">ANSWER &amp; REVIEW</h3>
-              <p className="font-body-md opacity-60">Practice with timed mock boards. Receive instant rationales for every single option provided.</p>
-            </div>
-            <div className="p-12 group hover:bg-on-surface hover:text-surface transition-all duration-500">
-              <span className="font-display-md text-headline-lg text-outline text-on-surface group-hover:text-surface mb-8 block transition-colors">03</span>
-              <h3 className="font-headline-lg uppercase mb-4">TRACK PERFORMANCE</h3>
-              <p className="font-body-md opacity-60">Visualize your growth. Identify specific competencies that require further review before exam day.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-section-gap px-margin-mobile md:px-margin-desktop bg-surface-container-highest">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-gutter">
-          <div className="md:col-span-4">
-            <h2 className="font-display-md text-headline-lg md:text-display-md uppercase leading-none mb-8">INVEST IN YOUR <span className="text-primary">LICENSE</span></h2>
-            <p className="font-body-lg text-secondary mb-12">No hidden fees. Just premium content designed to get you registered.</p>
-          </div>
-          <div className="md:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-gutter">
-            <div className="bg-surface p-12 border border-tertiary relative overflow-hidden group">
-              <div className="relative z-10">
-                <span className="font-label-caps text-secondary uppercase mb-8 block">Subscription</span>
-                <h3 className="font-headline-lg uppercase text-3xl mb-2">MONTHLY</h3>
-                <p className="font-display-md text-headline-lg text-primary leading-none mb-8">₱349</p>
-                <ul className="space-y-4 mb-12 font-mono-data text-sm">
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-primary text-sm">check</span> Unlimited Questions</li>
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-primary text-sm">check</span> All NP Categories</li>
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-primary text-sm">check</span> Performance Dashboard</li>
-                </ul>
-                <Link href="/sign-up" className="block w-full border-2 border-on-surface py-4 font-headline-lg uppercase text-center hover:bg-on-surface hover:text-surface transition-colors">Subscribe</Link>
-              </div>
-            </div>
-
-            <div className="bg-on-surface text-surface p-12 border border-secondary relative overflow-hidden">
-              <div className="absolute top-6 right-6 bg-primary text-white font-label-caps px-3 py-1 text-[10px] uppercase">Recommended</div>
-              <div className="relative z-10">
-                <span className="font-label-caps text-secondary-fixed-dim uppercase mb-8 block">Full Review</span>
-                <h3 className="font-headline-lg uppercase text-3xl mb-2">FINAL PUSH</h3>
-                <p className="font-display-md text-headline-lg text-primary leading-none mb-8">₱799</p>
-                <ul className="space-y-4 mb-12 font-mono-data text-sm">
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-primary text-sm">check</span> 3-Month Access</li>
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-primary text-sm">check</span> Predictive Exam Score</li>
-                  <li className="flex items-center gap-2"><span className="material-symbols-outlined text-primary text-sm">check</span> Priority Content Updates</li>
-                </ul>
-                <Link href="/sign-up" className="block w-full bg-primary py-4 font-headline-lg uppercase text-center hover:bg-primary-container transition-colors">Start Review</Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <footer className="bg-primary border-t border-primary-fixed/30 px-margin-mobile md:px-margin-desktop py-section-gap w-full text-on-primary">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-gutter">
-          <div className="md:col-span-2">
-            <div className="flex items-center gap-2 mb-8">
-              <div className="relative h-12 w-auto">
-                <Image
-                  className="brightness-0 invert"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2blFSvhfS9jHGCBXITovua9NLN6SXNJnqVDMXc9CHOYrjzSyHKGk1G-nSIA7Y-pA8IE5OxPbz97Q4ItVK4bGlq9lrPC-fPD7SteKIuT4T3u-Rpvye8uHZDBc_ZOElnEozIrYHZsTVDzmtwG7qjlgwEnOwk48CHFzu2Uz8bKKXs4zGBZ1iBaWI8Xw2n6H4kErKXEz9UJQbSR2YoV_iFBGvDST0_zMLuobj8XeygXkZ2mX4QSh4FXqa"
-                  alt="BOARDS. Logo"
-                  width={180}
-                  height={48}
-                />
-              </div>
-            </div>
-            <p className="font-body-md text-secondary-fixed-dim max-w-sm">
-              Empowering the next generation of Filipino nurses through cutting-edge technology and pedagogical excellence.
-            </p>
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="font-label-caps text-primary-fixed uppercase tracking-widest mb-2">Quick Links</span>
-            <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">About Us</Link>
-            <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">Curriculum</Link>
-            <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">Contact Support</Link>
-          </div>
-          <div className="flex flex-col gap-4">
-            <span className="font-label-caps text-primary-fixed uppercase tracking-widest mb-2">Legal</span>
-            <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">Privacy Policy</Link>
-            <Link className="font-body-md text-secondary-fixed-dim hover:text-primary-fixed-dim transition-colors duration-300" href="#">Terms of Service</Link>
-          </div>
-        </div>
-        <div className="max-w-7xl mx-auto mt-20 pt-8 border-t border-tertiary/20 flex flex-col md:flex-row justify-between gap-4">
-          <p className="font-body-md text-tertiary-fixed-dim text-sm">© 2024 BOARDS. Nursing Excellence Platform. All rights reserved.</p>
-          <div className="flex gap-6">
-            <button className="material-symbols-outlined text-secondary-fixed-dim hover:text-white transition-colors">brand_facebook</button>
-            <button className="material-symbols-outlined text-secondary-fixed-dim hover:text-white transition-colors">brand_linkedin</button>
-            <button className="material-symbols-outlined text-secondary-fixed-dim hover:text-white transition-colors">alternate_email</button>
-          </div>
-        </div>
-      </footer>
-    </ScrollAnimator>
+      </div>
+    </main>
   )
 }

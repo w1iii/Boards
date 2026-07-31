@@ -52,6 +52,12 @@ export const getProgressAgg = cache(async (userId: string) => {
   }
 })
 
+export const deleteUserData = async (userId: string) => {
+  await sql`DELETE FROM sessions WHERE user_id = ${userId}`
+  await sql`DELETE FROM subscriptions WHERE user_id = ${userId}`
+  await sql`DELETE FROM user_profiles WHERE clerk_user_id = ${userId}`
+}
+
 export const getAreaBreakdown = cache(async (userId: string) => {
   try {
     const result = await sql`

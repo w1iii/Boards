@@ -85,8 +85,12 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
 
       <div className="mt-auto px-3 pt-4 border-t border-outline-variant/20 space-y-1">
         <Link
-          href="/dashboard"
-          className="flex items-center px-4 py-2.5 gap-3 text-on-surface-variant hover:bg-surface-container-high hover:text-primary rounded-xl transition-all font-label-caps"
+          href="/dashboard/settings"
+          className={`flex items-center px-4 py-2.5 gap-3 rounded-xl transition-all font-label-caps ${
+            pathname.startsWith("/dashboard/settings")
+              ? "bg-primary-fixed/40 text-primary font-bold"
+              : "text-on-surface-variant hover:bg-surface-container-high hover:text-primary"
+          }`}
         >
           <span className="material-symbols-outlined text-xl">settings</span>
           Settings

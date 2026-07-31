@@ -59,6 +59,10 @@
 
   --color-surface-tint: #952323;
 
+  --color-boards-charcoal: #1a1a1a;
+  --color-power-red: #FF3B30;
+  --color-power-red-dark: #D70015;
+
   --spacing-margin-mobile: 16px;
   --spacing-margin-desktop: 64px;
   --spacing-gutter: 24px;
@@ -161,4 +165,13 @@
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #A73121;
   border-radius: 10px;
+}
+
+.btn-gradient {
+  background: linear-gradient(90deg, #FF3B30 0%, #FF2D55 100%);
+  transition: opacity 0.2s ease;
+}
+
+.btn-gradient:hover {
+  opacity: 0.9;
 }
