@@ -112,9 +112,9 @@ export default function HomePage() {
               </div>
 
               {isSignUp ? (
-                <SignUp appearance={clerkAppearance} signInUrl="/" fallbackRedirectUrl="/onboarding" />
+                <SignUp routing="hash" appearance={clerkAppearance} signInUrl="/#/sign-in" fallbackRedirectUrl="/onboarding" />
               ) : (
-                <SignIn appearance={clerkAppearance} signUpUrl="/sign-up" fallbackRedirectUrl="/dashboard" />
+                <SignIn routing="hash" appearance={clerkAppearance} signUpUrl="/#/sign-up" fallbackRedirectUrl="/dashboard" />
               )}
 
               <div className="text-center">
