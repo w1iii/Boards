@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useClerk } from "@clerk/nextjs"
 import { useBreak } from "@/app/contexts/break-context"
 
 const NAV_ITEMS: Array<{
@@ -23,6 +24,7 @@ interface SideNavBarProps {
 
 export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
   const pathname = usePathname()
+  const { signOut } = useClerk()
   const { openBreakModal } = useBreak()
 
   function isActive(href: string, query?: boolean): boolean {
@@ -95,6 +97,13 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
           <span className="material-symbols-outlined text-xl">settings</span>
           Settings
         </Link>
+        <button
+          onClick={() => signOut({ redirectUrl: "/sign-in" })}
+          className="w-full flex items-center px-4 py-2.5 gap-3 rounded-xl transition-all font-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-error"
+        >
+          <span className="material-symbols-outlined text-xl">logout</span>
+          Logout
+        </button>
         <button
           onClick={openBreakModal}
           className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-label-caps text-sm candy-button-shadow-sm transition-all hover:opacity-90 flex items-center justify-center gap-2"
