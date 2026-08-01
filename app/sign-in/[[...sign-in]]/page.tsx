@@ -7,68 +7,48 @@ export default function SignInPage() {
       <TopNavBar variant="public" />
 
       <main className="flex-grow flex items-center justify-center px-margin-mobile md:px-margin-desktop py-12 relative z-10 pt-28">
-        <div className="w-full max-w-md">
+        <div className="w-full max-w-[440px]">
           <div className="text-center mb-8">
             <div className="flex justify-center mb-3">
               <div className="w-12 h-12 bg-primary flex items-center justify-center rounded-2xl shadow-md">
                 <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>medical_services</span>
               </div>
             </div>
-            <h1 className="font-display-md text-3xl font-black tracking-tighter text-primary">BOARDS.</h1>
-            <p className="font-label-caps text-[10px] uppercase text-on-surface-variant tracking-widest mt-1">Nursing Excellence Platform</p>
+            <h1 className="font-display-md text-3xl font-black tracking-tighter text-primary mb-1">BOARDS.</h1>
+            <p className="font-body-md text-on-surface-variant">Elevate Your Practice</p>
+            <div className="mt-3 inline-flex items-center gap-2 bg-primary-fixed/40 px-3 py-1.5 rounded-xl border border-primary-fixed/30">
+              <span className="material-symbols-outlined text-[14px] text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>group</span>
+              <span className="font-label-caps text-[9px] text-primary uppercase">Join 5,000+ nursing students</span>
+            </div>
           </div>
 
-          <div className="relative">
-            <div className="absolute top-0 left-0 w-2 h-full bg-primary z-10 rounded-l-lg" />
-            <SignIn
-              appearance={{
-                elements: {
-                  rootBox: 'mx-auto w-full',
-                  card: 'glass-jar border border-white/40 shadow-none p-6 md:p-8 rounded-2xl',
-                  headerTitle: 'font-headline-lg text-xl text-primary',
-                  headerSubtitle: 'text-sm text-on-surface-variant',
-                  socialButtonsBlockButton: 'border-2 border-outline-variant text-on-surface hover:bg-surface-container hover:border-primary rounded-xl',
-                  socialButtonsBlockButtonText: 'text-sm font-body-md text-on-surface',
-                  dividerLine: 'bg-outline-variant',
-                  dividerText: 'font-label-caps text-[10px] text-on-surface-variant',
-                  formFieldLabel: 'font-label-caps text-[10px] text-on-surface-variant',
-                  formFieldInput: 'w-full bg-surface-container-low border border-outline-variant rounded-xl px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none focus:ring-0 transition-all',
-                  formButtonPrimary: 'w-full bg-primary text-on-primary text-sm py-3 rounded-xl font-label-caps uppercase tracking-wider transition-all hover:bg-primary-container active:scale-[0.98] candy-button-shadow',
-                  footerActionText: 'text-sm text-on-surface-variant',
-                  footerActionLink: 'text-primary font-bold hover:underline',
-                  identityPreviewText: 'text-on-surface',
-                  identityPreviewEditButton: 'text-primary',
-                },
-              }}
-            />
-          </div>
-
-          <div className="mt-8 grid grid-cols-3 gap-3 opacity-50">
-            <div className="flex flex-col items-center text-center">
-              <span className="material-symbols-outlined text-secondary text-lg mb-1">verified_user</span>
-              <span className="font-label-caps text-[9px]">ENCRYPTED</span>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <span className="material-symbols-outlined text-secondary text-lg mb-1">school</span>
-              <span className="font-label-caps text-[9px]">NLE CURRICULUM</span>
-            </div>
-            <div className="flex flex-col items-center text-center">
-              <span className="material-symbols-outlined text-secondary text-lg mb-1">clinical_notes</span>
-              <span className="font-label-caps text-[9px]">BOARD READY</span>
-            </div>
-          </div>
+          <SignIn
+            fallbackRedirectUrl="/dashboard"
+            appearance={{
+              elements: {
+                rootBox: 'mx-auto w-full',
+                card: 'glass-jar border border-white/40 shadow-none p-6 md:p-8 rounded-2xl',
+                headerTitle: 'font-display-md text-2xl font-black tracking-tighter text-primary',
+                headerSubtitle: 'text-sm text-on-surface-variant',
+                socialButtonsBlockButton: 'border border-outline-variant text-on-surface hover:bg-surface-container rounded-xl',
+                socialButtonsBlockButtonText: 'text-sm font-body-md text-on-surface',
+                dividerLine: 'bg-outline-variant',
+                dividerText: 'font-label-caps text-[10px] text-on-surface-variant',
+                formFieldLabel: 'font-label-caps text-[10px] text-on-surface-variant',
+                formFieldInput: 'w-full bg-surface-container-low border border-outline-variant rounded-xl px-3 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:border-primary focus:outline-none focus:ring-0 transition-all',
+                formButtonPrimary: 'w-full bg-primary text-on-primary text-sm py-3 rounded-xl font-label-caps uppercase tracking-wider transition-all hover:bg-primary-container active:scale-[0.98] candy-button-shadow',
+                footerActionText: 'text-sm text-on-surface-variant',
+                footerActionLink: 'text-primary font-bold hover:underline',
+                identityPreviewText: 'text-on-surface',
+                identityPreviewEditButton: 'text-primary',
+              },
+            }}
+          />
         </div>
       </main>
 
-      <footer className="py-6 border-t border-outline-variant/30 bg-surface-container-low/50 backdrop-blur-md relative z-10">
-        <div className="max-w-7xl mx-auto px-margin-mobile md:px-margin-desktop flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="font-body-md text-label-caps text-on-surface-variant opacity-60">&copy; 2024 BOARDS. Nursing Excellence Platform. All rights reserved.</p>
-          <div className="flex gap-6">
-            <a className="font-label-caps text-[10px] text-on-surface-variant hover:text-primary transition-colors" href="#">PRIVACY POLICY</a>
-            <a className="font-label-caps text-[10px] text-on-surface-variant hover:text-primary transition-colors" href="#">TERMS OF SERVICE</a>
-            <a className="font-label-caps text-[10px] text-on-surface-variant hover:text-primary transition-colors" href="#">SUPPORT</a>
-          </div>
-        </div>
+      <footer className="w-full py-6 px-margin-mobile border-t border-outline-variant/30 bg-surface-container-low/50 backdrop-blur-md text-center relative z-10">
+        <p className="font-label-caps text-[10px] text-on-surface-variant">&copy; 2024 BOARDS. NURSING EXCELLENCE PLATFORM.</p>
       </footer>
     </div>
   )

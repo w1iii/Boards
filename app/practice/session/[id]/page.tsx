@@ -9,7 +9,7 @@ export default async function SessionPage({
   params: Promise<{ id: string }>
 }) {
   const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+  if (!userId) redirect("/")
 
   const profile = await getProfile(userId)
   const firstName = (profile?.first_name as string) || "there"

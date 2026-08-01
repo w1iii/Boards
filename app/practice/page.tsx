@@ -5,7 +5,7 @@ import PracticeSetup from "./practice-setup"
 
 export default async function PracticePage() {
   const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+  if (!userId) redirect("/")
 
   const profile = await getProfile(userId)
   const firstName = (profile?.first_name as string) || "there"

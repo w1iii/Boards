@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/onboarding(.*)",
+  "/sso-callback(.*)",
   "/api/webhooks(.*)",
 ])
 
@@ -14,7 +15,7 @@ export default clerkMiddleware(
       await auth.protect()
     }
   },
-  { signInUrl: "/sign-in" },
+  { signInUrl: "/" },
 )
 
 export const config = {

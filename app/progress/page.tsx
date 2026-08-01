@@ -464,7 +464,7 @@ function ProgressSessionsFallback() {
 
 export default async function ProgressPage() {
   const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+  if (!userId) redirect("/")
 
   const profile = await getProfile(userId)
   if (!profile || !profile.onboarding_completed) {

@@ -112,9 +112,9 @@ export default function HomePage() {
               </div>
 
               {isSignUp ? (
-                <SignUp appearance={clerkAppearance} signInUrl="/sign-in" />
+                <SignUp appearance={clerkAppearance} signInUrl="/" fallbackRedirectUrl="/onboarding" />
               ) : (
-                <SignIn appearance={clerkAppearance} signUpUrl="/sign-up" />
+                <SignIn appearance={clerkAppearance} signUpUrl="/sign-up" fallbackRedirectUrl="/dashboard" />
               )}
 
               <div className="text-center">

@@ -233,7 +233,7 @@ function DashboardStatsFallback() {
 
 export default async function DashboardPage() {
   const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+  if (!userId) redirect("/")
 
   const profile = await getProfile(userId)
   if (!profile || !profile.onboarding_completed) {

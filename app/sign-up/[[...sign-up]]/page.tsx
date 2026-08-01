@@ -23,6 +23,7 @@ export default function SignUpPage() {
           </div>
 
           <SignUp
+            fallbackRedirectUrl="/onboarding"
             appearance={{
               elements: {
                 rootBox: 'mx-auto w-full',

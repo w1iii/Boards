@@ -84,7 +84,7 @@ export default function TopNavBar({ variant, firstName, imageUrl }: TopNavBarPro
           ) : (
             <div className="flex items-center gap-3">
               <Link
-                href="/sign-in"
+                href="/"
                 className="font-label-caps text-on-surface-variant hover:text-primary transition-colors px-4 py-2"
               >
                 Sign In

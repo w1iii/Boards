@@ -6,7 +6,7 @@ import SettingsForm from "./settings-form"
 
 export default async function SettingsPage() {
   const { userId } = await auth()
-  if (!userId) redirect("/sign-in")
+  if (!userId) redirect("/")
 
   const profile = await getProfile(userId)
   if (!profile || !profile.onboarding_completed) {
