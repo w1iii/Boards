@@ -325,7 +325,7 @@ export default function OnboardingPage() {
                 <h2 className="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">
                   What&rsquo;s your name?
                 </h2>
-                <div className="grid grid-cols-2 gap-3 mt-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-1">
                   <div className="relative group">
                     <label
                       className="font-label-caps text-label-caps text-secondary uppercase mb-1 block"

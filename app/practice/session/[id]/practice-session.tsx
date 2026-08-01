@@ -264,7 +264,7 @@ export default function PracticeSession({
             </div>
 
             <div className="flex-1 min-h-0 mt-2 overflow-y-auto">
-              <div className="grid grid-cols-2 gap-3 content-start">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
                 {choices.map((choice) => {
                   const isSelected = feedbackState?.selected === choice.key
                   const isCorrectChoice = feedbackState?.correctAnswer === choice.key

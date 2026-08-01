@@ -59,7 +59,7 @@ async function DashboardHero({ userId }: { userId: string }) {
               )}
             </p>
           </div>
-          <div className="flex gap-4 shrink-0">
+          <div className="flex flex-col sm:flex-row gap-4 shrink-0">
             <Link href="/practice" className="px-6 py-3 bg-primary text-on-primary rounded-full font-title-md text-sm candy-button-shadow hover:bg-primary-container active:scale-95 transition-all flex items-center gap-2">
               <span className="material-symbols-outlined text-lg">play_circle</span>
               Start Practice
@@ -84,7 +84,7 @@ function DashboardHeroFallback() {
             <div className="w-64 h-9 rounded shimmer bg-surface-container-high" />
             <div className="w-96 h-5 rounded shimmer bg-surface-container-high" />
           </div>
-          <div className="flex gap-4 shrink-0">
+          <div className="flex flex-col sm:flex-row gap-4 shrink-0">
             <div className="w-36 h-11 rounded-full shimmer bg-primary-fixed" />
             <div className="w-36 h-11 rounded-full shimmer bg-surface-container-high" />
           </div>

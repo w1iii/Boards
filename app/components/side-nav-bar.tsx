@@ -4,18 +4,8 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useClerk } from "@clerk/nextjs"
 import { useBreak } from "@/app/contexts/break-context"
-
-const NAV_ITEMS: Array<{
-  href: string
-  label: string
-  icon: string
-  query?: boolean
-}> = [
-  { href: "/dashboard", label: "Home", icon: "home" },
-  { href: "/practice", label: "Practice", icon: "edit_note" },
-  { href: "/practice?type=mock-exam", label: "Mock Exam", icon: "quiz", query: true },
-  { href: "/progress", label: "Progress", icon: "monitoring" },
-]
+import MobileNav from "@/app/components/mobile-nav"
+import { NAV_ITEMS } from "@/app/components/nav-items"
 
 interface SideNavBarProps {
   firstName: string
@@ -36,7 +26,9 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
   }
 
   return (
-    <aside className="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-6 pb-6 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-outline-variant/30 w-64 rounded-r-2xl shadow-sm">
+    <>
+      <MobileNav firstName={firstName} imageUrl={imageUrl} />
+      <aside className="hidden lg:flex flex-col h-screen fixed left-0 top-0 pt-6 pb-6 z-40 bg-surface-container-low/80 backdrop-blur-md border-r border-outline-variant/30 w-64 rounded-r-2xl shadow-sm">
       <div className="px-5 mb-6">
         <div className="flex items-center gap-3 p-3 bg-gradient-to-br from-primary-fixed/20 to-secondary-fixed/10 rounded-2xl border border-primary-fixed/20">
           <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-primary-fixed shrink-0 shadow-sm">
@@ -112,6 +104,7 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
           Take a Break
         </button>
       </div>
-    </aside>
+      </aside>
+    </>
   )
 }

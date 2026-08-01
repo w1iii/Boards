@@ -54,7 +54,7 @@ export default function ResultsView({
             <span className="font-label-caps text-primary block tracking-[0.2em] text-[10px] mb-2">
               SESSION COMPLETE
             </span>
-            <h1 className="font-display-md text-display-md uppercase leading-none mb-2">
+            <h1 className="font-display-md text-4xl md:text-display-md uppercase leading-none mb-2">
               {passing ? "PASSED" : "KEEP GOING"}
             </h1>
             <p className="font-body-md text-secondary text-sm">

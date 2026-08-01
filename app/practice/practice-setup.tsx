@@ -200,7 +200,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
           </div>
         </div>
 
-        <div className="max-w-4xl mx-auto flex items-center justify-between gap-4 px-5 py-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,218,213,0.6)" }}>
+        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 px-5 py-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,218,213,0.6)" }}>
           <div className="flex items-center gap-2.5">
             <span className={`w-2.5 h-2.5 rounded-full ${count > 0 ? "bg-primary" : "bg-secondary"}`} />
             <p className="font-title-md text-title-md text-primary uppercase tracking-wider text-sm">
@@ -210,7 +210,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
           <button
             onClick={beginSession}
             disabled={count === 0 || loading || generating}
-            className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-title-md text-sm transition-all active:scale-[0.97] flex items-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+            className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-title-md text-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed sm:w-auto"
             style={{ boxShadow: "0 3px 0 #6E1818, 0 4px 12px rgba(149,35,35,0.2)" }}
           >
             {loading || generating ? (
