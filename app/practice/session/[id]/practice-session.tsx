@@ -252,8 +252,8 @@ export default function PracticeSession({
       </div>
 
       <main className="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop py-3">
-        <div className="max-w-6xl mx-auto h-full grid grid-cols-1 md:grid-cols-12 gap-5">
-          <section className="md:col-span-7 flex flex-col min-h-0">
+        <div className="max-w-6xl mx-auto md:h-full grid grid-cols-1 md:grid-cols-12 gap-5">
+          <section className="md:col-span-7 md:flex md:flex-col md:min-h-0">
             <div className="p-5 border-l-4 border-primary bg-surface-container-lowest shrink-0">
               <h2 className="font-headline-lg text-xl leading-tight mb-3">
                 {question.text}
@@ -263,7 +263,7 @@ export default function PracticeSession({
               </p>
             </div>
 
-            <div className="flex-1 min-h-0 mt-2 overflow-y-auto">
+            <div className="mt-2 md:flex-1 md:min-h-0 md:overflow-y-auto">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
                 {choices.map((choice) => {
                   const isSelected = feedbackState?.selected === choice.key
@@ -337,8 +337,8 @@ export default function PracticeSession({
             </div>
           </section>
 
-          <aside className="md:col-span-5 min-h-0 overflow-hidden">
-            <div className="h-full overflow-y-auto space-y-4">
+          <aside className="md:col-span-5 md:min-h-0 md:overflow-hidden">
+            <div className="md:h-full md:overflow-y-auto space-y-4">
               {feedbackState ? (
                 <div className="p-5 bg-inverse-surface text-surface border-t-8 border-primary">
                   <div className="flex items-center gap-2 mb-3">
