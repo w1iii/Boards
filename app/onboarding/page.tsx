@@ -246,7 +246,7 @@ export default function OnboardingPage() {
                       onFocus={() => setDateFocused(true)}
                       onBlur={() => setDateFocused(false)}
                       required
-                      className={`w-full bg-surface-container-low border-0 border-b-2 py-3 px-0 font-body-lg text-body-lg transition-all placeholder:text-tertiary-fixed-dim focus:ring-0 ${
+                      className={`w-full bg-surface-container-low border rounded-lg py-3 px-3 font-body-lg text-body-lg transition-all placeholder:text-tertiary-fixed-dim focus:ring-0 ${
                         dateFocused ? "border-primary" : "border-tertiary"
                       }`}
                     />
@@ -339,7 +339,7 @@ export default function OnboardingPage() {
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
                       placeholder="Juan"
-                      className="w-full bg-surface-container-low border-0 border-b-2 border-tertiary focus:border-primary focus:ring-0 font-body-lg text-body-lg py-3 px-0 transition-all placeholder:text-tertiary-fixed-dim"
+                      className="w-full bg-surface-container-low border border-tertiary rounded-lg focus:border-primary focus:ring-0 font-body-lg text-body-lg py-3 px-3 transition-all placeholder:text-tertiary-fixed-dim"
                     />
                   </div>
                   <div className="relative group">
@@ -355,7 +355,7 @@ export default function OnboardingPage() {
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
                       placeholder="Dela Cruz"
-                      className="w-full bg-surface-container-low border-0 border-b-2 border-tertiary focus:border-primary focus:ring-0 font-body-lg text-body-lg py-3 px-0 transition-all placeholder:text-tertiary-fixed-dim"
+                      className="w-full bg-surface-container-low border border-tertiary rounded-lg focus:border-primary focus:ring-0 font-body-lg text-body-lg py-3 px-3 transition-all placeholder:text-tertiary-fixed-dim"
                     />
                   </div>
                 </div>
