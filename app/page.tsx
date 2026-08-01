@@ -24,12 +24,18 @@ const clerkAppearance = {
     header: "hidden",
     footer: "hidden",
     socialButtons: "hidden",
-    formFieldLabel: "block text-sm font-semibold text-gray-900 mb-0.5",
+    dividerRow: "hidden",
+    alternativeMethods: "hidden",
+    form: "gap-0",
+    formField: "mb-1.5",
+    formFieldRow: "gap-2 mb-1.5",
+    formFieldLabel: "block text-xs font-semibold text-gray-900 mb-0.5",
     formFieldInput:
-      "block w-full px-5 py-3 rounded-2xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-power-red/20 focus:border-power-red focus:outline-none transition-all text-base",
+      "block w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-power-red/20 focus:border-power-red focus:outline-none transition-all text-sm",
     formButtonPrimary:
-      "btn-gradient w-full py-3.5 px-6 rounded-full text-white font-bold text-lg shadow-lg shadow-power-red/30",
-    formFieldError: "text-sm text-power-red",
+      "btn-gradient w-full py-2 px-6 rounded-full text-white font-bold text-sm shadow-lg shadow-power-red/30",
+    formFieldError: "text-xs text-power-red",
+    footerAction: "pt-1",
   },
 }
 
@@ -63,13 +69,13 @@ export default function HomePage() {
 
   return (
     <main
-      className={`${inter.variable} font-sans antialiased overflow-x-hidden`}
+      className={`${inter.variable} font-sans antialiased overflow-hidden h-screen`}
       style={{ fontFamily: "var(--font-inter), sans-serif" }}
     >
-      <div className="min-h-screen flex items-center justify-center p-0 md:p-2 lg:p-4" style={{ backgroundColor: "#2b2b2b" }}>
-        <div className="flex flex-col lg:flex-row w-full max-w-[1440px] bg-boards-charcoal rounded-[3rem] lg:rounded-[3rem] rounded-none overflow-hidden shadow-2xl">
+      <div className="h-screen flex items-center justify-center p-0 md:p-2 lg:p-4 overflow-hidden" style={{ backgroundColor: "#2b2b2b" }}>
+        <div className="flex flex-col lg:flex-row w-full max-w-6xl h-[calc(100dvh-0rem)] md:h-[calc(100dvh-1rem)] lg:h-[calc(100dvh-2rem)] bg-boards-charcoal rounded-[2rem] overflow-hidden shadow-2xl">
           {/* Left Hero Section */}
-          <section className="relative flex-1 bg-boards-charcoal p-6 lg:p-10 flex flex-col justify-between overflow-hidden min-h-[380px] lg:min-h-[440px]">
+          <section className="relative flex-1 bg-boards-charcoal p-4 lg:p-6 flex flex-col justify-between overflow-hidden min-h-[260px] lg:min-h-[300px]">
             <div className="absolute inset-0 z-0">
               <Image
                 src={HERO_IMAGE}
@@ -95,17 +101,17 @@ export default function HomePage() {
             </div>
 
             <div className="relative z-10 mt-6">
-              <h1 className="text-2xl lg:text-4xl font-bold text-white leading-tight max-w-md">
+              <h1 className="text-xl lg:text-2xl font-bold text-white leading-tight max-w-md">
                 Your journey to NLE mastery starts here.
               </h1>
             </div>
           </section>
 
           {/* Right Auth Section */}
-          <section className="flex-1 bg-white p-6 lg:p-10 flex flex-col justify-center items-center">
-            <div className="w-full max-w-md space-y-4">
+          <section className="flex-1 bg-white p-2 lg:p-4 flex flex-col justify-center items-center overflow-hidden min-h-0">
+            <div className="w-full max-w-md flex flex-col space-y-1.5">
               <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-bold tracking-tight text-gray-900">{title}</h2>
+                <h2 className="text-lg font-bold tracking-tight text-gray-900">{title}</h2>
                 <button
                   onClick={() => setMode(isSignUp ? "signin" : "signup")}
                   className="text-sm font-semibold text-gray-500 hover:text-gray-900 flex items-center gap-2"
@@ -133,7 +139,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="flex justify-between items-center pt-4 text-xs text-gray-400 font-medium uppercase tracking-widest">
+              <div className="flex justify-between items-center pt-2 text-[10px] text-gray-400 font-medium uppercase tracking-widest">
                 <p>© 2024-2025 BOARDS. Inc.</p>
                 <div className="flex gap-6">
                   <a className="hover:text-gray-900 transition-colors" href="#">

@@ -175,3 +175,72 @@
 .btn-gradient:hover {
   opacity: 0.9;
 }
+
+.cl-cardBox {
+  width: 100% !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 auto !important;
+}
+
+.cl-rootBox {
+  display: flex !important;
+  justify-content: center !important;
+  width: 100% !important;
+}
+
+.cl-card {
+  min-width: 0 !important;
+}
+
+.cl-main {
+  width: 100% !important;
+}
+
+.cl-form {
+  gap: 0.25rem !important;
+}
+
+.cl-form > div {
+  gap: 0.25rem !important;
+}
+
+.cl-formField,
+.cl-formFieldRow {
+  gap: 0 !important;
+  margin-bottom: 0.15rem !important;
+}
+
+.cl-formFieldLabel {
+  margin-bottom: 0 !important;
+  font-size: 0.625rem !important;
+  line-height: 1 !important;
+}
+
+.cl-formFieldInput {
+  padding: 0.15rem 0.5rem !important;
+  min-height: 1.5rem !important;
+  font-size: 0.6875rem !important;
+  line-height: 1.2 !important;
+  border-radius: 0.35rem !important;
+}
+
+.cl-formButtonPrimary {
+  padding: 0.2rem 0.75rem !important;
+  min-height: 1.5rem !important;
+  font-size: 0.6875rem !important;
+  line-height: 1.2 !important;
+}
+
+.cl-formFieldInputShowPasswordButton {
+  min-height: 1.5rem !important;
+}
+
+.cl-footer {
+  display: none !important;
+}
+
+.cl-footerAction {
+  display: none !important;
+  padding-top: 0 !important;
+}
