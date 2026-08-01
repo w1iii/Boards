@@ -20,12 +20,12 @@ export default function PracticeLoading() {
           <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-4 md:py-6">
             <div className="mb-3 md:mb-4 shrink-0">
               <div className="w-28 h-5 rounded-full shimmer bg-primary-fixed mb-1.5" />
-              <div className="w-72 h-8 shimmer rounded-lg bg-surface-container-high" />
+              <div className="w-72 h-8 md:w-96 shimmer rounded-lg bg-surface-container-high" />
               <div className="w-96 h-4 shimmer rounded bg-surface-container-high mt-1" />
             </div>
 
             <div className="flex-1 overflow-y-auto -mx-2 px-2 pb-2">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {AREA_ICONS.map((icon, i) => (
                   <div
                     key={icon}
@@ -48,7 +48,7 @@ export default function PracticeLoading() {
           </div>
         </div>
 
-        <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-4 md:pb-6">
+        <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-3 md:pb-6">
           <div className="max-w-4xl mx-auto flex items-center justify-between gap-4 px-5 py-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,218,213,0.6)" }}>
             <div className="flex items-center gap-2.5">
               <div className="w-2.5 h-2.5 rounded-full shimmer bg-surface-container-high" />

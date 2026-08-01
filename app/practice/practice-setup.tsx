@@ -112,7 +112,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
             <span className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] bg-primary-fixed px-3 py-1 rounded-full inline-block mb-1.5">
               Practice Mode
             </span>
-            <h1 className="font-display-lg text-display-lg text-primary leading-[1.1]">
+            <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg text-primary leading-[1.1]">
               CHOOSE CONTENT AREA
             </h1>
             <p className="font-body-md text-body-md text-on-surface-variant mt-1 max-w-xl">
@@ -121,7 +121,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
           </div>
 
           <div className="flex-1 overflow-y-auto -mx-2 px-2 pb-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {AREAS.map((area) => {
                 const isSelected = selected.has(area.key)
                 return (
@@ -139,12 +139,12 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
                       <span className="material-symbols-outlined text-secondary shrink-0" style={{ fontSize: 24 }}>{area.icon}</span>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
-                          <h3 className="font-title-md text-title-md text-primary truncate">{area.label}</h3>
+                          <h3 className="font-title-md text-title-md text-primary">{area.label}</h3>
                           {isSelected && (
                             <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 18 }}>check_circle</span>
                           )}
                         </div>
-                        <p className="font-body-sm text-body-sm text-on-surface-variant leading-snug mt-0.5 line-clamp-2">{area.description}</p>
+                        <p className="font-body-sm text-body-sm text-on-surface-variant leading-snug mt-0.5">{area.description}</p>
                       </div>
                     </div>
                   </button>
@@ -155,9 +155,9 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
         </div>
       </div>
 
-      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-4 md:pb-6 space-y-3">
-        <div className="max-w-4xl mx-auto w-full bg-surface-container-lowest rounded-xl border border-outline-variant p-4 md:p-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-3 md:pb-6 space-y-2.5 md:space-y-3">
+        <div className="max-w-4xl mx-auto w-full bg-surface-container-lowest rounded-xl border border-outline-variant p-3 md:p-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
             <div>
               <label className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em] text-[11px] block mb-2">
                 Questions: <span className="text-primary font-bold">{questionCount}</span>
@@ -186,7 +186,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
                   <button
                     key={d.key}
                     onClick={() => setDifficulty(d.key)}
-                    className={`flex-1 px-3 py-2 rounded-md text-[11px] font-label-caps tracking-wider transition-all ${
+                    className={`flex-1 px-3 py-1.5 md:py-2 rounded-md text-[11px] font-label-caps tracking-wider transition-all ${
                       difficulty === d.key
                         ? "bg-primary text-on-primary shadow-sm"
                         : "text-on-surface-variant hover:text-on-surface"
