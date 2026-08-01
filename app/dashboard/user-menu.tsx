@@ -56,7 +56,7 @@ export default function UserMenu({ imageUrl, firstName }: UserMenuProps) {
             Settings
           </button>
           <button
-            onClick={() => signOut({ redirectUrl: "/sign-in" })}
+            onClick={() => signOut({ redirectUrl: "/" })}
             className="w-full text-left px-4 py-3 font-body-md text-on-surface hover:bg-surface-container transition-colors border-t border-tertiary"
           >
             Logout

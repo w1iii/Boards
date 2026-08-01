@@ -98,7 +98,7 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
           Settings
         </Link>
         <button
-          onClick={() => signOut({ redirectUrl: "/sign-in" })}
+          onClick={() => signOut({ redirectUrl: "/" })}
           className="w-full flex items-center px-4 py-2.5 gap-3 rounded-xl transition-all font-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-error"
         >
           <span className="material-symbols-outlined text-xl">logout</span>
