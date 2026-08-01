@@ -2,14 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import { Inter } from "next/font/google"
 import { SignIn, SignUp } from "@clerk/nextjs"
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  display: "swap",
-})
 
 const HERO_IMAGE =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBp9URoKbSdVXtDkLUk3agUg470oc7dnRKCgHR1cHcode3qnTUPb4W4llS4Ty0BhqYl0Gud6tuhJ8EmAY5i1Aekaz2i7ZtMDew1MlM7oCUMkikr64B-80R6cPJZPau66s6qQ-jxIYqimGOWnVBh7QrRig9PJD3hR6WgJuIaMbAM_3vpygG5pKIOY3BH8IrbULd-NdM2TELuBLTCMOnMbvT3V_mZVFpz_IJxVYYBqFijXc6b-UPD_7vE"
@@ -29,12 +22,12 @@ const clerkAppearance = {
     form: "gap-0",
     formField: "mb-1.5",
     formFieldRow: "gap-2 mb-1.5",
-    formFieldLabel: "block text-xs font-semibold text-gray-900 mb-0.5",
+    formFieldLabel: "block font-label-caps text-xs text-on-surface-variant mb-0.5",
     formFieldInput:
-      "block w-full px-3 py-2 rounded-lg border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-power-red/20 focus:border-power-red focus:outline-none transition-all text-sm",
+      "block w-full px-3 py-2 rounded-xl border border-outline-variant bg-surface-container-lowest text-on-surface placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none transition-all font-body-md text-sm",
     formButtonPrimary:
-      "btn-gradient w-full py-2 px-6 rounded-full text-white font-bold text-sm shadow-lg shadow-power-red/30",
-    formFieldError: "text-xs text-power-red",
+      "w-full py-2 px-6 rounded-full font-title-md text-sm text-on-primary bg-primary candy-button-shadow-sm transition-all hover:bg-primary-container hover:text-on-primary-container active:scale-[0.97]",
+    formFieldError: "text-sm text-error",
     footerAction: "pt-1",
   },
 }
@@ -68,23 +61,20 @@ export default function HomePage() {
   const footerLink = isSignUp ? "Sign In" : "Sign Up"
 
   return (
-    <main
-      className={`${inter.variable} font-sans antialiased overflow-hidden h-screen`}
-      style={{ fontFamily: "var(--font-inter), sans-serif" }}
-    >
-      <div className="h-screen flex items-center justify-center p-0 md:p-2 lg:p-4 overflow-hidden" style={{ backgroundColor: "#2b2b2b" }}>
-        <div className="flex flex-col lg:flex-row w-full max-w-6xl h-[calc(100dvh-0rem)] md:h-[calc(100dvh-1rem)] lg:h-[calc(100dvh-2rem)] bg-boards-charcoal rounded-[2rem] overflow-hidden shadow-2xl">
+    <main className="split-auth font-body-md antialiased overflow-hidden h-screen bg-surface">
+      <div className="h-screen flex items-center justify-center p-0 md:p-2 lg:p-4 overflow-hidden">
+        <div className="flex flex-col lg:flex-row w-full max-w-6xl h-[calc(100dvh-0rem)] md:h-[calc(100dvh-1rem)] lg:h-[calc(100dvh-2rem)] bg-surface-container-low rounded-[2rem] overflow-hidden shadow-2xl">
           {/* Left Hero Section */}
-          <section className="relative flex-1 bg-boards-charcoal p-4 lg:p-6 flex flex-col justify-between overflow-hidden min-h-[260px] lg:min-h-[300px]">
+          <section className="relative flex-1 bg-primary p-4 lg:p-8 flex flex-col items-center justify-center text-center overflow-hidden min-h-[260px] lg:min-h-[300px]">
             <div className="absolute inset-0 z-0">
               <Image
                 src={HERO_IMAGE}
                 alt="Medical background"
                 fill
                 sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover opacity-60"
+                className="object-cover opacity-50"
               />
-              <div className="absolute inset-0 bg-boards-charcoal/40" />
+              <div className="absolute inset-0 bg-primary/60" />
             </div>
 
             <div className="relative z-10">
@@ -93,28 +83,28 @@ export default function HomePage() {
                 alt="BOARDS. Logo"
                 width={160}
                 height={40}
-                className="h-10 w-auto brightness-0 invert"
+                className="h-10 w-auto brightness-0 invert mx-auto"
               />
-              <p className="text-gray-400 mt-3 text-xs uppercase tracking-widest font-medium">
-                Global NLE Certification Prep
-              </p>
             </div>
 
-            <div className="relative z-10 mt-6">
-              <h1 className="text-xl lg:text-2xl font-bold text-white leading-tight max-w-md">
-                Your journey to NLE mastery starts here.
-              </h1>
-            </div>
+            <h1 className="relative z-10 font-display-md text-display-md font-black tracking-tighter text-on-primary leading-tight">
+              BOARDS.
+            </h1>
+            <p className="relative z-10 font-label-caps text-sm text-primary-fixed uppercase tracking-widest mt-3">
+              Global NLE Certification Prep
+            </p>
           </section>
 
           {/* Right Auth Section */}
-          <section className="flex-1 bg-white p-2 lg:p-4 flex flex-col justify-center items-center overflow-hidden min-h-0">
+          <section className="flex-1 bg-surface p-4 lg:p-8 flex flex-col justify-center items-center overflow-hidden min-h-0">
             <div className="w-full max-w-md flex flex-col space-y-1.5">
-              <div className="flex justify-between items-center">
-                <h2 className="text-lg font-bold tracking-tight text-gray-900">{title}</h2>
+              <div className="flex justify-between items-center mb-2">
+                <h2 className="font-title-md text-title-md font-bold tracking-tight text-on-surface">
+                  {title}
+                </h2>
                 <button
                   onClick={() => setMode(isSignUp ? "signin" : "signup")}
-                  className="text-sm font-semibold text-gray-500 hover:text-gray-900 flex items-center gap-2"
+                  className="font-label-caps text-sm text-primary hover:text-primary-container flex items-center gap-2 transition-colors"
                 >
                   <UserPlusIcon className="h-5 w-5" />
                   {toggleLabel}
@@ -128,24 +118,24 @@ export default function HomePage() {
               )}
 
               <div className="text-center">
-                <p className="text-gray-500 text-sm">
+                <p className="font-body-md text-sm text-on-surface-variant">
                   {footerPrefix}{" "}
                   <button
                     onClick={() => setMode(isSignUp ? "signin" : "signup")}
-                    className="font-bold text-power-red hover:text-power-red-dark transition-colors"
+                    className="font-bold text-primary hover:text-primary-container transition-colors"
                   >
                     {footerLink}
                   </button>
                 </p>
               </div>
 
-              <div className="flex justify-between items-center pt-2 text-[10px] text-gray-400 font-medium uppercase tracking-widest">
+              <div className="flex justify-between items-center pt-4 font-label-caps text-xs text-on-surface-variant uppercase tracking-widest">
                 <p>© 2024-2025 BOARDS. Inc.</p>
                 <div className="flex gap-6">
-                  <a className="hover:text-gray-900 transition-colors" href="#">
+                  <a className="hover:text-primary transition-colors" href="#">
                     Contact Us
                   </a>
-                  <div className="flex items-center gap-1 cursor-pointer hover:text-gray-900 transition-colors">
+                  <div className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors">
                     <span>English</span>
                     <svg
                       className="h-3 w-3"

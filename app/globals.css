@@ -176,71 +176,102 @@
   opacity: 0.9;
 }
 
-.cl-cardBox {
+.split-auth .cl-cardBox {
   width: 100% !important;
   max-width: 100% !important;
   min-height: 0 !important;
   margin: 0 auto !important;
 }
 
-.cl-rootBox {
+.split-auth .cl-rootBox {
   display: flex !important;
   justify-content: center !important;
   width: 100% !important;
 }
 
-.cl-card {
+.split-auth .cl-card {
   min-width: 0 !important;
 }
 
-.cl-main {
+.split-auth .cl-main {
   width: 100% !important;
 }
 
-.cl-form {
+.split-auth .cl-form {
   gap: 0.25rem !important;
 }
 
-.cl-form > div {
+.split-auth .cl-form > div {
   gap: 0.25rem !important;
 }
 
-.cl-formField,
-.cl-formFieldRow {
+.split-auth .cl-formField,
+.split-auth .cl-formFieldRow {
   gap: 0 !important;
   margin-bottom: 0.15rem !important;
 }
 
-.cl-formFieldLabel {
+.split-auth .cl-formFieldLabel {
   margin-bottom: 0 !important;
   font-size: 0.6875rem !important;
   line-height: 1 !important;
+  font-family: var(--font-space-grotesk), sans-serif !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+  color: #50433E !important;
+  font-weight: 500 !important;
 }
 
-.cl-formFieldInput {
+.split-auth .cl-formFieldInput {
   padding: 0.2rem 0.5rem !important;
   min-height: 1.6rem !important;
   font-size: 0.8125rem !important;
   line-height: 1.2 !important;
   border-radius: 0.35rem !important;
+  font-family: var(--font-source-sans), sans-serif !important;
+  background: #FFFFFF !important;
+  border: 1px solid #D4C4BC !important;
+  color: #1B1C19 !important;
 }
 
-.cl-formButtonPrimary {
+.split-auth .cl-formFieldInput:focus {
+  border-color: #952323 !important;
+  box-shadow: 0 0 0 2px rgba(149, 35, 35, 0.2) !important;
+  outline: none !important;
+}
+
+.split-auth .cl-formButtonPrimary {
   padding: 0.25rem 0.75rem !important;
   min-height: 1.6rem !important;
   font-size: 0.8125rem !important;
   line-height: 1.2 !important;
+  font-family: var(--font-source-sans), sans-serif !important;
+  font-weight: 600 !important;
+  background: #952323 !important;
+  color: #FFFFFF !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 2px 0 #6E1818, 0 3px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
-.cl-formFieldInputShowPasswordButton {
+.split-auth .cl-formButtonPrimary:hover {
+  background: #A73121 !important;
+  color: #FFFFFF !important;
+}
+
+.split-auth .cl-formFieldError {
+  font-family: var(--font-source-sans), sans-serif !important;
+  color: #BA1A1A !important;
+}
+
+.split-auth .cl-formFieldInputShowPasswordButton {
   min-height: 1.5rem !important;
 }
 
-.cl-footer {
+.split-auth .cl-footer {
   display: none !important;
 }
 
-.cl-footerAction {
+.split-auth .cl-footerAction {
   display: none !important;
   padding-top: 0 !important;
 }
