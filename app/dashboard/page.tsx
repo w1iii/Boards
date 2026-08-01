@@ -64,7 +64,7 @@ async function DashboardHero({ userId }: { userId: string }) {
               <span className="material-symbols-outlined text-lg">play_circle</span>
               Start Practice
             </Link>
-            <Link href="/practice?type=mock-exam" className="px-6 py-3 bg-secondary text-on-secondary rounded-full font-title-md text-sm candy-button-shadow hover:bg-secondary-container hover:text-on-secondary-container active:scale-95 transition-all flex items-center gap-2">
+            <Link href="/mock-exam" className="px-6 py-3 bg-secondary text-on-secondary rounded-full font-title-md text-sm candy-button-shadow hover:bg-secondary-container hover:text-on-secondary-container active:scale-95 transition-all flex items-center gap-2">
               <span className="material-symbols-outlined text-lg">assignment</span>
               Mock Exam
             </Link>

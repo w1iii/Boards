@@ -31,11 +31,7 @@ export default function MobileNav({ firstName, imageUrl }: MobileNavProps) {
     }
   }, [open])
 
-  function isActive(href: string, query?: boolean): boolean {
-    if (query) {
-      if (href === "/practice?type=mock-exam" && pathname === "/practice") return false
-      return pathname === href
-    }
+  function isActive(href: string): boolean {
     return pathname === href || pathname.startsWith(href + "/")
   }
 
@@ -98,7 +94,7 @@ export default function MobileNav({ firstName, imageUrl }: MobileNavProps) {
 
             <nav className="flex-1 px-3 space-y-1">
               {NAV_ITEMS.map((item) => {
-                const active = isActive(item.href, item.query)
+                const active = isActive(item.href)
                 return (
                   <Link
                     key={item.label}
