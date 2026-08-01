@@ -213,22 +213,22 @@
 
 .cl-formFieldLabel {
   margin-bottom: 0 !important;
-  font-size: 0.625rem !important;
+  font-size: 0.6875rem !important;
   line-height: 1 !important;
 }
 
 .cl-formFieldInput {
-  padding: 0.15rem 0.5rem !important;
-  min-height: 1.5rem !important;
-  font-size: 0.6875rem !important;
+  padding: 0.2rem 0.5rem !important;
+  min-height: 1.6rem !important;
+  font-size: 0.8125rem !important;
   line-height: 1.2 !important;
   border-radius: 0.35rem !important;
 }
 
 .cl-formButtonPrimary {
-  padding: 0.2rem 0.75rem !important;
-  min-height: 1.5rem !important;
-  font-size: 0.6875rem !important;
+  padding: 0.25rem 0.75rem !important;
+  min-height: 1.6rem !important;
+  font-size: 0.8125rem !important;
   line-height: 1.2 !important;
 }
 
