@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { redirect, notFound } from "next/navigation"
 import { sql, getProfile } from "@/app/lib/db"
 import PracticeSession from "./practice-session"
+import MockExamSession from "./mock-exam-session"
 
 export default async function SessionPage({
   params,
@@ -21,6 +22,12 @@ export default async function SessionPage({
   if (result.rows.length === 0) notFound()
 
   const session = result.rows[0] as Record<string, unknown>
+  const sessionType = (session.type as string) ?? "practice"
+
+  if (sessionType === "mock-exam" && (session.status as string) === "completed") {
+    redirect(`/practice/session/${id}/results`)
+  }
+
   const questionIds = (session.questions as string[]) || []
 
   let questions: Record<string, unknown>[] = []
@@ -48,6 +55,25 @@ export default async function SessionPage({
     content_area: (q.content_area as string) ?? "",
     difficulty: (q.difficulty as string) ?? "medium",
   }))
+
+  if (sessionType === "mock-exam") {
+    const durationSeconds = (session.duration_seconds as number | null) ?? serializedQuestions.length * 72
+    const startedAt = new Date(session.started_at as string).getTime()
+    // eslint-disable-next-line react-hooks/purity -- dynamic server value; session deadline is authoritative at request time
+    const remainingSeconds = Math.max(0, Math.floor((startedAt + durationSeconds * 1000 - Date.now()) / 1000))
+
+    return (
+      <MockExamSession
+        sessionId={id}
+        questions={serializedQuestions}
+        existingAnswers={existingAnswers}
+        firstName={firstName}
+        imageUrl={null}
+        contentAreas={contentAreas}
+        initialRemainingSeconds={remainingSeconds}
+      />
+    )
+  }
 
   return (
     <PracticeSession

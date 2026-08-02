@@ -24,6 +24,18 @@ export async function POST(
     `
     if (session.rows.length === 0) throw new AppError("Session not found", 404)
 
+    const sessionRow = session.rows[0] as Record<string, unknown>
+    const sessionType = sessionRow.type as string
+
+    if (sessionType === "mock-exam") {
+      const durationSeconds = sessionRow.duration_seconds as number | null
+      const startedAt = sessionRow.started_at as string
+      if (durationSeconds && startedAt) {
+        const deadline = new Date(startedAt).getTime() + durationSeconds * 1000
+        if (Date.now() > deadline) throw new AppError("Exam time has expired", 410)
+      }
+    }
+
     const question = await sql`
       SELECT correct_answer, rationale, wrong_choice_rationales, choices, text FROM questions WHERE id = ${questionId}
     `
@@ -32,6 +44,18 @@ export async function POST(
     const q = question.rows[0] as Record<string, unknown>
     const correctAnswer = q.correct_answer as string
     const isCorrect = answer === correctAnswer
+
+    const currentAnswers = (sessionRow.answers as Record<string, string>) ?? {}
+    currentAnswers[questionId] = answer
+
+    await sql`
+      UPDATE sessions SET answers = ${JSON.stringify(currentAnswers)}::jsonb
+      WHERE id = ${sessionId}
+    `
+
+    if (sessionType === "mock-exam") {
+      return NextResponse.json({ saved: true })
+    }
 
     let rationale: string
     if (isCorrect) {
@@ -48,14 +72,6 @@ export async function POST(
         rationale = `Choice ${answer} ("${chosenText}") is not the best response. The correct answer is ${correctAnswer} ("${correctText}"): ${q.rationale as string}`
       }
     }
-
-    const currentAnswers = (session.rows[0] as Record<string, unknown>).answers as Record<string, string> ?? {}
-    currentAnswers[questionId] = answer
-
-    await sql`
-      UPDATE sessions SET answers = ${JSON.stringify(currentAnswers)}::jsonb
-      WHERE id = ${sessionId}
-    `
 
     return NextResponse.json({
       correct: isCorrect,

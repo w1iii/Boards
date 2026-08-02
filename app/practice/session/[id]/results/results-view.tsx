@@ -16,10 +16,20 @@ interface Props {
   firstName: string
   imageUrl: string | null
   totalQuestions: number
-  answeredQuestions: number
   correctAnswers: number
   score: number
   areaBreakdown: Record<string, { correct: number; total: number }>
+  sessionType: string
+  timeTakenSeconds: number | null
+}
+
+function formatDuration(total: number): string {
+  const s = Math.max(0, Math.round(total))
+  const h = Math.floor(s / 3600)
+  const m = Math.floor((s % 3600) / 60)
+  const sec = s % 60
+  const pad = (n: number) => String(n).padStart(2, "0")
+  return h > 0 ? `${h}h ${pad(m)}m ${pad(sec)}s` : `${pad(m)}m ${pad(sec)}s`
 }
 
 export default function ResultsView({
@@ -27,13 +37,20 @@ export default function ResultsView({
   firstName,
   imageUrl,
   totalQuestions,
-  answeredQuestions,
   correctAnswers,
   score,
   areaBreakdown,
+  sessionType,
+  timeTakenSeconds,
 }: Props) {
   const pct = Math.round(score * 100)
-  const passing = pct >= 75
+  const isMock = sessionType === "mock-exam"
+
+  const belowFloorAreas = Object.entries(areaBreakdown)
+    .filter(([, data]) => data.total > 0 && data.correct / data.total < 0.6)
+    .map(([area]) => AREA_LABELS[area] || area)
+
+  const passing = isMock ? pct >= 75 && belowFloorAreas.length === 0 : pct >= 75
 
   const r = 80
   const circumference = 2 * Math.PI * r
@@ -42,6 +59,14 @@ export default function ResultsView({
   const sortedAreas = Object.entries(areaBreakdown).sort(
     ([, a], [, b]) => b.correct / b.total - a.correct / a.total,
   )
+
+  const failReason = isMock
+    ? belowFloorAreas.length > 0
+      ? `Below 60% in: ${belowFloorAreas.join(", ")}`
+      : pct < 75
+        ? "Overall score below 75%."
+        : null
+    : null
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden">
@@ -54,13 +79,20 @@ export default function ResultsView({
             <span className="font-label-caps text-primary block tracking-[0.2em] text-[10px] mb-2">
               SESSION COMPLETE
             </span>
+            {isMock && (
+              <span className="font-label-caps text-[10px] uppercase tracking-[0.15em] bg-primary-fixed text-primary px-3 py-1 rounded-full inline-block mb-2">
+                Mock Exam
+              </span>
+            )}
             <h1 className="font-display-md text-4xl md:text-display-md uppercase leading-none mb-2">
               {passing ? "PASSED" : "KEEP GOING"}
             </h1>
             <p className="font-body-md text-secondary text-sm">
-              {passing
-                ? "Great work! You're on track for the boards."
-                : "Review the areas below and try again."}
+              {isMock && failReason
+                ? failReason
+                : passing
+                  ? "Great work! You're on track for the boards."
+                  : "Review the areas below and try again."}
             </p>
           </div>
 
@@ -91,14 +123,41 @@ export default function ResultsView({
                 </span>
               </div>
             </div>
-            <div className="mt-4 text-center">
-              <p className="font-display-md text-3xl font-black text-on-surface">
-                {correctAnswers}
-                <span className="text-secondary text-xl font-normal"> / {totalQuestions}</span>
-              </p>
-              <p className="font-label-caps text-[10px] text-secondary">CORRECT ANSWERS</p>
+            <div className="mt-4 flex items-center gap-6 text-center">
+              <div>
+                <p className="font-display-md text-3xl font-black text-on-surface">
+                  {correctAnswers}
+                  <span className="text-secondary text-xl font-normal"> / {totalQuestions}</span>
+                </p>
+                <p className="font-label-caps text-[10px] text-secondary">CORRECT ANSWERS</p>
+              </div>
+              {timeTakenSeconds !== null && (
+                <div className="pl-6 border-l border-outline-variant">
+                  <p className="font-display-md text-3xl font-black text-on-surface">
+                    {formatDuration(timeTakenSeconds)}
+                  </p>
+                  <p className="font-label-caps text-[10px] text-secondary">TIME TAKEN</p>
+                </div>
+              )}
             </div>
           </div>
+
+          {isMock && (
+            <div className={`mb-6 p-4 border ${
+              passing
+                ? "bg-[#e6f4ea] border-[#1a8038]/30"
+                : "bg-error-container border-primary/20"
+            }`}>
+              <p className="font-label-caps text-[10px] uppercase tracking-widest mb-1 text-on-surface">
+                Passing Standard
+              </p>
+              <p className="font-body-md text-sm text-on-surface">
+                {isMock
+                  ? "To pass the mock exam you need an overall score of at least 75% with no subject below 60% — same as the real board exam."
+                  : ""}
+              </p>
+            </div>
+          )}
 
           {sortedAreas.length > 0 && (
             <div className="mb-10">
@@ -108,19 +167,21 @@ export default function ResultsView({
               <div className="space-y-3">
                 {sortedAreas.map(([area, data]) => {
                   const areaPct = data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0
+                  const floorMet = isMock ? areaPct >= 60 : areaPct >= 75
                   return (
                     <div key={area} className="bg-surface-container-low border border-tertiary p-4">
                       <div className="flex justify-between items-center mb-2">
                         <span className="font-headline-lg text-sm uppercase">
                           {AREA_LABELS[area] || area}
                         </span>
-                        <span className="font-mono-data text-xs">
+                        <span className={`font-mono-data text-xs ${isMock && !floorMet ? "text-primary font-bold" : ""}`}>
                           {data.correct}/{data.total} — {areaPct}%
+                          {isMock && !floorMet && <span className="ml-2 font-label-caps text-[9px]">BELOW 60%</span>}
                         </span>
                       </div>
                       <div className="w-full h-2 bg-surface-container-highest">
                         <div
-                          className={`h-full transition-all duration-700 ${areaPct >= 75 ? "bg-[#1a8038]" : areaPct >= 50 ? "bg-[#e67e22]" : "bg-primary"}`}
+                          className={`h-full transition-all duration-700 ${floorMet ? "bg-[#1a8038]" : areaPct >= 50 ? "bg-[#e67e22]" : "bg-primary"}`}
                           style={{ width: `${areaPct}%` }}
                         />
                       </div>
@@ -133,16 +194,16 @@ export default function ResultsView({
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
-              href={`/practice/session/${sessionId}?review=1`}
+              href={`/practice/session/${sessionId}/review`}
               className="px-8 py-3 bg-surface border-2 border-secondary text-on-surface font-label-caps text-[11px] uppercase text-center hover:bg-secondary-container transition-all"
             >
-              Review Questions
+              Review Answers
             </Link>
             <Link
-              href="/practice"
+              href={isMock ? "/mock-exam" : "/practice"}
               className="px-8 py-3 bg-primary text-on-primary font-label-caps text-[11px] uppercase text-center hover:bg-on-primary-fixed-variant transition-all"
             >
-              New Practice Session
+              {isMock ? "New Mock Exam" : "New Practice Session"}
             </Link>
           </div>
         </div>

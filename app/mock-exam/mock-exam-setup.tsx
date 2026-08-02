@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
 import SideNavBar from "@/app/components/side-nav-bar"
 import { useSessionCreation } from "@/app/lib/use-session-creation"
 
@@ -12,27 +13,21 @@ const AREAS = [
   { key: "nlp-v", label: "NP V", description: "Mental Health", icon: "psychology", accent: "bg-outline-variant" },
 ] as const
 
+const SECONDS_PER_QUESTION = 72
+
 interface Props {
   firstName: string
   imageUrl: string | null
 }
 
-const DIFFICULTIES = [
-  { key: "all", label: "All", description: "Mix of easy to hard" },
-  { key: "easy", label: "Easy", description: "Recall & basic application" },
-  { key: "medium", label: "Medium", description: "Analysis & priority setting" },
-  { key: "hard", label: "Hard", description: "Complex multi-step reasoning" },
-] as const
-
-export default function PracticeSetup({ firstName, imageUrl }: Props) {
+export default function MockExamSetup({ firstName, imageUrl }: Props) {
   const [selected, setSelected] = useState<Set<string>>(new Set())
-  const [questionCount, setQuestionCount] = useState(20)
-  const [difficulty, setDifficulty] = useState<string>("all")
+  const [questionCount, setQuestionCount] = useState(50)
 
   const { loading, generating, error, notice, createSession } = useSessionCreation({
-    type: "practice",
+    type: "mock-exam",
     questionCount,
-    difficulty,
+    difficulty: null,
   })
 
   function toggle(key: string) {
@@ -42,12 +37,13 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
     setSelected(next)
   }
 
-  async function beginSession() {
+  async function beginExam() {
     if (selected.size === 0) return
     createSession([...selected])
   }
 
   const count = selected.size
+  const estimateMin = Math.round((questionCount * SECONDS_PER_QUESTION) / 60)
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden text-on-surface">
@@ -58,13 +54,13 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
         <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-4 md:py-6">
           <div className="mb-3 md:mb-4 shrink-0">
             <span className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] bg-primary-fixed px-3 py-1 rounded-full inline-block mb-1.5">
-              Practice Mode
+              Mock Exam
             </span>
             <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg text-primary leading-[1.1]">
-              CHOOSE CONTENT AREA
+              BUILD YOUR EXAM
             </h1>
             <p className="font-body-md text-body-md text-on-surface-variant mt-1 max-w-xl">
-              Select nursing domains to focus your practice.
+              Timed simulation at real board-exam pace. No instant feedback — answers lock at submit.
             </p>
           </div>
 
@@ -99,51 +95,50 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
                 )
               })}
             </div>
+
+            <div className="mt-4 bg-surface-container-lowest border border-tertiary p-4 md:p-5 rounded-xl">
+              <div className="flex items-start gap-3">
+                <span className="material-symbols-outlined text-secondary shrink-0" style={{ fontSize: 22 }}>schedule</span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="font-title-md text-title-md text-primary mb-2">How the real exam works</h3>
+                  <ul className="font-body-sm text-body-sm text-on-surface-variant space-y-1 leading-snug list-disc pl-4">
+                    <li>500 items total, 100 items per NP subject (NP I–V)</li>
+                    <li>Administered over 2 days, roughly 2 hours per test</li>
+                    <li>Passing: 75% general average AND no subject below 60%</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-3 md:pb-6 space-y-2.5 md:space-y-3">
         <div className="max-w-4xl mx-auto w-full bg-surface-container-lowest rounded-xl border border-outline-variant p-3 md:p-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
-            <div>
+          <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-5">
+            <div className="flex-1 w-full">
               <label className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em] text-[11px] block mb-2">
-                Questions: <span className="text-primary font-bold">{questionCount}</span>
+                Exam Length: <span className="text-primary font-bold">{questionCount}</span> questions
               </label>
               <div className="flex items-center gap-3">
-                <span className="font-body-sm text-[11px] text-on-surface-variant w-5 text-right">10</span>
+                <span className="font-body-sm text-[11px] text-on-surface-variant w-6 text-right">25</span>
                 <input
                   type="range"
-                  min={10}
+                  min={25}
                   max={100}
                   step={5}
                   value={questionCount}
                   onChange={(e) => setQuestionCount(Number(e.target.value))}
                   className="flex-1 accent-primary h-1.5 appearance-none cursor-pointer rounded-full bg-outline-variant [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-md"
                 />
-                <span className="font-body-sm text-[11px] text-on-surface-variant w-5">100</span>
+                <span className="font-body-sm text-[11px] text-on-surface-variant w-6">100</span>
               </div>
             </div>
-
-            <div>
-              <label className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em] text-[11px] block mb-2">
-                Difficulty
-              </label>
-              <div className="flex gap-1 bg-surface-variant rounded-lg p-1">
-                {DIFFICULTIES.map((d) => (
-                  <button
-                    key={d.key}
-                    onClick={() => setDifficulty(d.key)}
-                    className={`flex-1 px-3 py-1.5 md:py-2 rounded-md text-[11px] font-label-caps tracking-wider transition-all ${
-                      difficulty === d.key
-                        ? "bg-primary text-on-primary shadow-sm"
-                        : "text-on-surface-variant hover:text-on-surface"
-                    }`}
-                  >
-                    {d.label}
-                  </button>
-                ))}
-              </div>
+            <div className="shrink-0 bg-primary-fixed rounded-lg px-4 py-2.5 text-center min-w-[120px]">
+              <p className="font-mono-data text-lg font-bold text-primary leading-none">
+                ~{estimateMin} min
+              </p>
+              <p className="font-label-caps text-[10px] text-on-surface-variant mt-1">ESTIMATED TIME</p>
             </div>
           </div>
         </div>
@@ -158,21 +153,29 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
           <div className="flex items-center gap-2.5">
             <span className={`w-2.5 h-2.5 rounded-full ${count > 0 ? "bg-primary" : "bg-secondary"}`} />
             <p className="font-title-md text-title-md text-primary uppercase tracking-wider text-sm">
-              {error ? "ERROR" : count > 0 ? `${count} Domain${count > 1 ? "s" : ""} Selected` : "Select a focus area"}
+              {error ? "ERROR" : count > 0 ? `${count} Domain${count > 1 ? "s" : ""} Selected` : "Select at least one subject"}
             </p>
           </div>
-          <button
-            onClick={beginSession}
-            disabled={count === 0 || loading || generating}
-            className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-title-md text-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed sm:w-auto"
-            style={{ boxShadow: "0 3px 0 #6E1818, 0 4px 12px rgba(149,35,35,0.2)" }}
-          >
-            {loading || generating ? (
-              <><span>{generating ? "Generating..." : "Creating..."}</span><span className="material-symbols-outlined animate-spin" style={{ fontSize: 18 }}>autorenew</span></>
-            ) : (
-              <><span>Begin Practice Session</span><span className="material-symbols-outlined" style={{ fontSize: 18 }}>rocket_launch</span></>
-            )}
-          </button>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/practice"
+              className="px-5 py-2.5 rounded-full font-title-md text-sm text-on-surface-variant hover:text-on-surface transition-colors"
+            >
+              Back to Practice
+            </Link>
+            <button
+              onClick={beginExam}
+              disabled={count === 0 || loading || generating}
+              className="bg-primary text-on-primary px-6 py-2.5 rounded-full font-title-md text-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed sm:w-auto"
+              style={{ boxShadow: "0 3px 0 #6E1818, 0 4px 12px rgba(149,35,35,0.2)" }}
+            >
+              {loading || generating ? (
+                <><span>{generating ? "Generating..." : "Creating..."}</span><span className="material-symbols-outlined animate-spin" style={{ fontSize: 18 }}>autorenew</span></>
+              ) : (
+                <><span>Start Mock Exam</span><span className="material-symbols-outlined" style={{ fontSize: 18 }}>timer</span></>
+              )}
+            </button>
+          </div>
         </div>
       </div>
       </div>

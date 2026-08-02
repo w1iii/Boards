@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
     }
 
     const session = await sql`
-      INSERT INTO sessions (user_id, type, content_areas, questions, status)
-      VALUES (${userId}, ${type}, ${JSON.stringify(contentAreas)}, ${JSON.stringify(questionIds)}, 'in-progress')
+      INSERT INTO sessions (user_id, type, content_areas, questions, status, duration_seconds)
+      VALUES (${userId}, ${type}, ${JSON.stringify(contentAreas)}, ${JSON.stringify(questionIds)}, 'in-progress', ${type === "mock-exam" ? questionCount * 72 : null})
       RETURNING *
     `
 

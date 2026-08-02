@@ -57,8 +57,15 @@ export default async function ResultsPage({
   }
 
   const totalQuestions = existingCount
-  const answeredQuestions = Object.keys(answers).filter((id) => questionMap.has(id)).length
   const score = totalQuestions > 0 ? correctCount / totalQuestions : 0
+
+  const sessionType = (s.type as string) ?? "practice"
+  let timeTakenSeconds: number | null = null
+  if (s.completed_at && s.started_at) {
+    timeTakenSeconds = Math.round(
+      (new Date(s.completed_at as string).getTime() - new Date(s.started_at as string).getTime()) / 1000,
+    )
+  }
 
   return (
     <ResultsView
@@ -66,10 +73,11 @@ export default async function ResultsPage({
       firstName={firstName}
       imageUrl={null}
       totalQuestions={totalQuestions}
-      answeredQuestions={answeredQuestions}
       correctAnswers={correctCount}
       score={score}
       areaBreakdown={areaBreak}
+      sessionType={sessionType}
+      timeTakenSeconds={timeTakenSeconds}
     />
   )
 }
