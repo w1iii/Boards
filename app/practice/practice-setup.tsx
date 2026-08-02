@@ -31,6 +31,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
   const [loading, setLoading] = useState(false)
   const [generating, setGenerating] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [notice, setNotice] = useState<string | null>(null)
   const router = useRouter()
 
   function toggle(key: string) {
@@ -41,28 +42,38 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
     setError(null)
   }
 
-  function splitCount(areas: string[]): number[] {
+  function splitCount(areas: string[], total: number): number[] {
     const n = areas.length
-    const base = Math.floor(questionCount / n)
-    const remainder = questionCount % n
+    const base = Math.floor(total / n)
+    const remainder = total % n
     return areas.map((_, i) => base + (i < remainder ? 1 : 0))
+  }
+
+  async function callGenerate(area: string, count: number) {
+    const body: Record<string, unknown> = { contentArea: area, count }
+    if (difficulty !== "all") body.difficulty = difficulty
+    const res = await fetch("/api/questions/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
+    if (!res.ok) throw new Error("Generation failed")
+    return res.json()
   }
 
   async function generateQuestions(areas: string[]) {
     setGenerating(true)
-    const counts = splitCount(areas)
+    const counts = splitCount(areas, questionCount)
+    const shortfalls: string[] = []
     try {
       for (let i = 0; i < areas.length; i++) {
-        const body: Record<string, unknown> = { contentArea: areas[i], count: counts[i] }
-        if (difficulty !== "all") body.difficulty = difficulty
-        const res = await fetch("/api/questions/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body),
-        })
-        if (!res.ok) throw new Error()
+        const data = await callGenerate(areas[i], counts[i])
+        if (data.shortfall) shortfalls.push(`${counts[i]}→${data.generated}`)
       }
       setGenerating(false)
+      if (shortfalls.length > 0) {
+        setNotice(`Could only generate ${shortfalls.join(", ")} questions. Starting with what's available.`)
+      }
       createSession(areas)
     } catch {
       setGenerating(false)
@@ -70,23 +81,55 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
     }
   }
 
-  async function createSession(areas: string[]) {
+  async function generateMissing(areas: string[], missing: number): Promise<boolean> {
+    setGenerating(true)
+    const counts = splitCount(areas, missing)
+    try {
+      for (let i = 0; i < areas.length; i++) {
+        if (counts[i] <= 0) continue
+        await callGenerate(areas[i], counts[i])
+      }
+      setGenerating(false)
+      return true
+    } catch {
+      setGenerating(false)
+      setError("Failed to generate questions. Please try again.")
+      return false
+    }
+  }
+
+  async function postCreateSession(areas: string[], allowShortfall: boolean) {
+    const body: Record<string, unknown> = { type: "practice", contentAreas: areas, questionCount, allowShortfall }
+    if (difficulty !== "all") body.difficulty = difficulty
+    const res = await fetch("/api/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
+    return res.json()
+  }
+
+  const MAX_SESSION_ATTEMPTS = 3
+
+  async function createSession(areas: string[], attempt = 0) {
     setLoading(true)
     setError(null)
     try {
-      const body: Record<string, unknown> = { type: "practice", contentAreas: areas, questionCount }
-      if (difficulty !== "all") body.difficulty = difficulty
-      const res = await fetch("/api/sessions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      })
-      const data = await res.json()
+      const data = await postCreateSession(areas, attempt >= MAX_SESSION_ATTEMPTS)
       if (data.error === "no_questions_found") {
         generateQuestions(areas)
         return
       }
-      if (!res.ok) throw new Error("Failed to create session")
+      if (data.error === "insufficient_questions") {
+        const ok = await generateMissing(areas, data.questionCount - data.available)
+        if (!ok) return
+        createSession(areas, attempt + 1)
+        return
+      }
+      if (data.error || !data.session) throw new Error("Failed to create session")
+      if (data.shortfall) {
+        setNotice(`Could only gather ${data.session.questions?.length ?? 0} of ${questionCount} questions. Starting with what's available.`)
+      }
       router.push(`/practice/session/${data.session.id}`)
     } catch {
       setLoading(false)
@@ -199,6 +242,12 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
             </div>
           </div>
         </div>
+
+        {notice && (
+          <div className="max-w-4xl mx-auto bg-amber-50 border border-amber-300 text-amber-900 text-[12px] px-4 py-2.5 rounded-lg">
+            {notice}
+          </div>
+        )}
 
         <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 px-5 py-2.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,218,213,0.6)" }}>
           <div className="flex items-center gap-2.5">

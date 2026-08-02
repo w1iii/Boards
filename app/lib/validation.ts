@@ -42,6 +42,7 @@ export const createSessionSchema = z.object({
   contentAreas: z.array(contentAreaSchema).min(1),
   questionCount: z.number().int().min(10).max(50).default(20),
   difficulty: difficultySchema.optional(),
+  allowShortfall: z.boolean().optional().default(false),
 })
 
 export const answerQuestionSchema = z.object({
