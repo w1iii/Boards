@@ -7,8 +7,7 @@ import { SignIn, SignUp } from "@clerk/nextjs"
 const HERO_IMAGE =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBp9URoKbSdVXtDkLUk3agUg470oc7dnRKCgHR1cHcode3qnTUPb4W4llS4Ty0BhqYl0Gud6tuhJ8EmAY5i1Aekaz2i7ZtMDew1MlM7oCUMkikr64B-80R6cPJZPau66s6qQ-jxIYqimGOWnVBh7QrRig9PJD3hR6WgJuIaMbAM_3vpygG5pKIOY3BH8IrbULd-NdM2TELuBLTCMOnMbvT3V_mZVFpz_IJxVYYBqFijXc6b-UPD_7vE"
 
-const LOGO_IMAGE =
-  "https://lh3.googleusercontent.com/aida/AP1WRLuUh2k-lGT78YZeM3wwQp3tOQOFDXYNp8EMnjf-16T0lke4cZaqkOspRffuUgNbKGx75Wrj2AnrNHKrsvrKQB45Ym4b1x_tkvE4jxIcYa3Vxvhtpzn_IfrLDOpB_Hxfa4-i-tTv15VuRdKojci-SKifGI4CWOaA3I5Yre4N_k5QzxIw_Erk60LKmKt2mNiNijLSQLGjc4eqE9TlwNxHtTYVT9ft3tgUXQ7w3emqpa_NragDdHyzDCxOu7Q"
+const LOGO_IMAGE = "/boards._brand_logo.png"
 
 const clerkAppearance = {
   elements: {
@@ -82,8 +81,8 @@ export default function HomePage() {
                 src={LOGO_IMAGE}
                 alt="BOARDS. Logo"
                 width={160}
-                height={40}
-                className="h-10 w-auto brightness-0 invert mx-auto"
+                height={160}
+                className="h-14 w-14 object-contain rounded-2xl bg-white/90 p-1.5 shadow-lg mx-auto"
               />
             </div>
 
