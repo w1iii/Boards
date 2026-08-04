@@ -11,6 +11,9 @@ AI-powered practice exam platform for the Philippine Nursing Licensure Exam (NLE
 - **Mock exam mode** — timed, full-screen, results at the end with pass/fail at the 75% mark
 - **Progress analytics** — overall mastery score, per-area breakdown, weak-area alerts (<50%)
 - **Adaptive weak-area tracking** — prioritizes your weakest content area after ~20 answered questions
+- **Study guides & curriculum** — downloadable guides, notes, and review materials (`/study`, `/study-review`, admin-gated review queue)
+- **Clerk authentication** — email/password, Google OAuth, org-ready
+- **Admin review queue** — controlled via `ADMIN_EMAILS` env var
 - **Clerk authentication** — email/password, Google OAuth, org-ready
 - **Subscription payments** — PayMongo checkout (GCash, Maya, cards, Billease)
 
