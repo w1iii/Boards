@@ -6,5 +6,6 @@ export const NAV_ITEMS: Array<{
   { href: "/dashboard", label: "Home", icon: "home" },
   { href: "/practice", label: "Practice", icon: "edit_note" },
   { href: "/mock-exam", label: "Mock Exam", icon: "quiz" },
+  { href: "/study", label: "Study", icon: "school" },
   { href: "/progress", label: "Progress", icon: "monitoring" },
 ]
