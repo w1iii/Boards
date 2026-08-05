@@ -39,16 +39,14 @@ export const getProfile = cache(async (userId: string) => {
 export const getProgressAgg = cache(async (userId: string) => {
   const result = await sql`
     SELECT COUNT(*)::int as total_answered,
-           COUNT(*) FILTER (WHERE s.answers->>q.id::text = q.correct_answer)::int as total_correct
-    FROM sessions s
-    CROSS JOIN LATERAL jsonb_array_elements_text(s.questions) AS qid(qid_txt)
-    JOIN questions q ON q.id::text = qid.qid_txt
-    WHERE s.user_id = ${userId} AND s.status = 'completed'
+           COALESCE(SUM(CASE WHEN correct THEN weight ELSE 0 END), 0)::numeric as total_correct
+    FROM mastery_events
+    WHERE user_id = ${userId}
   `
   const row = result.rows[0] as Record<string, unknown> | undefined
   return {
     totalAnswered: (row?.total_answered as number) || 0,
-    totalCorrect: (row?.total_correct as number) || 0,
+    totalCorrect: Number(row?.total_correct as number) || 0,
   }
 })
 
@@ -61,16 +59,18 @@ export const deleteUserData = async (userId: string) => {
 export const getAreaBreakdown = cache(async (userId: string) => {
   try {
     const result = await sql`
-      SELECT q.content_area,
+      SELECT content_area,
              COUNT(*)::int as total,
-             COUNT(*) FILTER (WHERE s.answers->>q.id::text = q.correct_answer)::int as correct
-      FROM sessions s
-      CROSS JOIN LATERAL jsonb_array_elements_text(s.questions) AS qid(qid_txt)
-      JOIN questions q ON q.id::text = qid.qid_txt
-      WHERE s.user_id = ${userId} AND s.status = 'completed'
-      GROUP BY q.content_area
+             COALESCE(SUM(CASE WHEN correct THEN weight ELSE 0 END), 0)::numeric as correct
+      FROM mastery_events
+      WHERE user_id = ${userId}
+      GROUP BY content_area
     `
-    return result.rows as Array<{ content_area: string; total: number; correct: number }>
+    return result.rows.map((row: Record<string, unknown>) => ({
+      content_area: row.content_area as string,
+      total: row.total as number,
+      correct: Number(row.correct),
+    }))
   } catch {
     return []
   }
