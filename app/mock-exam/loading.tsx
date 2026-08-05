@@ -25,14 +25,14 @@ export default function MockExamLoading() {
             </div>
 
             <div className="flex-1 overflow-y-auto -mx-2 px-2 pb-2">
-              <div className="grid grid-cols-1 min-[420px]:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
                 {AREA_ICONS.map((icon, i) => (
                   <div
                     key={icon}
-                    className="relative overflow-hidden rounded-xl border border-transparent bg-surface-container-lowest"
+                    className="relative overflow-hidden rounded-xl border border-outline-variant bg-surface-container-lowest"
                   >
-                    <div className={`absolute top-0 left-0 w-full h-1 ${AREA_ACCENTS[i]}`} style={{ opacity: 0.4 }} />
-                    <div className="p-3 md:p-4 flex items-start gap-3">
+                    <div className={`absolute top-0 left-0 w-full h-0.5 ${AREA_ACCENTS[i]}`} style={{ opacity: 0.4 }} />
+                    <div className="p-3.5 flex items-center gap-2.5">
                       <span className="material-symbols-outlined text-[24px] text-outline-variant/30 shrink-0">
                         {icon}
                       </span>
@@ -45,7 +45,7 @@ export default function MockExamLoading() {
                 ))}
               </div>
 
-              <div className="mt-4 bg-surface-container-lowest border border-tertiary p-4 md:p-5 rounded-xl">
+              <div className="mt-4 p-4 md:p-5">
                 <div className="flex items-start gap-3">
                   <span className="material-symbols-outlined text-[22px] text-outline-variant/30 shrink-0">
                     schedule
