@@ -2,39 +2,12 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { sql } from "@/app/lib/db"
 import { handleError, AppError } from "@/app/lib/errors"
-import { getStudyResponse, type StudyTurn } from "@/app/lib/study-engine"
 import { z } from "zod"
 
-const messageSchema = z.object({
-  transcript: z.array(z.object({
-    role: z.enum(["system", "user", "assistant"]),
-    content: z.string(),
-  })),
+const answerSchema = z.object({
+  question_id: z.string().min(1),
+  selected_key: z.string().length(1),
 })
-
-async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    try {
-      return await fn()
-    } catch (err) {
-      if (attempt === maxAttempts) throw err
-      const isRetryable =
-        err instanceof Error && (
-          err.message.includes("429") ||
-          err.message.includes("500") ||
-          err.message.includes("502") ||
-          err.message.includes("503") ||
-          err.message.includes("rate") ||
-          err.message.includes("overloaded") ||
-          err.message.includes("timeout")
-        )
-      if (!isRetryable) throw err
-      const delay = attempt === 1 ? 500 : 1500
-      await new Promise((r) => setTimeout(r, delay))
-    }
-  }
-  throw new Error("unreachable")
-}
 
 export async function POST(
   request: NextRequest,
@@ -46,57 +19,46 @@ export async function POST(
 
     const { id } = await context.params
     const body = await request.json()
-    const parsed = messageSchema.safeParse(body)
+    const parsed = answerSchema.safeParse(body)
     if (!parsed.success) throw new AppError(parsed.error.message, 400)
 
     const session = await sql`
-      SELECT * FROM study_sessions WHERE id = ${id} AND user_id = ${userId}
+      SELECT question_ids, answers FROM study_sessions WHERE id = ${id} AND user_id = ${userId}
     `
     if (session.rows.length === 0) throw new AppError("Session not found", 404)
 
-    const sessionRow = session.rows[0] as Record<string, unknown>
-    const mode = sessionRow.mode as string
-    const contentArea = sessionRow.content_area as string
-    const concepts = (sessionRow.weak_concepts as string[]) ?? []
+    const row = session.rows[0] as Record<string, unknown>
+    const questionIds = (row.question_ids as string[]) ?? []
+    const answers = ((row.answers as Record<string, string>) ?? {})
 
-    const transcript = parsed.data.transcript as StudyTurn[]
+    const { question_id, selected_key } = parsed.data
+    if (!questionIds.includes(question_id)) throw new AppError("Question not in session", 400)
 
-    let apiMessages: StudyTurn[]
-    let persistedTranscript: StudyTurn[]
+    const question = await sql`
+      SELECT correct_answer, rationale, wrong_choice_rationales FROM study_questions WHERE id = ${question_id}
+    `
+    if (question.rows.length === 0) throw new AppError("Question not found", 404)
 
-    if (transcript.length === 0) {
-      const topic = (sessionRow.topic as string) || "all topics in this area"
-      const conceptList = concepts.length > 0 ? `\n\nSpecific concepts to drill:\n${concepts.map((c, i) => `${i + 1}. ${c}`).join("\n")}` : ""
-      apiMessages = [{ role: "user", content: `Let's start. I'm ready for the first concept on ${topic}.${conceptList}` }]
-      persistedTranscript = []
-    } else {
-      apiMessages = transcript
-      persistedTranscript = [...transcript]
-    }
+    const q = question.rows[0] as Record<string, unknown>
+    const correctAnswer = q.correct_answer as string
+    const wrongChoiceRationales = (q.wrong_choice_rationales as Record<string, string>) ?? {}
+    const rationale = q.rationale as string
 
-    // Count questions already asked (user messages = answers to questions)
-    // Subtract 1 on first call because the "Let's start" message isn't a question answer
-    const userMsgCount = apiMessages.filter((m) => m.role === "user").length
-    const questionCount = transcript.length === 0 ? userMsgCount - 1 : userMsgCount
+    const correct = selected_key === correctAnswer
+    const displayedRationale = correct ? rationale : (wrongChoiceRationales[selected_key] ?? rationale)
 
-    const { content, question, correct_rationale, incorrect_rationale, summary } = await withRetry(() =>
-      getStudyResponse(
-        apiMessages,
-        mode as "drill" | "case" | "recall" | "weak_area" | "teach_back",
-        contentArea,
-        { questionCount, conceptList: concepts, maxQuestions: 10 },
-      ),
-    )
-
-    const updatedTranscript = [...persistedTranscript, { role: "assistant" as const, content }]
-
+    const newAnswers = { ...answers, [question_id]: selected_key }
     await sql`
-      UPDATE study_sessions
-      SET transcript_json = ${JSON.stringify(updatedTranscript)}::jsonb
-      WHERE id = ${id}
+      UPDATE study_sessions SET answers = ${JSON.stringify(newAnswers)}::jsonb WHERE id = ${id}
     `
 
-    return NextResponse.json({ content, question, correct_rationale, incorrect_rationale, summary: summary ?? null })
+    return NextResponse.json({
+      correct,
+      correct_answer: correctAnswer,
+      rationale: displayedRationale,
+      correct_rationale: correct ? rationale : "",
+      incorrect_rationale: correct ? "" : displayedRationale,
+    })
   } catch (error) {
     return handleError(error)
   }

@@ -29,15 +29,7 @@ export default function StudyPicker({
   const [selectedMode, setSelectedMode] = useState<StudyMode | null>(null)
   const [selectedArea, setSelectedArea] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
-  const [showBetaModal, setShowBetaModal] = useState(() => {
-    if (typeof window === "undefined") return false
-    return !sessionStorage.getItem("beta-modal-dismissed")
-  })
-
-  function dismissBetaModal() {
-    sessionStorage.setItem("beta-modal-dismissed", "true")
-    setShowBetaModal(false)
-  }
+  const [showUnavailableModal, setShowUnavailableModal] = useState(true)
 
   const areas = Object.keys(CONCEPT_CHECKLISTS)
 
@@ -66,23 +58,24 @@ export default function StudyPicker({
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden text-on-surface">
-      {showBetaModal && (
+      {showUnavailableModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
           <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 max-w-sm w-full shadow-xl">
             <div className="flex items-center gap-2 mb-3">
-              <span className="material-symbols-outlined text-primary" style={{ fontSize: 24 }}>science</span>
-              <span className="font-label-caps text-primary text-[11px] uppercase tracking-wider">Beta Feature</span>
+              <span className="material-symbols-outlined text-primary" style={{ fontSize: 24 }}>warning</span>
+              <span className="font-label-caps text-primary text-[11px] uppercase tracking-wider">Study Mode Unavailable</span>
             </div>
-            <h2 className="font-title-md text-title-md text-on-surface mb-2">Study Mode is in Beta</h2>
             <p className="font-body-sm text-sm text-on-surface-variant leading-relaxed mb-5">
-              This feature is still being tested. You may encounter some errors or unexpected behavior. We are working on fixing these issues as soon as possible.
+              Sorry, study mode is not available right now.
             </p>
-            <button
-              onClick={dismissBetaModal}
-              className="w-full bg-primary text-on-primary py-2.5 rounded-xl font-title-md text-sm transition-all active:scale-[0.97]"
-            >
-              Got it
-            </button>
+            <div className="flex gap-3">
+              <button onClick={() => setShowUnavailableModal(false)} className="flex-1 py-2.5 border border-outline rounded-xl font-label-caps text-[11px] hover:bg-surface-container-high transition-all">
+                STAY
+              </button>
+              <button onClick={() => router.push("/dashboard")} className="flex-1 py-2.5 bg-primary text-on-primary rounded-xl font-label-caps text-[11px] hover:bg-on-primary-fixed-variant transition-all">
+                GO HOME
+              </button>
+            </div>
           </div>
         </div>
       )}
