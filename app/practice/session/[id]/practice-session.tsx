@@ -103,14 +103,15 @@ export default function PracticeSession({
   )
 
   const handleTimeExpire = useCallback(() => {
-    if (!question || answerStates[question.id]) return
+    if (!question?.id || answerStates[question.id]) return
+    const q = question
     setAnswerStates((prev) => ({
       ...prev,
-      [question.id]: {
+      [q.id]: {
         selected: null,
         correct: false,
-        correctAnswer: question.correct_answer,
-        rationale: question.rationale,
+        correctAnswer: q.correct_answer,
+        rationale: q.rationale,
         timedOut: true,
       },
     }))

@@ -19,57 +19,61 @@ export async function POST(
 
     const { questionId, answer } = parsed.data
 
-    const session = await sql`
-      SELECT * FROM sessions WHERE id = ${sessionId} AND user_id = ${userId}
+    const result = await sql`
+      WITH s AS (
+        SELECT type, answers, started_at, duration_seconds
+        FROM sessions WHERE id = ${sessionId} AND user_id = ${userId}
+      ),
+      u AS (
+        UPDATE sessions
+        SET answers = COALESCE(s.answers, '{}'::jsonb) || jsonb_build_object(${questionId}::text, ${answer}::text)
+        FROM s
+        WHERE sessions.id = ${sessionId}
+        RETURNING 1
+      )
+      SELECT s.type AS session_type,
+             s.started_at,
+             s.duration_seconds,
+             q.correct_answer,
+             q.rationale,
+             q.wrong_choice_rationales,
+             q.choices
+      FROM s
+      CROSS JOIN questions q
+      WHERE q.id = ${questionId}
     `
-    if (session.rows.length === 0) throw new AppError("Session not found", 404)
 
-    const sessionRow = session.rows[0] as Record<string, unknown>
-    const sessionType = sessionRow.type as string
+    if (result.rows.length === 0) throw new AppError("Session or question not found", 404)
+
+    const row = result.rows[0] as Record<string, unknown>
+    const sessionType = row.session_type as string
 
     if (sessionType === "mock-exam") {
-      const durationSeconds = sessionRow.duration_seconds as number | null
-      const startedAt = sessionRow.started_at as string
+      const durationSeconds = row.duration_seconds as number | null
+      const startedAt = row.started_at as string
       if (durationSeconds && startedAt) {
         const deadline = new Date(startedAt).getTime() + durationSeconds * 1000
         if (Date.now() > deadline) throw new AppError("Exam time has expired", 410)
       }
-    }
-
-    const question = await sql`
-      SELECT correct_answer, rationale, wrong_choice_rationales, choices, text FROM questions WHERE id = ${questionId}
-    `
-    if (question.rows.length === 0) throw new AppError("Question not found", 404)
-
-    const q = question.rows[0] as Record<string, unknown>
-    const correctAnswer = q.correct_answer as string
-    const isCorrect = answer === correctAnswer
-
-    const currentAnswers = (sessionRow.answers as Record<string, string>) ?? {}
-    currentAnswers[questionId] = answer
-
-    await sql`
-      UPDATE sessions SET answers = ${JSON.stringify(currentAnswers)}::jsonb
-      WHERE id = ${sessionId}
-    `
-
-    if (sessionType === "mock-exam") {
       return NextResponse.json({ saved: true })
     }
 
+    const correctAnswer = row.correct_answer as string
+    const isCorrect = answer === correctAnswer
+
     let rationale: string
     if (isCorrect) {
-      rationale = q.rationale as string
+      rationale = row.rationale as string
     } else {
-      const wrongRationales = q.wrong_choice_rationales as Record<string, string> | null
+      const wrongRationales = row.wrong_choice_rationales as Record<string, string> | null
       const specificRationale = wrongRationales?.[answer]
       if (specificRationale) {
         rationale = specificRationale
       } else {
-        const choices = (q.choices as Array<{ key: string; text: string }>) ?? []
+        const choices = (row.choices as Array<{ key: string; text: string }>) ?? []
         const chosenText = choices.find((c) => c.key === answer)?.text ?? "selected"
         const correctText = choices.find((c) => c.key === correctAnswer)?.text ?? ""
-        rationale = `Choice ${answer} ("${chosenText}") is not the best response. The correct answer is ${correctAnswer} ("${correctText}"): ${q.rationale as string}`
+        rationale = `Choice ${answer} ("${chosenText}") is not the best response. The correct answer is ${correctAnswer} ("${correctText}"): ${row.rationale as string}`
       }
     }
 

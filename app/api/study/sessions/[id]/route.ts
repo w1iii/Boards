@@ -53,8 +53,7 @@ export async function PATCH(
 
       await sql`
         UPDATE study_sessions
-        SET status = 'completed',
-            completed_at = now(),
+        SET completed_at = now(),
             transcript_json = ${JSON.stringify(body.transcript ?? [])}::jsonb,
             weak_concepts = ${JSON.stringify(weak_concepts)}::jsonb,
             score_pct = ${score_pct}

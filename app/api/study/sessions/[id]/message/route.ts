@@ -12,7 +12,7 @@ const messageSchema = z.object({
   })),
 })
 
-async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 3): Promise<T> {
+async function withRetry<T>(fn: () => Promise<T>, maxAttempts = 4): Promise<T> {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await fn()
@@ -57,7 +57,7 @@ export async function POST(
     const sessionRow = session.rows[0] as Record<string, unknown>
     const mode = sessionRow.mode as string
     const contentArea = sessionRow.content_area as string
-    const concepts = (sessionRow.concepts as string[]) ?? []
+    const concepts = (sessionRow.weak_concepts as string[]) ?? []
 
     const transcript = parsed.data.transcript as StudyTurn[]
 
@@ -74,11 +74,17 @@ export async function POST(
       persistedTranscript = [...transcript]
     }
 
-    const { content, summary } = await withRetry(() =>
+    // Count questions already asked (user messages = answers to questions)
+    // Subtract 1 on first call because the "Let's start" message isn't a question answer
+    const userMsgCount = apiMessages.filter((m) => m.role === "user").length
+    const questionCount = transcript.length === 0 ? userMsgCount - 1 : userMsgCount
+
+    const { content, question, correct_rationale, incorrect_rationale, summary } = await withRetry(() =>
       getStudyResponse(
         apiMessages,
         mode as "drill" | "case" | "recall" | "weak_area" | "teach_back",
         contentArea,
+        { questionCount, conceptList: concepts, maxQuestions: 10 },
       ),
     )
 
@@ -90,7 +96,7 @@ export async function POST(
       WHERE id = ${id}
     `
 
-    return NextResponse.json({ content, summary: summary ?? null })
+    return NextResponse.json({ content, question, correct_rationale, incorrect_rationale, summary: summary ?? null })
   } catch (error) {
     return handleError(error)
   }
