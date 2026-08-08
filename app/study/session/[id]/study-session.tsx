@@ -56,7 +56,7 @@ export default function StudySession({
   const [rationale, setRationale] = useState("")
   const [finalizing, setFinalizing] = useState(false)
 
-  const [showLeaveModal, setShowLeaveModal] = useState(true)
+  const [showLeaveModal, setShowLeaveModal] = useState(false)
   const MAX_QUESTIONS = questions.length
 
   const router = useRouter()

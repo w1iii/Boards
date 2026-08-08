@@ -5,16 +5,35 @@ import { AREA_LABELS, type StudyMode } from "./study-concepts"
 
 const groq = new Groq()
 
-const studyQuestionSchema = z.object({
-  text: z.string().min(1),
-  choices: z.array(z.object({ key: z.string().min(1), text: z.string().min(1) })).min(2).max(10),
-  correctAnswer: z.string().min(1),
-  rationale: z.string().min(1),
-  wrongChoiceRationales: z.record(z.string(), z.string()).refine(
-    (val) => Object.keys(val).length >= 1,
-    { message: "wrongChoiceRationales needs at least 1 entry" },
-  ),
-})
+export const studyQuestionSchema = z
+  .object({
+    text: z.string().min(1),
+    choices: z.record(z.string(), z.string()).refine((val) => Object.keys(val).length >= 2, {
+      message: "choices needs at least 2 entries",
+    }),
+    correctAnswer: z.string().min(1),
+    rationale: z.string().min(1),
+    wrongChoiceRationales: z.record(z.string(), z.string()).refine(
+      (val) => Object.keys(val).length >= 1,
+      { message: "wrongChoiceRationales needs at least 1 entry" },
+    ),
+  })
+  .transform((q, ctx) => {
+    const keys = Object.keys(q.choices)
+    const correctKey = q.correctAnswer.toUpperCase()
+    if (!keys.includes(correctKey)) {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: `correctAnswer ${q.correctAnswer} not among choices ${keys.join(", ")}` })
+      return z.NEVER
+    }
+    const letters = ["A", "B", "C", "D"].filter((l) => keys.includes(l))
+    return {
+      text: q.text,
+      choices: letters.map((key) => ({ key, text: q.choices[key] })),
+      correctAnswer: correctKey,
+      rationale: q.rationale,
+      wrongChoiceRationales: q.wrongChoiceRationales,
+    }
+  })
 
 type StudyQuestion = z.infer<typeof studyQuestionSchema>
 
@@ -67,7 +86,7 @@ Requirements for EVERY question:
 - Include full rationales: why the correct answer is right, AND why each wrong choice is wrong.
 - Use Philippine clinical context where appropriate (DOH programs, RA numbers, brand names, Filipino patient names).
 
-Respond JSON only: {"questions":[{"text": "...", "choices":[{"key":"A","text":"..."},{"key":"B","text":"..."},{"key":"C","text":"..."},{"key":"D","text":"..."}], "correctAnswer":"C", "rationale":"Why C is correct.", "wrongChoiceRationales":{"A":"Why A is wrong.","B":"Why B is wrong.","D":"Why D is wrong."}}]}
+Respond JSON only: {"questions":[{"text": "...", "choices":{"A":"...","B":"...","C":"...","D":"..."}, "correctAnswer":"C", "rationale":"Why C is correct.", "wrongChoiceRationales":{"A":"Why A is wrong.","B":"Why B is wrong.","D":"Why D is wrong."}}]}
 
 Generate up to 12 questions.`
 }
@@ -80,18 +99,23 @@ async function generateBatch(
 ): Promise<{ questions: StudyQuestion[]; error?: string }> {
   const areaLabel = AREA_LABELS[contentArea] ?? contentArea
 
-  const completion = await groq.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    max_tokens: 8192,
-    temperature: 1.0,
-    response_format: { type: "json_object" },
-    messages: [
-      { role: "system", content: buildPrompt(mode, areaLabel, concepts) },
-      { role: "user", content: `Generate ${count} study questions for content area: ${areaLabel}${concepts.length ? ` covering these concepts: ${concepts.join(", ")}` : ""}` },
-    ],
-  })
-
-  const raw = completion.choices[0]?.message?.content ?? ""
+  let raw: string
+  try {
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.3-70b-versatile",
+      max_tokens: 8192,
+      temperature: 0.4,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: buildPrompt(mode, areaLabel, concepts) },
+        { role: "user", content: `Generate ${count} study questions for content area: ${areaLabel}${concepts.length ? ` covering these concepts: ${concepts.join(", ")}` : ""}` },
+      ],
+    })
+    raw = completion.choices[0]?.message?.content ?? ""
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e)
+    return { questions: [], error: `Groq request failed: ${message.slice(0, 300)}` }
+  }
   if (!raw) return { questions: [], error: "AI returned empty response" }
 
   let parsed: unknown
@@ -105,19 +129,27 @@ async function generateBatch(
   const rawList = Array.isArray(rawArray) ? (rawArray as Record<string, unknown>[]) : []
 
   const normalized = rawList.map((q) => {
-    let choices: { key: string; text: string }[] = []
-    if (Array.isArray(q.choices)) {
-      choices = (q.choices as Array<Record<string, unknown>>).map((c) => ({
-        key: String(c.key ?? "A").toUpperCase(),
-        text: String(c.text ?? ""),
-      }))
-    }
+    const rawChoices = q.choices as Record<string, string> | Array<Record<string, unknown>> | undefined
+    const choices: Record<string, string> = Array.isArray(rawChoices)
+      ? Object.fromEntries(
+          rawChoices.map((c) => [String(c.key ?? "A").toUpperCase(), String(c.text ?? "")]),
+        )
+      : (rawChoices ?? {})
+    const wrong =
+      (q.wrongChoiceRationales as Record<string, string> | undefined) ??
+      (q.wrong_choice_rationales as Record<string, string> | undefined) ??
+      {}
     return {
-      ...q,
-      correctAnswer: String(q.correctAnswer ?? "A").toUpperCase(),
-      choices,
+      text: String(q.text ?? ""),
+      choices: Object.fromEntries(
+        Object.keys(choices)
+          .sort()
+          .map((k) => [k.toUpperCase(), choices[k]]),
+      ),
+      correctAnswer: String(q.correctAnswer ?? q.correct_answer ?? "A").toUpperCase(),
+      rationale: String(q.rationale ?? q.correct_rationale ?? ""),
       wrongChoiceRationales: Object.fromEntries(
-        Object.entries((q.wrongChoiceRationales as Record<string, string>) || {}).map(([k, v]) => [k.toUpperCase(), v]),
+        Object.entries(wrong).map(([k, v]) => [k.toUpperCase(), v]),
       ),
     }
   })
@@ -177,14 +209,15 @@ export async function ensureStudyBank(
   const maxAttempts = 4
 
   for (let attempt = 0; attempt < maxAttempts && all.length < BANK_TARGET; attempt++) {
-    const batch = await generateBatch(mode, contentArea, Math.min(BANK_TARGET - all.length, 4), concepts)
-    if (batch.error) break
+    const want = Math.max(4, Math.min(BANK_TARGET - all.length, 6))
+    const batch = await generateBatch(mode, contentArea, want, concepts)
     for (const q of batch.questions) {
       const key = q.text.trim().toLowerCase()
       if (seen.has(key)) continue
       seen.add(key)
       all.push(q)
     }
+    if (batch.error && attempt === maxAttempts - 1) break
   }
 
   if (all.length === 0) return

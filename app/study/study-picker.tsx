@@ -29,7 +29,7 @@ export default function StudyPicker({
   const [selectedMode, setSelectedMode] = useState<StudyMode | null>(null)
   const [selectedArea, setSelectedArea] = useState<string | null>(null)
   const [creating, setCreating] = useState(false)
-  const [showUnavailableModal, setShowUnavailableModal] = useState(true)
+  const [showUnavailableModal, setShowUnavailableModal] = useState(false)
 
   const areas = Object.keys(CONCEPT_CHECKLISTS)
 
