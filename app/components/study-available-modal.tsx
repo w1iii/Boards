@@ -1,47 +1,43 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
 
 const DISMISSED_KEY = "study-available-dismissed"
 
+let listeners: Array<() => void> = []
+
+function subscribe(callback: () => void) {
+  listeners.push(callback)
+  return () => {
+    listeners = listeners.filter((l) => l !== callback)
+  }
+}
+
+function getSnapshot() {
+  return sessionStorage.getItem(DISMISSED_KEY) === null
+}
+
+function getServerSnapshot() {
+  return false
+}
+
+function dismissStore() {
+  sessionStorage.setItem(DISMISSED_KEY, "true")
+  listeners.forEach((l) => l())
+}
+
 export default function StudyAvailableModal() {
   const router = useRouter()
-  const [open, setOpen] = useState(false)
+  const show = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot)
 
-  useEffect(() => {
-    if (typeof window === "undefined") return
-    if (!sessionStorage.getItem(DISMISSED_KEY)) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOpen(true)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (!open) return
-    function handleKeyDown(e: KeyboardEvent) {
-      if (e.key === "Escape") dismiss()
-    }
-    document.addEventListener("keydown", handleKeyDown)
-    document.body.style.overflow = "hidden"
-    return () => {
-      document.removeEventListener("keydown", handleKeyDown)
-      document.body.style.overflow = ""
-    }
-  }, [open])
-
-  function dismiss() {
-    sessionStorage.setItem(DISMISSED_KEY, "true")
-    setOpen(false)
-  }
-
-  if (!open) return null
+  if (!show) return null
 
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm"
       onClick={(e) => {
-        if (e.target === e.currentTarget) dismiss()
+        if (e.target === e.currentTarget) dismissStore()
       }}
     >
       <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-md mx-4 overflow-hidden border border-outline-variant/30">
@@ -69,7 +65,7 @@ export default function StudyAvailableModal() {
             <span className="material-symbols-outlined text-lg">arrow_forward</span>
           </button>
           <button
-            onClick={dismiss}
+            onClick={dismissStore}
             className="w-full py-2.5 font-label-caps text-sm text-secondary hover:text-on-surface transition-colors"
           >
             Not now
