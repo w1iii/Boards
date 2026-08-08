@@ -194,7 +194,7 @@ export default function StudySession({
                   </div>
                 </div>
               </div>
-              <div className="w-full h-[3px] bg-surface-variant relative overflow-hidden">
+<div className="w-full h-[3px] bg-surface-variant relative overflow-hidden">
                 <div className="absolute top-0 left-0 h-full bg-primary transition-all duration-500 ease-out" style={{ width: "100%" }} />
               </div>
             </div>

@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import SideNavBar from "@/app/components/side-nav-bar"
 import QuestionTimer from "./timer"
-import { useBreak } from "@/app/contexts/break-context"
+import { usePomodoro } from "@/app/contexts/pomodoro-context"
 
 interface Question {
   id: string
@@ -72,7 +72,7 @@ export default function PracticeSession({
   const [completing, setCompleting] = useState(false)
   const completingRef = useRef(false)
   const router = useRouter()
-  const { isBreakActive } = useBreak()
+  const { isBreakActive } = usePomodoro()
   const timerRunningBeforeBreakRef = useRef(false)
 
   useEffect(() => {
@@ -226,7 +226,7 @@ export default function PracticeSession({
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
       <div className="shrink-0 px-margin-mobile md:px-margin-desktop pt-4 pb-2">
         <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-end mb-3">
+          <div className="flex justify-between items-end mb-2">
             <div>
               <span className="font-label-caps text-primary block tracking-[0.2em] text-[10px]">
                 NURSING BOARD EXAM PREP

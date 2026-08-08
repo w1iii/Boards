@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useClerk } from "@clerk/nextjs"
-import { useBreak } from "@/app/contexts/break-context"
+import { usePomodoro } from "@/app/contexts/pomodoro-context"
 import MobileNav from "@/app/components/mobile-nav"
 import { NAV_ITEMS } from "@/app/components/nav-items"
 
@@ -15,7 +15,7 @@ interface SideNavBarProps {
 export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
   const pathname = usePathname()
   const { signOut } = useClerk()
-  const { openBreakModal } = useBreak()
+  const { openModal } = usePomodoro()
 
   function isActive(href: string): boolean {
     return pathname === href || pathname.startsWith(href + "/")
@@ -93,11 +93,11 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
           Logout
         </button>
         <button
-          onClick={openBreakModal}
+          onClick={openModal}
           className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-label-caps text-sm candy-button-shadow-sm transition-all hover:opacity-90 flex items-center justify-center gap-2"
         >
-          <span className="material-symbols-outlined text-base">self_improvement</span>
-          Take a Break
+          <span className="material-symbols-outlined text-base">timer</span>
+          Pomodoro
         </button>
       </div>
       </aside>

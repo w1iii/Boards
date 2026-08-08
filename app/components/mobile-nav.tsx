@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useClerk } from "@clerk/nextjs"
-import { useBreak } from "@/app/contexts/break-context"
+import { usePomodoro } from "@/app/contexts/pomodoro-context"
 import { NAV_ITEMS } from "@/app/components/nav-items"
 
 interface MobileNavProps {
@@ -16,7 +16,7 @@ export default function MobileNav({ firstName, imageUrl }: MobileNavProps) {
   const [open, setOpen] = useState(false)
   const pathname = usePathname()
   const { signOut } = useClerk()
-  const { openBreakModal } = useBreak()
+  const { openModal } = usePomodoro()
 
   useEffect(() => {
     if (!open) return
@@ -144,12 +144,12 @@ export default function MobileNav({ firstName, imageUrl }: MobileNavProps) {
               <button
                 onClick={() => {
                   close()
-                  openBreakModal()
+                  openModal()
                 }}
                 className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-label-caps text-sm candy-button-shadow-sm transition-all hover:opacity-90 flex items-center justify-center gap-2"
               >
-                <span className="material-symbols-outlined text-base">self_improvement</span>
-                Take a Break
+                <span className="material-symbols-outlined text-base">timer</span>
+                Pomodoro
               </button>
             </div>
           </div>
