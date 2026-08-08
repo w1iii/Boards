@@ -8,6 +8,16 @@ export const POMODORO_PRESETS = [
 ] as const
 
 const BASE_TITLE = "BOARDS. | Master the NLE Nursing Board Exam"
+const STORAGE_KEY = "pomodoro-state"
+
+interface PersistedState {
+  phase: Phase
+  endTime: number
+  roundCount: number
+  focusMinutes: number
+  breakMinutes: number
+  isBreakModalOpen: boolean
+}
 
 type Phase = "focus" | "break" | null
 
@@ -120,6 +130,15 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     }
   }, [])
 
+  const clearPersisted = useCallback(() => {
+    if (typeof window === "undefined") return
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch {
+      // storage unavailable
+    }
+  }, [])
+
   const beginFocus = useCallback(
     (round: number) => {
       const total = focusMinutesRef.current * 60
@@ -175,8 +194,9 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     setPhaseTotalSeconds(1)
     endTimeRef.current = null
     setIsBreakModalOpen(false)
+    clearPersisted()
     if (typeof document !== "undefined") document.title = BASE_TITLE
-  }, [clearTicker, setPhaseBoth, setRoundBoth])
+  }, [clearTicker, setPhaseBoth, setRoundBoth, clearPersisted])
 
   const openModal = useCallback(() => {
     setIsBreakModalOpen(true)
@@ -194,8 +214,9 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
     setPhaseTotalSeconds(1)
     endTimeRef.current = null
     setIsBreakModalOpen(false)
+    clearPersisted()
     if (typeof document !== "undefined") document.title = BASE_TITLE
-  }, [clearTicker, setPhaseBoth, setRoundBoth])
+  }, [clearTicker, setPhaseBoth, setRoundBoth, clearPersisted])
 
   useEffect(() => {
     if (phase === null) {
@@ -220,6 +241,57 @@ export function PomodoroProvider({ children }: { children: React.ReactNode }) {
 
     return () => clearTicker()
   }, [phase, clearTicker, beginFocus, beginBreak])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY)
+      if (!raw) return
+      const saved = JSON.parse(raw) as Partial<PersistedState>
+      const endTime = typeof saved.endTime === "number" ? saved.endTime : NaN
+      const phaseSaved = saved.phase
+      const savedRound = typeof saved.roundCount === "number" ? saved.roundCount : 1
+      const focusMin = typeof saved.focusMinutes === "number" ? saved.focusMinutes : 20
+      const breakMin = typeof saved.breakMinutes === "number" ? saved.breakMinutes : 5
+
+      if (phaseSaved !== "focus" && phaseSaved !== "break") return
+      if (!Number.isFinite(endTime) || endTime <= Date.now()) return
+
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMinutesBoth(focusMin, breakMin)
+      setRoundBoth(savedRound)
+      setPhaseTotalSeconds(phaseSaved === "break" ? breakMin * 60 : focusMin * 60)
+      setRemainingSeconds(Math.max(0, Math.round((endTime - Date.now()) / 1000)))
+      endTimeRef.current = endTime
+      setIsBreakModalOpen(saved.isBreakModalOpen === true)
+      setPhaseBoth(phaseSaved)
+      titleForPhase(phaseSaved, Math.max(0, Math.round((endTime - Date.now()) / 1000)))
+    } catch {
+      clearPersisted()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === "undefined") return
+    try {
+      if (phase === null || endTimeRef.current === null) {
+        localStorage.removeItem(STORAGE_KEY)
+      } else {
+        const state: PersistedState = {
+          phase,
+          endTime: endTimeRef.current,
+          roundCount,
+          focusMinutes,
+          breakMinutes,
+          isBreakModalOpen,
+        }
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+      }
+    } catch {
+      // storage unavailable
+    }
+  }, [phase, roundCount, focusMinutes, breakMinutes, isBreakModalOpen])
 
   return (
     <PomodoroContext.Provider
