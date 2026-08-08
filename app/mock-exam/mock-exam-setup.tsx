@@ -6,11 +6,11 @@ import SideNavBar from "@/app/components/side-nav-bar"
 import { useSessionCreation } from "@/app/lib/use-session-creation"
 
 const AREAS = [
-  { key: "nlp-i", label: "NP I", description: "Community Health", icon: "groups", accent: "bg-primary-fixed" },
-  { key: "nlp-ii", label: "NP II", description: "Mother & Child", icon: "pregnant_woman", accent: "bg-secondary-fixed" },
-  { key: "nlp-iii", label: "NP III", description: "Adult Health I", icon: "monitor_heart", accent: "bg-tertiary-fixed" },
-  { key: "nlp-iv", label: "NP IV", description: "Adult Health II", icon: "medical_services", accent: "bg-primary-fixed-dim" },
-  { key: "nlp-v", label: "NP V", description: "Mental Health", icon: "psychology", accent: "bg-outline-variant" },
+  { key: "nlp-i", label: "NP I", description: "Community Health", icon: "groups" },
+  { key: "nlp-ii", label: "NP II", description: "Mother & Child", icon: "pregnant_woman" },
+  { key: "nlp-iii", label: "NP III", description: "Adult Health I", icon: "monitor_heart" },
+  { key: "nlp-iv", label: "NP IV", description: "Adult Health II", icon: "medical_services" },
+  { key: "nlp-v", label: "NP V", description: "Mental Health", icon: "psychology" },
 ] as const
 
 const SECONDS_PER_QUESTION = 72
@@ -44,6 +44,7 @@ export default function MockExamSetup({ firstName, imageUrl }: Props) {
 
   const count = selected.size
   const estimateMin = Math.round((questionCount * SECONDS_PER_QUESTION) / 60)
+  const pct = ((questionCount - 25) / (100 - 25)) * 100
 
   return (
     <div className="h-dvh flex flex-col overflow-hidden text-on-surface">
@@ -51,54 +52,54 @@ export default function MockExamSetup({ firstName, imageUrl }: Props) {
 
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
       <div className="flex-1 flex flex-col overflow-hidden px-margin-mobile md:px-margin-desktop">
-        <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-4 md:py-6">
-          <div className="mb-3 md:mb-4 shrink-0">
-            <span className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] bg-primary-fixed px-3 py-1 rounded-full inline-block mb-1.5">
+        <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-3 md:py-5">
+          <header className="mb-4 md:mb-5 shrink-0">
+            <p className="font-label-caps text-label-caps text-primary uppercase tracking-widest mb-1.5">
               Mock Exam
-            </span>
-            <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg text-primary leading-[1.1]">
-              BUILD YOUR EXAM
+            </p>
+            <h1 className="font-display-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase mb-2 leading-[1.1]">
+              Build Your Exam
             </h1>
-            <p className="font-body-md text-body-md text-on-surface-variant mt-1 max-w-xl">
+            <p className="font-body-md text-body-md text-on-surface-variant">
               Timed simulation at real board-exam pace. No instant feedback — answers lock at submit.
             </p>
-          </div>
+          </header>
 
-          <div className="flex-1 overflow-y-auto -mx-2 px-2 pb-2">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+          <div className="flex-1 overflow-y-auto -mx-3 px-3 pb-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
               {AREAS.map((area) => {
                 const isSelected = selected.has(area.key)
                 return (
                   <button
                     key={area.key}
                     onClick={() => toggle(area.key)}
-                    className={`group cursor-pointer text-left relative overflow-hidden rounded-xl border transition-all duration-200 ${
+                    aria-pressed={isSelected}
+                    className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border ${
                       isSelected
-                        ? "border-primary bg-primary-fixed"
-                        : "border-outline-variant bg-surface-container-lowest hover:border-secondary"
+                        ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
+                        : "border-outline-variant/30"
                     }`}
                   >
-                    <div className={`absolute top-0 left-0 w-full h-0.5 ${area.accent}`} style={{ opacity: 0.4 }} />
-                    <div className="p-3.5 flex items-center gap-2.5">
-                      <span className="material-symbols-outlined text-secondary shrink-0" style={{ fontSize: 24 }}>{area.icon}</span>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-1.5">
-                          <h3 className="font-title-md text-sm text-primary truncate">{area.label}</h3>
-                          {isSelected && (
-                            <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 16 }}>check_circle</span>
-                          )}
-                        </div>
-                        <p className="font-body-sm text-[11px] text-on-surface-variant leading-snug mt-0.5">{area.description}</p>
+                    <div className={`w-11 h-11 rounded-xl bg-primary-container/10 flex items-center justify-center mb-4 group-hover:bg-primary-container/20 transition-colors ${isSelected ? "bg-primary-container/20" : ""}`}>
+                      <span className="material-symbols-outlined text-primary" style={{ fontSize: 26 }}>{area.icon}</span>
+                    </div>
+                    <div className="mt-auto">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <h3 className="font-display-lg text-xl text-primary">{area.label}</h3>
+                        {isSelected && (
+                          <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 18 }}>check_circle</span>
+                        )}
                       </div>
+                      <p className="font-body-md text-body-md text-on-surface-variant">{area.description}</p>
                     </div>
                   </button>
                 )
               })}
             </div>
 
-            <div className="mt-2 px-3 py-2">
-              <div className="flex items-center gap-2">
-                <span className="material-symbols-outlined text-error shrink-0" style={{ fontSize: 20 }}>schedule</span>
+            <div className="mt-3 px-1">
+              <div className="flex items-start gap-2">
+                <span className="material-symbols-outlined text-error shrink-0" style={{ fontSize: 18 }}>schedule</span>
                 <p className="text-error leading-snug" style={{ fontSize: 13, lineHeight: 1.4 }}>
                   500 items total · 100 per NP subject (NP I–V) · 2 days · Passing: 75% avg, no subject below 60%
                 </p>
@@ -108,15 +109,23 @@ export default function MockExamSetup({ firstName, imageUrl }: Props) {
         </div>
       </div>
 
-      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-3 md:pb-6 space-y-2">
-        <div className="max-w-4xl mx-auto w-full bg-surface-container-lowest rounded-xl border border-outline-variant p-2.5 md:p-4">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-4">
-            <div className="flex-1 w-full">
-              <label className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.1em] text-[11px] block mb-1.5">
-                Exam Length: <span className="text-primary font-bold">{questionCount}</span> questions
+      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-3 md:pb-6 space-y-3">
+        <div className="max-w-7xl mx-auto w-full bg-surface-container-lowest rounded-2xl border border-outline-variant/30 p-4 md:p-5 shadow-sm flex flex-col md:flex-row gap-5 md:gap-6 items-start md:items-center">
+          <div className="flex-1 w-full md:pr-6 md:border-r border-outline-variant/20">
+            <div className="flex justify-between items-baseline mb-3">
+              <label className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.15em]">
+                Exam Length
               </label>
-              <div className="flex items-center gap-3">
-                <span className="font-body-sm text-[11px] text-on-surface-variant w-6 text-right">25</span>
+              <div className="flex items-baseline gap-1">
+                <span className="font-display-lg text-2xl text-primary leading-none">{questionCount}</span>
+                <span className="font-label-caps text-label-caps text-on-surface-variant">Questions</span>
+              </div>
+            </div>
+            <div className="relative flex items-center group">
+              <span className="font-label-caps text-label-caps text-on-surface-variant/60 mr-4">25</span>
+              <div className="relative flex-1 h-6 flex items-center">
+                <div className="absolute w-full h-1 bg-surface-variant rounded-full" />
+                <div className="absolute h-1 bg-primary rounded-full" style={{ width: `${pct}%` }} />
                 <input
                   type="range"
                   min={25}
@@ -124,46 +133,55 @@ export default function MockExamSetup({ firstName, imageUrl }: Props) {
                   step={5}
                   value={questionCount}
                   onChange={(e) => setQuestionCount(Number(e.target.value))}
-                  className="flex-1 accent-primary h-1 appearance-none cursor-pointer rounded-full bg-outline-variant [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-primary [&::-webkit-slider-thumb]:shadow-md"
+                  className="absolute w-full h-1 opacity-0 cursor-pointer z-10"
                 />
-                <span className="font-body-sm text-[11px] text-on-surface-variant w-6">100</span>
+                <div
+                  className="absolute w-4 h-4 bg-primary rounded-full shadow-sm border-2 border-surface-container-lowest pointer-events-none transition-transform group-hover:scale-110"
+                  style={{ left: `${pct}%`, transform: "translateX(-50%)" }}
+                />
               </div>
+              <span className="font-label-caps text-label-caps text-on-surface-variant/60 ml-4">100</span>
             </div>
-            <div className="shrink-0 bg-primary-fixed rounded-lg px-3 py-2 text-center min-w-[100px]">
-              <p className="font-mono-data text-base font-bold text-primary leading-none">
-                ~{estimateMin} min
-              </p>
-              <p className="font-label-caps text-[10px] text-on-surface-variant mt-0.5">ESTIMATED TIME</p>
+          </div>
+
+          <div className="shrink-0 w-full md:w-auto md:pl-2">
+            <label className="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-[0.15em] block mb-3">
+              Estimated Time
+            </label>
+            <div className="bg-primary-container/10 border border-primary/20 rounded-xl px-4 py-2.5 text-center min-w-[110px]">
+              <p className="font-display-lg text-xl text-primary leading-none">~{estimateMin} min</p>
             </div>
           </div>
         </div>
 
         {notice && (
-          <div className="max-w-4xl mx-auto bg-amber-50 border border-amber-300 text-amber-900 text-[12px] px-4 py-2 rounded-lg">
+          <div className="max-w-7xl mx-auto bg-amber-50 border border-amber-300 text-amber-900 text-[12px] px-4 py-2.5 rounded-lg">
             {notice}
           </div>
         )}
 
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 px-4 py-2 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,218,213,0.6)" }}>
-          <div className="flex items-center gap-2">
-            <span className={`w-2.5 h-2.5 rounded-full ${count > 0 ? "bg-primary" : "bg-secondary"}`} />
-            <p className="font-title-md text-primary uppercase tracking-wider" style={{ fontSize: 13 }}>
-              {error ? "ERROR" : count > 0 ? `${count} Domain${count > 1 ? "s" : ""} Selected` : "Select at least one subject"}
-            </p>
+        <div className="max-w-7xl mx-auto bg-surface-container-lowest rounded-full border border-outline-variant/30 p-1.5 pl-4 md:pl-5 flex items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className={`w-2 h-2 rounded-full shrink-0 ${error ? "bg-error" : count > 0 ? "bg-primary" : "bg-outline"}`} />
+            <span className={`font-label-caps text-label-caps uppercase tracking-wider truncate ${error ? "text-error" : count > 0 ? "text-on-surface" : "text-primary"}`}>
+              {error ? "ERROR" : count > 0 ? "Ready to Begin" : "Select at least one subject"}
+            </span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 shrink-0">
             <Link
               href="/practice"
-              className="px-4 py-2 rounded-full font-title-md text-on-surface-variant hover:text-on-surface transition-colors"
-              style={{ fontSize: 13 }}
+              className="px-3 py-2 rounded-full font-label-caps text-label-caps text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-all"
             >
               Back to Practice
             </Link>
             <button
               onClick={beginExam}
               disabled={count === 0 || loading || generating}
-              className="bg-primary text-on-primary px-5 py-2 rounded-full font-title-md transition-all active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed sm:w-auto"
-              style={{ fontSize: 13, boxShadow: "0 3px 0 #6E1818, 0 4px 12px rgba(149,35,35,0.2)" }}
+              className={`px-5 md:px-6 py-2 rounded-full font-title-md text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.97] shrink-0 ${
+                count === 0 || loading || generating
+                  ? "bg-outline-variant text-on-surface opacity-70 cursor-not-allowed"
+                  : "bg-primary text-on-primary candy-button-shadow-sm"
+              }`}
             >
               {loading || generating ? (
                 <><span>{generating ? "Generating..." : "Creating..."}</span><span className="material-symbols-outlined animate-spin" style={{ fontSize: 18 }}>autorenew</span></>

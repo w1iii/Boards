@@ -16,6 +16,14 @@ const MODES: { mode: StudyMode; label: string; icon: string; desc: string }[] = 
   { mode: "teach_back", label: "Teach-It-Back", icon: "record_voice_over", desc: "Explain it back to me" },
 ]
 
+const AREA_ICONS: Record<string, string> = {
+  "nlp-i": "groups",
+  "nlp-ii": "pregnant_woman",
+  "nlp-iii": "monitor_heart",
+  "nlp-iv": "medical_services",
+  "nlp-v": "psychology",
+}
+
 interface Props {
   firstName: string
   imageUrl: string | null
@@ -84,46 +92,47 @@ export default function StudyPicker({
 
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
       <div className="flex-1 flex flex-col overflow-hidden px-margin-mobile md:px-margin-desktop">
-        <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-4 md:py-6">
-          <div className="mb-4 md:mb-5 shrink-0">
-            <span className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] bg-primary-fixed px-3 py-1 rounded-full inline-block mb-1.5">
+        <div className="max-w-7xl mx-auto w-full flex flex-col flex-1 overflow-hidden py-3 md:py-5">
+          <header className="mb-4 md:mb-5 shrink-0">
+            <p className="font-label-caps text-label-caps text-primary uppercase tracking-widest mb-1.5">
               Study Mode
-            </span>
-            <h1 className="font-display-lg text-headline-lg-mobile md:text-display-lg text-primary leading-[1.1]">
-              PICK A MODE
+            </p>
+            <h1 className="font-display-lg text-headline-lg-mobile md:text-headline-lg text-primary uppercase mb-2 leading-[1.1]">
+              Pick a Mode
             </h1>
-            <p className="font-body-md text-body-md text-on-surface-variant mt-1 max-w-xl">
+            <p className="font-body-md text-body-md text-on-surface-variant">
               Choose your study approach and content area.
             </p>
-          </div>
+          </header>
 
-          <div className="flex-1 overflow-y-auto -mx-2 px-2 pb-2">
-            <div className="mb-4">
-              <h2 className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] text-[11px] mb-2">Study Approach</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+          <div className="flex-1 overflow-y-auto -mx-3 px-3 pb-3">
+            <div className="mb-5">
+              <h2 className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] mb-3">Study Approach</h2>
+              <div className="grid p-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
                 {MODES.map((m) => {
                   const isSelected = selectedMode === m.mode
                   return (
                     <button
                       key={m.mode}
                       onClick={() => setSelectedMode(m.mode)}
-                      className={`group cursor-pointer text-left relative overflow-hidden rounded-xl border transition-all duration-200 ${
+                      aria-pressed={isSelected}
+                      className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border ${
                         isSelected
-                          ? "border-primary bg-primary-fixed"
-                          : "border-outline-variant bg-surface-container-lowest hover:border-secondary"
+                          ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
+                          : "border-outline-variant/30"
                       }`}
                     >
-                      <div className="p-3.5 flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-secondary shrink-0" style={{ fontSize: 24 }}>{m.icon}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <h3 className="font-title-md text-sm text-primary truncate">{m.label}</h3>
-                            {isSelected && (
-                              <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 16 }}>check_circle</span>
-                            )}
-                          </div>
-                          <p className="font-body-sm text-[11px] text-on-surface-variant leading-snug mt-0.5">{m.desc}</p>
+                      <div className={`w-11 h-11 rounded-xl bg-primary-container/10 flex items-center justify-center mb-4 group-hover:bg-primary-container/20 transition-colors ${isSelected ? "bg-primary-container/20" : ""}`}>
+                        <span className="material-symbols-outlined text-primary" style={{ fontSize: 26 }}>{m.icon}</span>
+                      </div>
+                      <div className="mt-auto">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-display-lg text-xl text-primary">{m.label}</h3>
+                          {isSelected && (
+                            <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 18 }}>check_circle</span>
+                          )}
                         </div>
+                        <p className="font-body-md text-body-md text-on-surface-variant">{m.desc}</p>
                       </div>
                     </button>
                   )
@@ -132,8 +141,8 @@ export default function StudyPicker({
             </div>
 
             <div>
-              <h2 className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] text-[11px] mb-2">Content Area</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+              <h2 className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] mb-3">Content Area</h2>
+              <div className="grid p-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
                 {areas.map((area) => {
                   const isSelected = selectedArea === area
                   return (
@@ -141,21 +150,22 @@ export default function StudyPicker({
                       key={area}
                       onClick={() => setSelectedArea(area)}
                       disabled={creating}
-                      className={`group cursor-pointer text-left relative overflow-hidden rounded-xl border transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed ${
+                      aria-pressed={isSelected}
+                      className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border disabled:opacity-40 disabled:cursor-not-allowed ${
                         isSelected
-                          ? "border-primary bg-primary-fixed"
-                          : "border-outline-variant bg-surface-container-lowest hover:border-secondary"
+                          ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
+                          : "border-outline-variant/30"
                       }`}
                     >
-                      <div className="p-3.5 flex items-center gap-2.5">
-                        <span className="material-symbols-outlined text-secondary shrink-0" style={{ fontSize: 24 }}>folder</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5">
-                            <h3 className="font-title-md text-sm text-primary truncate">{AREA_LABELS[area] ?? area}</h3>
-                            {isSelected && (
-                              <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 16 }}>check_circle</span>
-                            )}
-                          </div>
+                      <div className={`w-11 h-11 rounded-xl bg-primary-container/10 flex items-center justify-center mb-4 group-hover:bg-primary-container/20 transition-colors ${isSelected ? "bg-primary-container/20" : ""}`}>
+                        <span className="material-symbols-outlined text-primary" style={{ fontSize: 26 }}>{AREA_ICONS[area] ?? "folder"}</span>
+                      </div>
+                      <div className="mt-auto">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-display-lg text-xl text-primary">{AREA_LABELS[area] ?? area}</h3>
+                          {isSelected && (
+                            <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 18 }}>check_circle</span>
+                          )}
                         </div>
                       </div>
                     </button>
@@ -167,32 +177,26 @@ export default function StudyPicker({
         </div>
       </div>
 
-      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-3 md:pb-6 space-y-2.5 md:space-y-3">
-        <div className="max-w-4xl mx-auto w-full bg-surface-container-lowest rounded-xl border border-outline-variant p-3.5 md:p-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <span className={`w-2.5 h-2.5 rounded-full ${hasSelection ? "bg-primary" : "bg-secondary"}`} />
-              <p className="font-title-md text-title-md text-primary uppercase tracking-wider text-sm">
-                {creating ? "CREATING..." : hasSelection
-                  ? `${selectedMode?.replace("_", " ").replace(/\b\w/g, (c: string) => c.toUpperCase())}${selectedArea ? ` · ${AREA_LABELS[selectedArea]}` : ""}`
-                  : "Select mode and area to begin"}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 px-6 py-3 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.92)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,218,213,0.6)" }}>
-          <div className="flex items-center gap-2.5">
-            <span className={`w-2.5 h-2.5 rounded-full ${hasSelection ? "bg-primary" : "bg-secondary"}`} />
-            <p className="font-title-md text-title-md text-primary uppercase tracking-wider text-sm">
-              {hasSelection ? "Ready to Start" : "Select a mode and area"}
-            </p>
+      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pb-3 md:pb-6">
+        <div className="max-w-7xl mx-auto bg-surface-container-lowest rounded-full border border-outline-variant/30 p-1.5 pl-4 md:pl-5 flex items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className={`w-2 h-2 rounded-full shrink-0 ${hasSelection ? "bg-primary" : "bg-outline"}`} />
+            <span className={`font-label-caps text-label-caps uppercase tracking-wider truncate ${hasSelection ? "text-on-surface" : "text-primary"}`}>
+              {creating
+                ? "CREATING..."
+                : hasSelection
+                  ? "Ready to Start"
+                  : "Select a mode and area"}
+            </span>
           </div>
           <button
             onClick={startSession}
             disabled={!hasSelection || creating}
-            className="bg-primary text-on-primary px-7 py-3 rounded-full font-title-md text-sm transition-all active:scale-[0.97] flex items-center justify-center gap-2 disabled:opacity-40 disabled:cursor-not-allowed sm:w-auto"
-            style={{ boxShadow: "0 3px 0 #6E1818, 0 4px 12px rgba(149,35,35,0.2)" }}
+            className={`px-5 md:px-6 py-2 rounded-full font-title-md text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.97] shrink-0 ${
+              !hasSelection || creating
+                ? "bg-outline-variant text-on-surface opacity-70 cursor-not-allowed"
+                : "bg-primary text-on-primary candy-button-shadow-sm"
+            }`}
           >
             {creating ? (
               <><span>Creating...</span><span className="material-symbols-outlined animate-spin" style={{ fontSize: 18 }}>autorenew</span></>
