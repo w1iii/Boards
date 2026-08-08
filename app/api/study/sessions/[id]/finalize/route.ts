@@ -55,7 +55,7 @@ export async function POST(
     const { id } = await context.params
 
     const session = await sql`
-      SELECT mode, content_area, question_ids, answers FROM study_sessions
+      SELECT mode, content_area, question_ids, answers, retries, first_try_correct FROM study_sessions
       WHERE id = ${id} AND user_id = ${userId}
     `
     if (session.rows.length === 0) throw new AppError("Session not found", 404)
@@ -64,24 +64,25 @@ export async function POST(
     const contentArea = row.content_area as string
     const questionIds = (row.question_ids as string[]) ?? []
     const answers = (row.answers as Record<string, string>) ?? {}
+    const retries = Number(row.retries ?? 0)
+    const firstTryCorrect = Number(row.first_try_correct ?? 0)
 
     const questions = await sql`
       SELECT id, text, correct_answer FROM study_questions WHERE id = ANY(${questionIds})
     `
 
-    let correctCount = 0
     const results: { text: string; correct: boolean }[] = []
     for (const q of questions.rows as Array<Record<string, unknown>>) {
       const qid = q.id as string
       const selected = answers[qid]
       if (!selected) continue
       const correct = selected === (q.correct_answer as string)
-      if (correct) correctCount++
       results.push({ text: q.text as string, correct })
     }
 
     const total = results.length || 1
-    const score_pct = Math.round((correctCount / total) * 100)
+    const mastery = firstTryCorrect - retries
+    const score_pct = Math.max(0, Math.round((mastery / total) * 100))
 
     let concepts_covered: string[] = []
     let weak_concepts: string[] = []
@@ -106,7 +107,9 @@ export async function POST(
       UPDATE study_sessions
       SET completed_at = now(),
           weak_concepts = ${JSON.stringify(weak_concepts)}::jsonb,
-          score_pct = ${score_pct}
+          score_pct = ${score_pct},
+          retries = ${retries},
+          first_try_correct = ${firstTryCorrect}
       WHERE id = ${id}
     `
 
@@ -118,7 +121,10 @@ export async function POST(
       `
     }
 
-    return NextResponse.json({ summary, events_written: concepts_covered.length })
+    return NextResponse.json({
+      summary: { ...summary, retries, first_try_correct: firstTryCorrect },
+      events_written: concepts_covered.length,
+    })
   } catch (error) {
     return handleError(error)
   }

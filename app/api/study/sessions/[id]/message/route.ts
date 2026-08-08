@@ -47,10 +47,27 @@ export async function POST(
     const correct = selected_key === correctAnswer
     const displayedRationale = correct ? rationale : (wrongChoiceRationales[selected_key] ?? rationale)
 
+    const isFirstAttempt = !(question_id in answers)
     const newAnswers = { ...answers, [question_id]: selected_key }
-    await sql`
-      UPDATE study_sessions SET answers = ${JSON.stringify(newAnswers)}::jsonb WHERE id = ${id}
-    `
+
+    if (correct && isFirstAttempt) {
+      await sql`
+        UPDATE study_sessions
+        SET answers = ${JSON.stringify(newAnswers)}::jsonb,
+            first_try_correct = first_try_correct + 1
+        WHERE id = ${id}
+      `
+    } else if (correct) {
+      await sql`
+        UPDATE study_sessions SET answers = ${JSON.stringify(newAnswers)}::jsonb WHERE id = ${id}
+      `
+    } else {
+      await sql`
+        UPDATE study_sessions SET answers = ${JSON.stringify(newAnswers)}::jsonb,
+          retries = retries + 1
+        WHERE id = ${id}
+      `
+    }
 
     return NextResponse.json({
       correct,

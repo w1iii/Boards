@@ -1,0 +1,2 @@
+ALTER TABLE study_sessions
+  ADD COLUMN IF NOT EXISTS wrong_choices INT NOT NULL DEFAULT 0;

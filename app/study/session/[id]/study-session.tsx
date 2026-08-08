@@ -17,6 +17,8 @@ interface SessionSummary {
   concepts_covered: string[]
   weak_concepts: string[]
   score_pct: number
+  retries: number
+  first_try_correct: number
 }
 
 interface QuestionSnapshot {
@@ -214,19 +216,23 @@ export default function StudySession({
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <span className="font-display-lg text-3xl text-on-surface">{Math.round(summary.score_pct)}%</span>
-                    <span className="font-label-caps text-[9px] text-secondary">SCORE</span>
+                    <span className="font-label-caps text-[9px] text-secondary">MASTERY</span>
                   </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
                 <div className="p-4 bg-surface-container-lowest border border-outline-variant rounded-2xl text-center">
                   <p className="font-display-lg text-2xl text-on-surface">{answeredCount}</p>
                   <p className="font-label-caps text-[9px] text-secondary">ANSWERED</p>
                 </div>
                 <div className="p-4 bg-surface-container-lowest border border-outline-variant rounded-2xl text-center">
-                  <p className="font-display-lg text-2xl text-[#1a8038]">{correctCount}</p>
-                  <p className="font-label-caps text-[9px] text-secondary">CORRECT</p>
+                  <p className="font-display-lg text-2xl text-[#1a8038]">{summary.first_try_correct ?? 0}</p>
+                  <p className="font-label-caps text-[9px] text-secondary">NO-HINT</p>
+                </div>
+                <div className="p-4 bg-surface-container-lowest border border-outline-variant rounded-2xl text-center">
+                  <p className="font-display-lg text-2xl text-primary">{summary.retries ?? 0}</p>
+                  <p className="font-label-caps text-[9px] text-secondary">RETRIES</p>
                 </div>
                 <div className="p-4 bg-surface-container-lowest border border-outline-variant rounded-2xl text-center">
                   <p className="font-display-lg text-2xl text-primary">{summary.concepts_covered.length}</p>
