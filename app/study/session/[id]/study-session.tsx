@@ -105,7 +105,6 @@ export default function StudySession({
           ...prev,
           { q: currentQ, selectedKey: key, correct: true, rationale: currentQ.rationale },
         ])
-        setCurrentQuestionIndex((i) => i + 1)
         setAnswerResult("correct")
         setRationale(currentQ.rationale)
       } else {
@@ -357,10 +356,6 @@ export default function StudySession({
                           borderStyle = "border-2 border-primary bg-error-container"
                           letterStyle = "bg-primary text-white border-primary"
                           icon = <span className="material-symbols-outlined text-primary shrink-0 text-sm">cancel</span>
-                        } else if (answerResult === "wrong" && choice.key === displayMC.correct_answer) {
-                          borderStyle = "border-2 border-[#1a8038] bg-[#e6f4ea]"
-                          letterStyle = "bg-[#1a8038] text-white border-[#1a8038]"
-                          icon = <span className="material-symbols-outlined text-[#1a8038] shrink-0 text-sm">check_circle</span>
                         } else if (answerResult === "wrong" && !isSelected) {
                           borderStyle = "border border-outline-variant bg-surface opacity-40"
                           letterStyle = "border border-outline-variant text-secondary"
@@ -523,7 +518,7 @@ export default function StudySession({
               </span>
               <button
                 onClick={handleNextQuestion}
-                disabled={!isViewingPast || currentQuestionIndex >= questionHistory.length - 1}
+                disabled={!isViewingPast}
                 className="flex items-center gap-2 font-label-caps text-secondary hover:text-primary transition-colors text-[11px] disabled:opacity-30 disabled:cursor-not-allowed"
               >
                 NEXT
@@ -539,10 +534,10 @@ export default function StudySession({
           <div className="bg-surface-container-lowest border border-outline-variant rounded-2xl p-6 max-w-sm w-full shadow-xl">
             <div className="flex items-center gap-2 mb-3">
               <span className="material-symbols-outlined text-primary" style={{ fontSize: 24 }}>warning</span>
-              <span className="font-label-caps text-primary text-[11px] uppercase tracking-wider">Study Mode Unavailable</span>
+              <span className="font-label-caps text-primary text-[11px] uppercase tracking-wider">Leave Study Mode</span>
             </div>
             <p className="font-body-sm text-sm text-on-surface-variant leading-relaxed mb-5">
-              Sorry, study mode is not available right now.
+              Your progress will be lost if you leave before finishing. Do you want to exit?
             </p>
             <div className="flex gap-3">
               <button onClick={() => setShowLeaveModal(false)} className="flex-1 py-2.5 border border-outline rounded-xl font-label-caps text-[11px] hover:bg-surface-container-high transition-all">
