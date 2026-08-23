@@ -1,7 +1,8 @@
 import { ClerkProvider } from "@clerk/nextjs"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Playfair_Display, Source_Sans_3, Space_Grotesk } from "next/font/google"
 import AppShell from "@/app/components/app-shell"
+import SWRegister from "@/app/components/sw-register"
 import { PomodoroProvider } from "@/app/contexts/pomodoro-context"
 import PomodoroModal from "@/app/components/pomodoro-modal"
 import "./globals.css"
@@ -37,9 +38,21 @@ const sourceSans = Source_Sans_3({
   display: "swap",
 })
 
+export const viewport: Viewport = {
+  themeColor: "#952323",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+}
+
 export const metadata: Metadata = {
   title: "BOARDS. | Master the NLE Nursing Board Exam",
   description: "AI-powered practice exams designed for Philippine nursing boards. We bridge the gap between classroom theory and licensure success.",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "BOARDS.",
+  },
 }
 
 export default function RootLayout({
@@ -57,8 +70,10 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" />
+        <link rel="apple-touch-icon" href="/icon-192.png" />
       </head>
       <body className="bg-surface text-on-surface font-body-md overflow-x-hidden min-h-screen selection:bg-primary selection:text-white custom-scrollbar">
+        <SWRegister />
         <ClerkProvider>
           <PomodoroProvider>
             <AppShell>

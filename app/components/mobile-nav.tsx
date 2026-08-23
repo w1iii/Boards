@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation"
 import { useClerk } from "@clerk/nextjs"
 import { usePomodoro } from "@/app/contexts/pomodoro-context"
 import { NAV_ITEMS } from "@/app/components/nav-items"
+import DownloadModal from "@/app/components/download-modal"
 
 interface MobileNavProps {
   firstName: string
@@ -122,6 +123,14 @@ export default function MobileNav({ firstName, imageUrl }: MobileNavProps) {
             </nav>
 
             <div className="mt-auto px-3 pt-4 border-t border-outline-variant/20 space-y-1">
+              <DownloadModal
+                trigger={
+                  <span className="flex items-center px-4 py-2.5 gap-3 rounded-xl transition-all font-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-primary cursor-pointer">
+                    <span className="material-symbols-outlined text-xl">install_mobile</span>
+                    Get the App
+                  </span>
+                }
+              />
               <Link
                 href="/dashboard/settings"
                 onClick={close}
