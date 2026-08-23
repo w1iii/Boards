@@ -3,7 +3,6 @@ import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import Link from "next/link"
 import AppLayout from "@/app/components/app-layout"
-import StudyAvailableModal from "@/app/components/study-available-modal"
 import { getProfile, getProgressAgg, getAreaBreakdown } from "@/app/lib/db"
 
 const AREA_LABELS: Record<string, string> = {
@@ -250,7 +249,6 @@ export default async function DashboardPage() {
       firstName={(profile.first_name as string) || "there"}
       imageUrl={null}
     >
-      <StudyAvailableModal />
       <Suspense fallback={<DashboardHeroFallback />}>
         <DashboardHero userId={userId} />
       </Suspense>
