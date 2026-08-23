@@ -62,9 +62,7 @@ const STEPS: Record<Platform, { icon: string; title: string; steps: string[] }[]
   ],
 }
 
-const STORAGE_KEY = "download-modal-dismissed"
-
-export default function DownloadModal({ trigger }: { trigger?: React.ReactNode }) {
+export default function DownloadModal() {
   const [isOpen, setOpen] = useState(false)
   const [platform, setPlatform] = useState<Platform>("desktop")
   const [installed, setInstalled] = useState(true)
@@ -74,10 +72,13 @@ export default function DownloadModal({ trigger }: { trigger?: React.ReactNode }
     setInstalled(window.matchMedia("(display-mode: standalone)").matches)
   }, [])
 
+  useEffect(() => {
+    const handleOpen = () => setOpen(true)
+    window.addEventListener("open-download-modal", handleOpen)
+    return () => window.removeEventListener("open-download-modal", handleOpen)
+  }, [])
+
   const dismiss = useCallback(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, "1")
-    } catch {}
     setOpen(false)
   }, [])
 
@@ -94,80 +95,62 @@ export default function DownloadModal({ trigger }: { trigger?: React.ReactNode }
     }
   }, [isOpen, dismiss])
 
-  if (installed) return null
+  if (installed || !isOpen) return null
 
   return (
-    <>
-      {trigger ? (
-        <span onClick={() => setOpen(true)} className="cursor-pointer">
-          {trigger}
-        </span>
-      ) : (
-        <button
-          onClick={() => setOpen(true)}
-          className="w-full flex items-center px-4 py-2.5 gap-3 rounded-xl transition-all font-label-caps text-on-surface-variant hover:bg-surface-container-high hover:text-primary"
-        >
-          <span className="material-symbols-outlined text-xl">install_mobile</span>
-          Get the App
-        </button>
-      )}
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) dismiss()
+      }}
+    >
+      <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden border border-outline-variant/30">
+        <div className="p-6 text-center">
+          <span
+            className="material-symbols-outlined text-5xl text-primary mb-3 block"
+            style={{ fontVariationSettings: "'FILL' 1" }}
+          >
+            install_mobile
+          </span>
+          <h2 className="font-title-lg text-title-lg text-on-surface mb-1">
+            Install BOARDS.
+          </h2>
+          <p className="font-body-sm text-on-surface/60 mb-6">
+            Add to your home screen for quick access — just like a native app.
+          </p>
 
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) dismiss()
-          }}
-        >
-          <div className="bg-surface rounded-3xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden border border-outline-variant/30">
-            <div className="p-6 text-center">
-              <span
-                className="material-symbols-outlined text-5xl text-primary mb-3 block"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                install_mobile
-              </span>
-              <h2 className="font-title-lg text-title-lg text-on-surface mb-1">
-                Install BOARDS.
-              </h2>
-              <p className="font-body-sm text-on-surface/60 mb-6">
-                Add to your home screen for quick access — just like a native app.
-              </p>
-
-              <div className="space-y-4 text-left">
-                {STEPS[platform].map((section, i) => (
-                  <div key={i} className="flex gap-3">
-                    <div className="w-9 h-9 rounded-xl bg-primary-fixed/40 flex items-center justify-center shrink-0">
-                      <span className="material-symbols-outlined text-lg text-primary">
-                        {section.icon}
-                      </span>
-                    </div>
-                    <div className="min-w-0">
-                      <h3 className="font-label-lg text-on-surface text-sm mb-0.5">
-                        {i + 1}. {section.title}
-                      </h3>
-                      {section.steps.map((step, j) => (
-                        <p key={j} className="font-body-sm text-on-surface/60 text-xs leading-relaxed">
-                          {step}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+          <div className="space-y-4 text-left">
+            {STEPS[platform].map((section, i) => (
+              <div key={i} className="flex gap-3">
+                <div className="w-9 h-9 rounded-xl bg-primary-fixed/40 flex items-center justify-center shrink-0">
+                  <span className="material-symbols-outlined text-lg text-primary">
+                    {section.icon}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <h3 className="font-label-lg text-on-surface text-sm mb-0.5">
+                    {i + 1}. {section.title}
+                  </h3>
+                  {section.steps.map((step, j) => (
+                    <p key={j} className="font-body-sm text-on-surface/60 text-xs leading-relaxed">
+                      {step}
+                    </p>
+                  ))}
+                </div>
               </div>
-            </div>
-
-            <div className="px-6 pb-6">
-              <button
-                onClick={dismiss}
-                className="w-full py-3 bg-primary text-on-primary rounded-xl font-label-caps text-sm hover:bg-primary/90 transition-all active:scale-[0.97]"
-              >
-                Got it
-              </button>
-            </div>
+            ))}
           </div>
         </div>
-      )}
-    </>
+
+        <div className="px-6 pb-6">
+          <button
+            onClick={dismiss}
+            className="w-full py-3 bg-primary text-on-primary rounded-xl font-label-caps text-sm hover:bg-primary/90 transition-all active:scale-[0.97]"
+          >
+            Got it
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }

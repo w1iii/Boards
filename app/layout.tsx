@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono, Playfair_Display, Source_Sans_3, Space_Grotesk } from "next/font/google"
 import AppShell from "@/app/components/app-shell"
 import SWRegister from "@/app/components/sw-register"
+import DownloadModal from "@/app/components/download-modal"
 import { PomodoroProvider } from "@/app/contexts/pomodoro-context"
 import PomodoroModal from "@/app/components/pomodoro-modal"
 import "./globals.css"
@@ -74,6 +75,7 @@ export default function RootLayout({
       </head>
       <body className="bg-surface text-on-surface font-body-md overflow-x-hidden min-h-screen selection:bg-primary selection:text-white custom-scrollbar">
         <SWRegister />
+        <DownloadModal />
         <ClerkProvider>
           <PomodoroProvider>
             <AppShell>
