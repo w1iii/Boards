@@ -71,7 +71,7 @@ export default function EncouragementModal() {
           onClick={dismiss}
           className="w-full py-3 bg-primary text-on-primary rounded-xl font-label-caps text-sm hover:bg-primary/90 transition-all active:scale-[0.97]"
         >
-          Let&apos;s Go
+          Study
         </button>
       </div>
     </div>
