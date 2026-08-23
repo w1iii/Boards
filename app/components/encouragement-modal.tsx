@@ -3,11 +3,10 @@
 import { useState, useEffect, useCallback } from "react"
 
 // ============================================================
-// TEMPLATE: Change this text to customize the encouragement
 // displayed after login. Shows once per browser session.
 // ============================================================
-const ENCOURAGEMENT_TEXT = "Every question you answer today brings you closer to the patients who need you tomorrow."
-const ENCOURAGEMENT_AUTHOR = "BOARDS."
+const ENCOURAGEMENT_TEXT = "You are ready. Maybe not perfectly, but genuinely — and that's enough."
+const ENCOURAGEMENT_AUTHOR = "LF"
 // ============================================================
 
 const STORAGE_KEY = "encouragement-modal-seen"
