@@ -5,8 +5,8 @@ import { useState, useEffect, useCallback } from "react"
 // ============================================================
 // displayed after login. Shows once per browser session.
 // ============================================================
-const ENCOURAGEMENT_TEXT = "You are ready. Maybe not perfectly, but genuinely — and that's enough."
-const ENCOURAGEMENT_AUTHOR = "LF"
+const ENCOURAGEMENT_TEXT = "Discipline is painful at the time, but later yields a peaceful fruit of righteousness."
+const ENCOURAGEMENT_AUTHOR = "Hebrews 12:11"
 // ============================================================
 
 const STORAGE_KEY = "encouragement-modal-seen"
