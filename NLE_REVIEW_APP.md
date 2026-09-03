@@ -42,7 +42,7 @@ Generic AI-generated questions without grounding can be factually wrong or misma
 ## 4. Tech Stack
 
 - **Frontend/backend:** Next.js (reuse patterns from Feynman/ReviewSense) or Laravel/Vue
-- **AI:** Claude API for question generation + rationales, batch-generated and cached
+- **AI:** Groq (`llama-3.3-70b-versatile`) for question generation + rationales, batch-generated and cached
 - **Database:** Postgres — question bank + user progress/analytics
 - **Auth:** Clerk (or equivalent)
 - **Payments:** PayMongo — Philippine-founded (YC-backed), single integration covering GCash, Maya, cards, and bank transfer
