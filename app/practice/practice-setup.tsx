@@ -3,6 +3,7 @@
 import { useState } from "react"
 import SideNavBar from "@/app/components/side-nav-bar"
 import { useSessionCreation } from "@/app/lib/use-session-creation"
+import { Stagger, StaggerItem } from "@/app/components/motion/stagger"
 
 const AREAS = [
   { key: "nlp-i", label: "NP I", description: "Community Health", icon: "groups" },
@@ -70,36 +71,37 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
           </header>
 
           <div className="flex-1 overflow-y-auto -mx-3 px-3 pb-3">
-            <div className="grid p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
+            <Stagger className="grid p-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
               {AREAS.map((area) => {
                 const isSelected = selected.has(area.key)
                 return (
-                  <button
-                    key={area.key}
-                    onClick={() => toggle(area.key)}
-                    aria-pressed={isSelected}
-                    className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border ${
-                      isSelected
-                        ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
-                        : "border-outline-variant/30"
-                    }`}
-                  >
-                    <div className={`w-11 h-11 rounded-xl bg-primary-container/10 flex items-center justify-center mb-4 group-hover:bg-primary-container/20 transition-colors ${isSelected ? "bg-primary-container/20" : ""}`}>
-                      <span className="material-symbols-outlined text-primary" style={{ fontSize: 26 }}>{area.icon}</span>
-                    </div>
-                    <div className="mt-auto">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <h3 className="font-display-lg text-xl text-primary">{area.label}</h3>
-                        {isSelected && (
-                          <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 18 }}>check_circle</span>
-                        )}
+                  <StaggerItem key={area.key}>
+                    <button
+                      onClick={() => toggle(area.key)}
+                      aria-pressed={isSelected}
+                      className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full w-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border ${
+                        isSelected
+                          ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
+                          : "border-outline-variant/30"
+                      }`}
+                    >
+                      <div className={`w-11 h-11 rounded-xl bg-primary-container/10 flex items-center justify-center mb-4 group-hover:bg-primary-container/20 transition-colors ${isSelected ? "bg-primary-container/20" : ""}`}>
+                        <span className="material-symbols-outlined text-primary" style={{ fontSize: 26 }}>{area.icon}</span>
                       </div>
-                      <p className="font-body-md text-body-md text-on-surface-variant">{area.description}</p>
-                    </div>
-                  </button>
+                      <div className="mt-auto">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <h3 className="font-display-lg text-xl text-primary">{area.label}</h3>
+                          {isSelected && (
+                            <span className="material-symbols-outlined text-primary shrink-0" style={{ fontVariationSettings: "'FILL' 1", fontSize: 18 }}>check_circle</span>
+                          )}
+                        </div>
+                        <p className="font-body-md text-body-md text-on-surface-variant">{area.description}</p>
+                      </div>
+                    </button>
+                  </StaggerItem>
                 )
               })}
-            </div>
+            </Stagger>
           </div>
         </div>
       </div>
@@ -169,7 +171,7 @@ export default function PracticeSetup({ firstName, imageUrl }: Props) {
 
         <div className="max-w-7xl mx-auto bg-surface-container-lowest rounded-full border border-outline-variant/30 p-1.5 pl-4 md:pl-5 flex items-center justify-between gap-3 shadow-sm">
           <div className="flex items-center gap-3 min-w-0">
-            <span className={`w-2 h-2 rounded-full shrink-0 ${error ? "bg-error" : count > 0 ? "bg-primary" : "bg-outline"}`} />
+            <span aria-hidden="true" className={`w-2 h-2 rounded-full shrink-0 ${error ? "bg-error" : count > 0 ? "bg-primary" : "bg-outline"}`} />
             <span className={`font-label-caps text-label-caps uppercase tracking-wider truncate ${error ? "text-error" : count > 0 ? "text-on-surface" : "text-primary"}`}>
               {error ? "ERROR" : count > 0 ? "Ready to Begin" : "Select a Focus Area"}
             </span>

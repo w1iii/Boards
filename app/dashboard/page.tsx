@@ -4,6 +4,8 @@ import { Suspense } from "react"
 import Link from "next/link"
 import AppLayout from "@/app/components/app-layout"
 import EncouragementModal from "@/app/components/encouragement-modal"
+import FadeIn from "@/app/components/motion/fade-in"
+import { Stagger, StaggerItem } from "@/app/components/motion/stagger"
 import { getProfile, getProgressAgg, getAreaBreakdown } from "@/app/lib/db"
 
 const AREA_LABELS: Record<string, string> = {
@@ -14,7 +16,7 @@ const AREA_LABELS: Record<string, string> = {
   "nlp-v": "NP V — Mental Health & Psych",
 }
 
-function ScoreCircle({ score, label }: { score: number; label: string }) {
+function ScoreCircle({ score }: { score: number }) {
   const r = 36
   const circumference = 2 * Math.PI * r
   const offset = circumference * (1 - score / 100)
@@ -24,7 +26,10 @@ function ScoreCircle({ score, label }: { score: number; label: string }) {
         <circle cx="40" cy="40" r={r} fill="transparent" stroke="currentColor" strokeWidth="4" className="text-surface-container-highest" />
         <circle cx="40" cy="40" r={r} fill="transparent" stroke="currentColor" strokeWidth="4" strokeDasharray={circumference} strokeDashoffset={offset} className="text-primary" />
       </svg>
-      <div className="absolute inset-0 flex items-center justify-center font-mono-data text-xs">{label}</div>
+      <div className="absolute inset-0 flex flex-col items-center justify-center">
+        <span className="font-mono-data text-sm font-semibold text-primary">{score}%</span>
+        <span className="font-label-caps text-[9px] text-on-surface-variant">mastery</span>
+      </div>
     </div>
   )
 }
@@ -36,8 +41,11 @@ async function DashboardHero({ userId }: { userId: string }) {
 
   const examDaysLeft: number | null = targetExamDate
     ? (() => {
-        const diff = new Date(targetExamDate).getTime() - new Date().getTime()
-        return Math.max(0, Math.ceil(diff / 86400000))
+        const examDate = new Date(`${targetExamDate}T00:00:00`)
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const diff = examDate.getTime() - today.getTime()
+        return Math.ceil(diff / 86400000)
       })()
     : null
 
@@ -49,14 +57,14 @@ async function DashboardHero({ userId }: { userId: string }) {
       <div className="glass-jar p-8 md:p-10 rounded-3xl border border-white/50 backdrop-blur-md">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex-1">
-            <h1 className="font-display-lg text-display-lg text-primary mb-2">
+            <h1 className="font-display-lg text-4xl md:text-5xl text-primary mb-2">
               {greeting}, {firstName}!
             </h1>
             <p className="font-body-lg text-on-surface-variant max-w-xl">
               {examDaysLeft !== null ? (
-                <>Your NLE Board Exam is in <strong className="text-primary">{examDaysLeft} days</strong>. Keep the momentum going!</>
+                <>Your NLE Board Exam is {examDaysLeft < 0 ? <strong className="text-primary">past its target date</strong> : examDaysLeft === 0 ? <strong className="text-primary">today</strong> : <>in <strong className="text-primary">{examDaysLeft} days</strong></>}. Keep the momentum going!</>
               ) : (
-                <>Stay consistent with your <strong>daily practice</strong> to build mastery.</>
+                <>Set your <Link href="/dashboard/settings" className="font-semibold text-primary underline-offset-4 hover:underline">exam date</Link> to start your countdown.</>
               )}
             </p>
           </div>
@@ -65,11 +73,11 @@ async function DashboardHero({ userId }: { userId: string }) {
               <span className="material-symbols-outlined text-lg">play_circle</span>
               Start Practice
             </Link>
-            <Link href="/mock-exam" className="px-6 py-3 bg-secondary text-on-secondary rounded-full font-title-md text-sm candy-button-shadow hover:bg-secondary-container hover:text-on-secondary-container active:scale-95 transition-all flex items-center gap-2">
+            <Link href="/mock-exam" className="px-6 py-3 rounded-full border border-primary/40 text-primary font-title-md text-sm hover:bg-primary/10 active:scale-95 transition-all flex items-center gap-2">
               <span className="material-symbols-outlined text-lg">assignment</span>
               Mock Exam
             </Link>
-            <Link href="/study" className="px-6 py-3 bg-tertiary text-on-tertiary rounded-full font-title-md text-sm candy-button-shadow hover:bg-tertiary-container hover:text-on-tertiary-container active:scale-95 transition-all flex items-center gap-2">
+            <Link href="/study" className="px-6 py-3 rounded-full border border-outline-variant text-on-surface-variant font-title-md text-sm hover:bg-surface-container-high active:scale-95 transition-all flex items-center gap-2">
               <span className="material-symbols-outlined text-lg">school</span>
               Study
             </Link>
@@ -106,6 +114,7 @@ async function DashboardStats({ userId }: { userId: string }) {
 
   const profile = await getProfile(userId)
   const contentAreas = (profile?.content_areas as string[]) || []
+  const dailyGoal = (profile?.daily_goal as number) || 0
 
   const areaScores = new Map<string, number>()
   for (const area of contentAreas) {
@@ -118,7 +127,7 @@ async function DashboardStats({ userId }: { userId: string }) {
   }
 
   const weakAreas = [...areaScores.entries()]
-    .filter(([, s]) => s > 0)
+    .filter(([, s]) => s > 0 && s < 75)
     .sort(([, a], [, b]) => a - b)
     .slice(0, 3)
   const weakestArea = weakAreas[0]
@@ -130,22 +139,26 @@ async function DashboardStats({ userId }: { userId: string }) {
           <div>
             <p className="font-label-caps text-on-surface-variant mb-1">OVERALL MASTERY</p>
             <h2 className="font-display-lg text-4xl text-primary">{overallScore}%</h2>
+            <p className="font-mono-data text-xs text-on-surface-variant mt-2">Current accuracy</p>
           </div>
-          <ScoreCircle score={overallScore} label="TOP" />
+          <ScoreCircle score={overallScore} />
         </div>
         <div className="glass-jar p-6 rounded-2xl">
           <p className="font-label-caps text-on-surface-variant mb-1">TOTAL QUESTIONS</p>
           <h2 className="font-display-lg text-4xl text-primary">{totalAnswered.toLocaleString()}</h2>
           <p className="font-mono-data text-on-surface-variant text-xs mt-2">
-            {totalAnswered > 0 ? `${totalCorrect} correct — keep building!` : "Start your first session"}
+            {totalAnswered > 0
+              ? `${totalCorrect} correct · ${dailyGoal > 0 ? `${dailyGoal} daily goal` : "keep building"}`
+              : dailyGoal > 0 ? `${dailyGoal} questions planned daily` : "Start your first session"}
           </p>
         </div>
-        <div className="glass-jar p-6 rounded-2xl flex items-center justify-between group cursor-help">
+        <div className={`glass-jar p-6 rounded-2xl flex items-center justify-between group cursor-help ${weakAreas.length > 0 ? "border-amber-300/70 bg-amber-50/60" : ""}`}>
           <div>
             <p className="font-label-caps text-on-surface-variant mb-1">WEAK AREAS</p>
             <h2 className="font-display-lg text-4xl text-primary">{weakAreas.length.toString().padStart(2, "0")}</h2>
+            <p className="font-mono-data text-xs text-on-surface-variant mt-2">{weakAreas.length > 0 ? "Below 75% mastery" : "No areas flagged"}</p>
           </div>
-          <span className="material-symbols-outlined text-primary text-4xl group-hover:scale-110 transition-transform">warning</span>
+          <span className={`material-symbols-outlined text-4xl group-hover:scale-110 transition-transform ${weakAreas.length > 0 ? "text-amber-700" : "text-primary"}`}>warning</span>
         </div>
       </div>
 
@@ -251,12 +264,18 @@ export default async function DashboardPage() {
       imageUrl={null}
     >
       <EncouragementModal />
-      <Suspense fallback={<DashboardHeroFallback />}>
-        <DashboardHero userId={userId} />
-      </Suspense>
-      <Suspense fallback={<DashboardStatsFallback />}>
-        <DashboardStats userId={userId} />
-      </Suspense>
+      <FadeIn>
+        <Suspense fallback={<DashboardHeroFallback />}>
+          <DashboardHero userId={userId} />
+        </Suspense>
+      </FadeIn>
+      <Stagger>
+        <StaggerItem>
+          <Suspense fallback={<DashboardStatsFallback />}>
+            <DashboardStats userId={userId} />
+          </Suspense>
+        </StaggerItem>
+      </Stagger>
     </AppLayout>
   )
 }

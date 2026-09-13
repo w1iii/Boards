@@ -15,7 +15,8 @@ interface SideNavBarProps {
 export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
   const pathname = usePathname()
   const { signOut } = useClerk()
-  const { openModal } = usePomodoro()
+  const { openModal, isActive: isTimerActive, remainingSeconds, isFocusPhase } = usePomodoro()
+  const timerLabel = `${Math.floor(remainingSeconds / 60)}:${String(remainingSeconds % 60).padStart(2, "0")}`
 
   function isActive(href: string): boolean {
     return pathname === href || pathname.startsWith(href + "/")
@@ -94,10 +95,11 @@ export default function SideNavBar({ firstName, imageUrl }: SideNavBarProps) {
         </button>
         <button
           onClick={openModal}
-          className="w-full mt-2 py-2.5 px-4 bg-gradient-to-r from-primary to-primary-container text-on-primary rounded-xl font-label-caps text-sm candy-button-shadow-sm transition-all hover:opacity-90 flex items-center justify-center gap-2"
+          aria-label={isTimerActive ? `Open Pomodoro timer, ${timerLabel} remaining` : "Start Pomodoro timer"}
+          className={`w-full mt-2 py-2.5 px-4 rounded-xl font-label-caps text-sm candy-button-shadow-sm transition-all hover:opacity-90 flex items-center justify-center gap-2 ${isTimerActive ? "bg-primary text-on-primary ring-2 ring-primary/30" : "bg-gradient-to-r from-primary to-primary-container text-on-primary"}`}
         >
           <span className="material-symbols-outlined text-base">timer</span>
-          Pomodoro
+          {isTimerActive ? `${isFocusPhase ? "Focus" : "Break"} · ${timerLabel}` : "Pomodoro"}
         </button>
       </div>
       </aside>

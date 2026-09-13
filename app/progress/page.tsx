@@ -4,6 +4,8 @@ import { redirect } from "next/navigation"
 import { Suspense } from "react"
 import Link from "next/link"
 import AppLayout from "@/app/components/app-layout"
+import FadeIn from "@/app/components/motion/fade-in"
+import { Stagger, StaggerItem } from "@/app/components/motion/stagger"
 
 const AREA_LABELS: Record<string, string> = {
   "nlp-i": "NP I — Community Health",
@@ -476,18 +478,28 @@ export default async function ProgressPage() {
       firstName={(profile.first_name as string) || "there"}
       imageUrl={null}
     >
-      <Suspense fallback={<ProgressHeroFallback />}>
-        <ProgressHero userId={userId} />
-      </Suspense>
-      <Suspense fallback={<ProgressStatsFallback />}>
-        <ProgressStats userId={userId} />
-      </Suspense>
-      <Suspense fallback={<ProgressAreasFallback />}>
-        <ProgressAreas userId={userId} />
-      </Suspense>
-      <Suspense fallback={<ProgressSessionsFallback />}>
-        <ProgressSessions userId={userId} />
-      </Suspense>
+      <FadeIn>
+        <Suspense fallback={<ProgressHeroFallback />}>
+          <ProgressHero userId={userId} />
+        </Suspense>
+      </FadeIn>
+      <Stagger>
+        <StaggerItem>
+          <Suspense fallback={<ProgressStatsFallback />}>
+            <ProgressStats userId={userId} />
+          </Suspense>
+        </StaggerItem>
+        <StaggerItem>
+          <Suspense fallback={<ProgressAreasFallback />}>
+            <ProgressAreas userId={userId} />
+          </Suspense>
+        </StaggerItem>
+        <StaggerItem>
+          <Suspense fallback={<ProgressSessionsFallback />}>
+            <ProgressSessions userId={userId} />
+          </Suspense>
+        </StaggerItem>
+      </Stagger>
     </AppLayout>
   )
 }

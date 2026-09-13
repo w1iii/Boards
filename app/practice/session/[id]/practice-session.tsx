@@ -90,6 +90,7 @@ export default function PracticeSession({
 
   const question = questions[currentIdx]
   const totalQuestions = questions.length
+  const answeredCount = Object.keys(answerStates).length
 
   const goToQuestion = useCallback(
     (idx: number) => {
@@ -224,24 +225,32 @@ export default function PracticeSession({
       <SideNavBar firstName={firstName} imageUrl={imageUrl} />
 
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
-      <div className="shrink-0 px-margin-mobile md:px-margin-desktop pt-4 pb-2">
+      <div className="shrink-0 border-b border-outline-variant/40 bg-surface-container-lowest px-margin-mobile py-4 md:px-margin-desktop">
         <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-end mb-2">
+          <div className="flex items-center justify-between gap-4 mb-3">
             <div>
-              <span className="font-label-caps text-primary block tracking-[0.2em] text-[10px]">
-                NURSING BOARD EXAM PREP
+              <span className="font-label-caps text-primary block tracking-[0.2em] text-[10px] uppercase">
+                Practice session
               </span>
-              <h1 className="font-headline-lg text-lg uppercase tracking-tight leading-none">
+              <h1 className="font-headline-lg text-xl tracking-tight leading-none">
                 Question {currentIdx + 1}{" "}
                 <span className="text-secondary opacity-30">/ {totalQuestions}</span>
               </h1>
             </div>
-            <QuestionTimer
-              key={timerResetKey}
-              duration={60}
-              onExpire={handleTimeExpire}
-              running={timerRunning && !feedbackState}
-            />
+            <div className="flex items-center gap-3">
+              <span className="hidden sm:inline font-label-caps text-[10px] text-on-surface-variant">
+                {answeredCount}/{totalQuestions} answered
+              </span>
+              <div className="flex items-center gap-2 rounded-full border border-outline-variant/50 bg-surface px-3 py-1.5">
+                <span className="font-label-caps text-[10px] text-on-surface-variant">TIME</span>
+                <QuestionTimer
+                  key={timerResetKey}
+                  duration={60}
+                  onExpire={handleTimeExpire}
+                  running={timerRunning && !feedbackState}
+                />
+              </div>
+            </div>
           </div>
           <div className="w-full h-[3px] bg-surface-variant relative overflow-hidden">
             <div
@@ -255,7 +264,7 @@ export default function PracticeSession({
       <main className="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop py-3">
         <div className="max-w-6xl mx-auto md:h-full grid grid-cols-1 md:grid-cols-12 gap-5">
           <section className="md:col-span-7 md:flex md:flex-col md:min-h-0">
-            <div className="p-5 border-l-4 border-primary bg-surface-container-lowest shrink-0">
+            <div className="rounded-2xl border border-outline-variant/40 border-l-4 border-l-primary bg-surface-container-lowest p-5 shadow-sm shrink-0 md:p-7">
               <h2 className="font-headline-lg text-xl leading-tight mb-3">
                 {question.text}
               </h2>
@@ -308,7 +317,7 @@ export default function PracticeSession({
                       key={choice.key}
                       onClick={() => handleSelect(choice.key)}
                       disabled={!!feedbackState || submitting}
-                      className={`group flex items-center p-5 text-left transition-all duration-200 ${borderStyle} disabled:cursor-default`}
+                      className={`group flex items-center rounded-xl p-5 text-left transition-all duration-200 ${borderStyle} disabled:cursor-default hover:-translate-y-0.5 hover:shadow-sm`}
                     >
                       <div
                         className={`w-7 h-7 flex items-center justify-center font-bold mr-3 shrink-0 text-xs ${letterStyle}`}
@@ -341,7 +350,7 @@ export default function PracticeSession({
           <aside className="md:col-span-5 md:min-h-0 md:overflow-hidden">
             <div className="md:h-full md:overflow-y-auto space-y-4">
               {feedbackState ? (
-                <div className="p-5 bg-inverse-surface text-surface border-t-8 border-primary">
+                <div className="rounded-2xl border border-inverse-surface bg-inverse-surface p-5 text-surface shadow-sm md:sticky md:top-3">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="material-symbols-outlined text-primary text-lg">
                       {feedbackState.timedOut
@@ -402,7 +411,7 @@ export default function PracticeSession({
                   </div>
                 </div>
               ) : (
-                <div className="p-5 border border-tertiary-fixed bg-surface-container-low">
+                <div className="rounded-2xl border border-tertiary-fixed bg-surface-container-low p-5">
                   <div className="flex items-center gap-2 mb-3">
                     <span className="material-symbols-outlined text-secondary text-lg">
                       info
@@ -423,7 +432,7 @@ export default function PracticeSession({
         </div>
       </main>
 
-      <footer className="shrink-0 bg-surface-container-high border-t border-tertiary px-margin-mobile md:px-margin-desktop py-3 z-50">
+      <footer className="shrink-0 border-t border-outline-variant/50 bg-surface-container-lowest px-margin-mobile py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:px-margin-desktop md:py-4 z-50">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
           <button
             onClick={() => goToQuestion(currentIdx - 1)}

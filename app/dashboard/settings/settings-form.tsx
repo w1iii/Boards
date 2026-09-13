@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useClerk } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
+import PageHeader from "@/app/components/ui/page-header"
 
 const CONTENT_AREAS = [
   { value: "nlp-i", label: "NP I — Community Health Nursing" },
@@ -111,12 +112,11 @@ export default function SettingsForm({
 
   return (
     <div className="max-w-3xl">
-      <div className="mb-8">
-        <h1 className="font-display-lg text-display-lg text-primary mb-2">Settings</h1>
-        <p className="font-body-lg text-on-surface-variant">
-          Manage your account, study plan, and focus areas.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Preferences"
+        title="Settings"
+        description="Manage your account, study plan, and focus areas."
+      />
 
       {error && (
         <div className="mb-6 bg-error-container border border-primary p-3 font-mono-data text-sm text-on-error-container">

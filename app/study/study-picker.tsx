@@ -8,6 +8,7 @@ import {
   AREA_LABELS,
   type StudyMode,
 } from "@/app/lib/study-concepts"
+import { Stagger, StaggerItem } from "@/app/components/motion/stagger"
 
 const MODES: { mode: StudyMode; label: string; icon: string; desc: string }[] = [
   { mode: "drill", label: "Concept Drill", icon: "psychology", desc: "Socratic Q&A per concept" },
@@ -108,20 +109,20 @@ export default function StudyPicker({
           <div className="flex-1 overflow-y-auto -mx-3 px-3 pb-3">
             <div className="mb-5">
               <h2 className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] mb-3">Study Approach</h2>
-              <div className="grid p-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
+              <Stagger className="grid p-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5">
                 {MODES.map((m) => {
                   const isSelected = selectedMode === m.mode
                   return (
-                    <button
-                      key={m.mode}
-                      onClick={() => setSelectedMode(m.mode)}
-                      aria-pressed={isSelected}
-                      className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border ${
-                        isSelected
-                          ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
-                          : "border-outline-variant/30"
-                      }`}
-                    >
+                    <StaggerItem key={m.mode}>
+                      <button
+                        onClick={() => setSelectedMode(m.mode)}
+                        aria-pressed={isSelected}
+                        className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full w-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border ${
+                          isSelected
+                            ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
+                            : "border-outline-variant/30"
+                        }`}
+                      >
                       <div className={`w-11 h-11 rounded-xl bg-primary-container/10 flex items-center justify-center mb-4 group-hover:bg-primary-container/20 transition-colors ${isSelected ? "bg-primary-container/20" : ""}`}>
                         <span className="material-symbols-outlined text-primary" style={{ fontSize: 26 }}>{m.icon}</span>
                       </div>
@@ -134,29 +135,30 @@ export default function StudyPicker({
                         </div>
                         <p className="font-body-md text-body-md text-on-surface-variant">{m.desc}</p>
                       </div>
-                    </button>
+                      </button>
+                    </StaggerItem>
                   )
                 })}
-              </div>
+              </Stagger>
             </div>
 
             <div>
               <h2 className="font-label-caps text-label-caps text-primary uppercase tracking-[0.15em] mb-3">Content Area</h2>
-              <div className="grid p-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
+              <Stagger className="grid p-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-5">
                 {areas.map((area) => {
                   const isSelected = selectedArea === area
                   return (
-                    <button
-                      key={area}
-                      onClick={() => setSelectedArea(area)}
-                      disabled={creating}
-                      aria-pressed={isSelected}
-                      className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border disabled:opacity-40 disabled:cursor-not-allowed ${
-                        isSelected
-                          ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
-                          : "border-outline-variant/30"
-                      }`}
-                    >
+                    <StaggerItem key={area}>
+                      <button
+                        onClick={() => setSelectedArea(area)}
+                        disabled={creating}
+                        aria-pressed={isSelected}
+                        className={`group cursor-pointer text-left bg-surface-container-lowest rounded-2xl p-5 md:p-6 flex flex-col h-full w-full transition-all duration-200 hover:shadow-md hover:border-primary/30 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background active:scale-[0.98] border disabled:opacity-40 disabled:cursor-not-allowed ${
+                          isSelected
+                            ? "border-primary shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background"
+                            : "border-outline-variant/30"
+                        }`}
+                      >
                       <div className={`w-11 h-11 rounded-xl bg-primary-container/10 flex items-center justify-center mb-4 group-hover:bg-primary-container/20 transition-colors ${isSelected ? "bg-primary-container/20" : ""}`}>
                         <span className="material-symbols-outlined text-primary" style={{ fontSize: 26 }}>{AREA_ICONS[area] ?? "folder"}</span>
                       </div>
@@ -168,10 +170,11 @@ export default function StudyPicker({
                           )}
                         </div>
                       </div>
-                    </button>
+                      </button>
+                    </StaggerItem>
                   )
                 })}
-              </div>
+              </Stagger>
             </div>
           </div>
         </div>

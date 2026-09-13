@@ -183,14 +183,14 @@ export default function StudySession({
       <div className="h-dvh flex flex-col overflow-hidden">
         <SideNavBar firstName={firstName} imageUrl={imageUrl} />
         <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
-          <div className="shrink-0 px-margin-mobile md:px-margin-desktop pt-4 pb-2">
+          <div className="shrink-0 border-b border-outline-variant/40 bg-surface-container-lowest px-margin-mobile py-4 md:px-margin-desktop">
             <div className="max-w-6xl mx-auto">
-              <div className="flex justify-between items-end mb-3">
+              <div className="flex justify-between items-center gap-4 mb-3">
                 <div>
                   <span className="font-label-caps text-primary block tracking-[0.2em] text-[10px]">STUDY MODE</span>
                   <div className="flex items-center gap-3 mt-1">
                     <h1 className="font-headline-lg text-lg uppercase tracking-tight leading-none">{modeLabel}</h1>
-                    <span className="px-2.5 py-0.5 bg-surface-container-high border border-outline text-[10px] font-bold uppercase tracking-wider text-on-surface">{areaLabel}</span>
+                    <span className="hidden sm:inline px-2.5 py-0.5 bg-surface-container-high border border-outline text-[10px] font-bold uppercase tracking-wider text-on-surface">{areaLabel}</span>
                   </div>
                 </div>
               </div>
@@ -291,15 +291,15 @@ export default function StudySession({
       <SideNavBar firstName={firstName} imageUrl={imageUrl} />
 
       <div className="lg:pl-64 flex flex-col flex-1 overflow-hidden">
-        <div className="shrink-0 px-margin-mobile md:px-margin-desktop pt-4 pb-2">
+        <div className="shrink-0 border-b border-outline-variant/40 bg-surface-container-lowest px-margin-mobile py-4 md:px-margin-desktop">
           <div className="max-w-6xl mx-auto">
-            <div className="flex justify-between items-end mb-3">
+            <div className="flex justify-between items-center gap-4 mb-3">
               <div className="flex items-center gap-4">
                 <div>
                   <span className="font-label-caps text-primary block tracking-[0.2em] text-[10px]">STUDY MODE</span>
                   <div className="flex items-center gap-3 mt-1">
                     <h1 className="font-headline-lg text-lg uppercase tracking-tight leading-none">{modeLabel}</h1>
-                    <span className="px-2.5 py-0.5 bg-surface-container-high border border-outline text-[10px] font-bold uppercase tracking-wider text-on-surface">{areaLabel}</span>
+                    <span className="hidden sm:inline px-2.5 py-0.5 bg-surface-container-high border border-outline text-[10px] font-bold uppercase tracking-wider text-on-surface">{areaLabel}</span>
                     {topic && (
                       <span className="px-2.5 py-0.5 bg-primary-container border border-primary text-[10px] font-bold uppercase tracking-wider text-on-primary-container">{topic}</span>
                     )}
@@ -317,13 +317,17 @@ export default function StudySession({
           </div>
         </div>
 
-        <main className="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop py-3">
+        <main className="flex-1 overflow-y-auto px-margin-mobile md:px-margin-desktop py-4 md:py-6">
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-5">
             <section className="md:col-span-8">
               <div className="space-y-4">
                 {displayMC && (
                   <div className="space-y-4">
-                    <div className="p-5 border-l-4 border-primary bg-surface-container-lowest rounded-2xl rounded-bl-md">
+                    <div className="rounded-2xl border border-outline-variant/40 border-l-4 border-l-primary bg-surface-container-lowest p-5 shadow-sm md:p-7">
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <span className="font-label-caps text-[10px] tracking-widest text-primary">QUESTION {currentQuestionIndex + 1} OF {MAX_QUESTIONS}</span>
+                        <span className="font-mono-data text-xs text-on-surface-variant">{Math.round(progressPct)}% complete</span>
+                      </div>
                       <p className="font-body-md text-sm leading-relaxed whitespace-pre-wrap text-on-surface">{displayMC.text}</p>
                     </div>
 
@@ -375,7 +379,7 @@ export default function StudySession({
                             key={choice.key}
                             onClick={() => handleSelectChoice(choice.key)}
                             disabled={selectedAnswer !== null || isViewingPast || finalizing}
-                            className={`group flex items-center p-5 text-left transition-all duration-200 ${borderStyle} disabled:cursor-default`}
+                            className={`group flex items-center rounded-xl p-5 text-left transition-all duration-200 ${borderStyle} disabled:cursor-default hover:-translate-y-0.5 hover:shadow-sm`}
                           >
                             <div className={`w-7 h-7 flex items-center justify-center font-bold mr-3 shrink-0 text-xs ${letterStyle}`}>{choice.key}</div>
                             <div className="flex-1 min-w-0">
@@ -464,7 +468,7 @@ export default function StudySession({
             </section>
 
             <aside className="md:col-span-4 md:sticky md:top-3 md:self-start space-y-4">
-              <div className="p-5 border border-tertiary-fixed bg-surface-container-low">
+              <div className="rounded-2xl border border-tertiary-fixed bg-surface-container-low p-5">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="material-symbols-outlined text-secondary text-lg">info</span>
                   <h3 className="font-label-caps text-secondary tracking-widest text-[10px]">TIPS</h3>
@@ -479,7 +483,7 @@ export default function StudySession({
                 </p>
               </div>
 
-              <div className="p-5 bg-inverse-surface text-surface border-t-8 border-primary">
+              <div className="rounded-2xl border border-inverse-surface bg-inverse-surface p-5 text-surface shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="material-symbols-outlined text-primary text-lg">bar_chart</span>
                   <h3 className="font-label-caps text-primary tracking-widest text-[10px]">PROGRESS</h3>
@@ -509,7 +513,7 @@ export default function StudySession({
         </main>
 
         {!completed && (
-          <footer className="shrink-0 bg-surface-container-high border-t border-tertiary px-margin-mobile md:px-margin-desktop py-3 z-50">
+          <footer className="shrink-0 border-t border-outline-variant/50 bg-surface-container-lowest px-margin-mobile py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.05)] md:px-margin-desktop md:py-4 z-50">
             <div className="max-w-6xl mx-auto flex justify-between items-center">
               <button
                 onClick={handleGoBack}
@@ -520,7 +524,7 @@ export default function StudySession({
                 PREVIOUS
               </button>
               <span className="font-label-caps text-secondary text-[10px]">
-              Q{answeredCount} / {MAX_QUESTIONS}
+              Q{currentQuestionIndex + 1} / {MAX_QUESTIONS}
               </span>
               <button
                 onClick={handleNextQuestion}
