@@ -31,6 +31,8 @@ const AREA_DESCRIPTIONS: Record<string, string> = {
   "nlp-v": "Mental health, psychiatric nursing, leadership, legal/ethical.",
 }
 
+const SESSION_PAGE_SIZE = 5
+
 function ScoreRing({ score, size = "lg" }: { score: number; size?: "sm" | "lg" }) {
   const dim = size === "lg" ? 200 : 120
   const r = size === "lg" ? 80 : 48
@@ -351,13 +353,23 @@ function ProgressAreasFallback() {
   )
 }
 
-async function ProgressSessions({ userId }: { userId: string }) {
+async function ProgressSessions({ userId, page }: { userId: string; page: number }) {
+  const countResult = await sql`
+    SELECT COUNT(*)::int AS count
+    FROM sessions
+    WHERE user_id = ${userId} AND status = 'completed'
+  `
+  const totalSessions = Number((countResult.rows[0] as { count?: number })?.count ?? 0)
+  const totalPages = Math.max(1, Math.ceil(totalSessions / SESSION_PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages)
+  const offset = (currentPage - 1) * SESSION_PAGE_SIZE
   const sessionsResult = await sql`
     SELECT id, type, questions, answers, completed_at
     FROM sessions
     WHERE user_id = ${userId} AND status = 'completed'
     ORDER BY completed_at DESC
-    LIMIT 20
+    LIMIT ${SESSION_PAGE_SIZE}
+    OFFSET ${offset}
   `
 
   if (sessionsResult.rows.length === 0) {
@@ -365,7 +377,7 @@ async function ProgressSessions({ userId }: { userId: string }) {
       <div className="mb-10">
         <div className="flex items-end justify-between mb-6">
           <h2 className="font-headline-lg text-headline-lg text-primary">Session History</h2>
-          <span className="font-label-caps text-on-surface-variant text-xs">Last 0 sessions</span>
+          <span className="font-label-caps text-on-surface-variant text-xs">No completed sessions</span>
         </div>
         <div className="glass-jar p-10 rounded-2xl text-center">
           <span className="material-symbols-outlined text-4xl text-secondary mb-4 block">timeline</span>
@@ -408,11 +420,15 @@ async function ProgressSessions({ userId }: { userId: string }) {
     }
   })
 
+  const firstItemNumber = totalSessions - offset
+
   return (
     <div className="mb-10">
-      <div className="flex items-end justify-between mb-6">
+      <div className="flex flex-col gap-3 mb-6 sm:flex-row sm:items-end sm:justify-between">
         <h2 className="font-headline-lg text-headline-lg text-primary">Session History</h2>
-        <span className="font-label-caps text-on-surface-variant text-xs">Last {recentSessions.length} sessions</span>
+        <span className="font-label-caps text-on-surface-variant text-xs">
+          {totalSessions} completed session{totalSessions === 1 ? "" : "s"}
+        </span>
       </div>
       <div className="space-y-2">
         {recentSessions.map((session, i) => (
@@ -424,11 +440,42 @@ async function ProgressSessions({ userId }: { userId: string }) {
               correctAnswers={session.correctAnswers}
               type={session.type}
               completedAt={session.completedAt}
-              index={recentSessions.length - i}
+              index={firstItemNumber - i}
             />
           </Link>
         ))}
       </div>
+      {totalPages > 1 && (
+        <nav className="mt-6 flex items-center justify-between rounded-2xl border border-outline-variant/40 bg-surface-container-lowest px-4 py-3" aria-label="Session history pagination">
+          <Link
+            href={currentPage > 1 ? `/progress?page=${currentPage - 1}` : "/progress"}
+            aria-disabled={currentPage === 1}
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 font-label-caps text-xs transition-colors ${
+              currentPage === 1
+                ? "pointer-events-none text-on-surface-variant/40"
+                : "text-primary hover:bg-primary/10"
+            }`}
+          >
+            <span className="material-symbols-outlined text-base">arrow_back</span>
+            Previous
+          </Link>
+          <span className="font-mono-data text-xs text-on-surface-variant">
+            Page {currentPage} of {totalPages}
+          </span>
+          <Link
+            href={`/progress?page=${currentPage + 1}`}
+            aria-disabled={currentPage === totalPages}
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-2 font-label-caps text-xs transition-colors ${
+              currentPage === totalPages
+                ? "pointer-events-none text-on-surface-variant/40"
+                : "text-primary hover:bg-primary/10"
+            }`}
+          >
+            Next
+            <span className="material-symbols-outlined text-base">arrow_forward</span>
+          </Link>
+        </nav>
+      )}
     </div>
   )
 }
@@ -464,9 +511,17 @@ function ProgressSessionsFallback() {
   )
 }
 
-export default async function ProgressPage() {
+export default async function ProgressPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>
+}) {
   const { userId } = await auth()
   if (!userId) redirect("/")
+
+  const params = await searchParams
+  const requestedPage = Number.parseInt(params.page ?? "1", 10)
+  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1
 
   const profile = await getProfile(userId)
   if (!profile || !profile.onboarding_completed) {
@@ -496,7 +551,7 @@ export default async function ProgressPage() {
         </StaggerItem>
         <StaggerItem>
           <Suspense fallback={<ProgressSessionsFallback />}>
-            <ProgressSessions userId={userId} />
+            <ProgressSessions userId={userId} page={page} />
           </Suspense>
         </StaggerItem>
       </Stagger>
