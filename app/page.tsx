@@ -61,8 +61,8 @@ export default function HomePage() {
 
   return (
     <main className="split-auth font-body-md antialiased overflow-x-hidden overflow-y-auto min-h-screen bg-surface">
-      <div className="min-h-screen flex items-center justify-center p-0 md:p-2 lg:p-4">
-        <div className="flex flex-col lg:flex-row w-full max-w-6xl min-h-[calc(100dvh-0rem)] md:h-[calc(100dvh-1rem)] lg:h-[calc(100dvh-2rem)] bg-surface-container-low rounded-[2rem] overflow-hidden shadow-2xl">
+      <div className="min-h-screen w-full">
+        <div className="flex min-h-screen w-full flex-col overflow-hidden bg-surface-container-low lg:flex-row">
           {/* Left Hero Section */}
           <section className="relative flex-1 bg-primary p-4 lg:p-8 flex flex-col items-center justify-center text-center overflow-hidden min-h-[260px] lg:min-h-[300px]">
             <div className="absolute inset-0 z-0">
