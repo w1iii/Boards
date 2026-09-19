@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth, clerkClient } from "@clerk/nextjs/server"
-import { sql, deleteUserData } from "@/app/lib/db"
+import { normalizeDateOnly, sql, deleteUserData } from "@/app/lib/db"
 import { handleError, AppError } from "@/app/lib/errors"
 import { settingsSchema } from "@/app/lib/validation"
 
@@ -12,7 +12,8 @@ export async function GET() {
     const result = await sql`
       SELECT * FROM user_profiles WHERE clerk_user_id = ${userId}
     `
-    const profile = result.rows[0] || null
+    const profile = result.rows[0] as Record<string, unknown> | undefined
+    if (profile) profile.target_exam_date = normalizeDateOnly(profile.target_exam_date)
 
     let email: string | null = null
     try {
@@ -22,7 +23,7 @@ export async function GET() {
       // clerk unavailable; profile fields still returned
     }
 
-    return NextResponse.json({ profile, email })
+    return NextResponse.json({ profile: profile || null, email })
   } catch (error) {
     return handleError(error)
   }

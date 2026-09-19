@@ -85,6 +85,7 @@ export default function SettingsForm({
       }
 
       setSaved(section === "account" ? "Account updated." : "Study plan updated.")
+      router.refresh()
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong")
     } finally {

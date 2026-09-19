@@ -29,11 +29,21 @@ export async function unsafesql(
   return client.query(query, params) as Promise<FullQueryResults<false>>
 }
 
+export function normalizeDateOnly(value: unknown): string | null {
+  if (value instanceof Date) return value.toISOString().slice(0, 10)
+  if (typeof value === "string" && value.length > 0) return value.slice(0, 10)
+  return null
+}
+
 export const getProfile = cache(async (userId: string) => {
   const result = await sql`
     SELECT * FROM user_profiles WHERE clerk_user_id = ${userId}
   `
-  return result.rows[0] as Record<string, unknown> | undefined
+  const profile = result.rows[0] as Record<string, unknown> | undefined
+  if (profile) {
+    profile.target_exam_date = normalizeDateOnly(profile.target_exam_date)
+  }
+  return profile
 })
 
 export const getProgressAgg = cache(async (userId: string) => {

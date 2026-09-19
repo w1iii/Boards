@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
-import { sql } from "@/app/lib/db"
+import { normalizeDateOnly, sql } from "@/app/lib/db"
 import { handleError, AppError } from "@/app/lib/errors"
 import { onboardingSchema } from "@/app/lib/validation"
 
@@ -13,7 +13,10 @@ export async function GET() {
       SELECT * FROM user_profiles WHERE clerk_user_id = ${userId}
     `
 
-    return NextResponse.json({ profile: result.rows[0] || null })
+    const profile = result.rows[0] as Record<string, unknown> | undefined
+    if (profile) profile.target_exam_date = normalizeDateOnly(profile.target_exam_date)
+
+    return NextResponse.json({ profile: profile || null })
   } catch (error) {
     return handleError(error)
   }
