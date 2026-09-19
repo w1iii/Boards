@@ -5,8 +5,8 @@ import { useState, useEffect, useCallback } from "react"
 // ============================================================
 // displayed after login. Shows once per browser session.
 // ============================================================
-const ENCOURAGEMENT_TEXT = "Discipline is painful at the time, but later yields a peaceful fruit of righteousness."
-const ENCOURAGEMENT_AUTHOR = "Hebrews 12:11"
+const ENCOURAGEMENT_TEXT = "Congratulations to all the newly Registered Nurses who passed the Nursing Licensure Examination!"
+const ENCOURAGEMENT_AUTHOR = "All Glory to God!"
 // ============================================================
 
 const STORAGE_KEY = "encouragement-modal-seen"
@@ -20,7 +20,8 @@ export default function EncouragementModal() {
     } catch {
       return
     }
-    setOpen(true)
+    const frame = requestAnimationFrame(() => setOpen(true))
+    return () => cancelAnimationFrame(frame)
   }, [])
 
   const dismiss = useCallback(() => {
